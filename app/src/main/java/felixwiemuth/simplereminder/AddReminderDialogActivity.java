@@ -31,7 +31,7 @@ public class AddReminderDialogActivity extends AppCompatActivity {
                 int hour;
                 int minute;
                 boolean tomorrow = false;
-               
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     hour = timePicker.getHour();
                     minute = timePicker.getMinute();
@@ -43,6 +43,7 @@ public class AddReminderDialogActivity extends AppCompatActivity {
                 Calendar time = Calendar.getInstance();
                 time.set(Calendar.HOUR_OF_DAY, hour);
                 time.set(Calendar.MINUTE, minute);
+                time.set(Calendar.SECOND, 0);
 
                 if (time.compareTo(Calendar.getInstance()) <= 0) { // TODO might want to add margin if ReminderManager does not send out reminder when time has already elapsed
                     time.add(Calendar.DAY_OF_MONTH, 1);  //TODO test: does it wrap over midnight?
