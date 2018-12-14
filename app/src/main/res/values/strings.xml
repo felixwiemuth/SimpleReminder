@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SimpleReminder</string>
+    <string name="add_reminder_title">Add reminder</string>
+    <string name="add_reminder_name_hint">Reminder text (optional)</string>
+    <string name="button_add_reminder">Add</string>
+    <string name="toast_reminder_added_for">Reminder added for</string>
+    <string name="toast_reminder_added_tomorrow">tomorrow</string>
 </resources>
