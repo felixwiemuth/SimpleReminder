@@ -1,5 +1,6 @@
 package felixwiemuth.simplereminder;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -16,6 +17,7 @@ import android.support.v4.app.NotificationManagerCompat;
  */
 public class ReminderService extends IntentService {
     public static final String CHANNEL_REMINDER = "Reminder";
+    public static final String EXTRA_INT_ID = "felixwiemuth.simplereminder.ReminderService.ID";
     public static final String EXTRA_STRING_REMINDER_TEXT = "felixwiemuth.simplereminder.ReminderService.REMINDER_TEXT";
 
     public ReminderService() {
@@ -30,6 +32,7 @@ public class ReminderService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+        int id =  intent.getExtras().getInt(EXTRA_INT_ID);
         if (intent == null) {
             return;
         }
@@ -37,17 +40,18 @@ public class ReminderService extends IntentService {
         if (text == null) {
             text = "Reminder!";
         }
-        sendNotification(text);
+        sendNotification(id, text);
     }
 
-    private void sendNotification(String text) {
+    @SuppressLint("ApplySharedPref")
+    private void sendNotification(int id, String text) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_REMINDER)
                 .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-                .setContentTitle("Reminder")
+                .setContentTitle(getString(R.string.notification_title))
                 .setContentText(text)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(0, builder.build()); //TODO create unique ID and save
+        notificationManager.notify(id, builder.build()); //TODO save ID to list of currently scheduled reminders
 
     }
 
