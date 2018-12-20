@@ -37,6 +37,7 @@ public class AddReminderDialogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_reminder_dialog);
 
         final AutoCompleteTextView nameTextView = findViewById(R.id.nameTextView);
+        nameTextView.requestFocus();
 
         final TimePicker timePicker = findViewById(R.id.timePicker);
         timePicker.setIs24HourView(true);
