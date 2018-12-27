@@ -16,17 +16,25 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="green">#10e279</color>
-    <color name="yellow">#ffef09</color>
-    <color name="orange">#f7a33d</color>
-    <color name="grey">#d1dad7</color>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
-    <color name="bg_scheduled">@color/green</color>
-    <color name="bg_notified">@color/yellow</color>
-    <color name="bg_done">@color/grey</color>
-    <color name="bg_cancelled">@color/orange</color>
-</resources>
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:text="empty date"
+        android:textAppearance="?attr/textAppearanceListItem"/>
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:textAppearance="?attr/textAppearanceListItem"
+        />
+
+</LinearLayout>

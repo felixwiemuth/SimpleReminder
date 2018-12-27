@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (C) 2018 Felix Wiemuth
   ~
@@ -17,16 +16,9 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
-    <color name="green">#10e279</color>
-    <color name="yellow">#ffef09</color>
-    <color name="orange">#f7a33d</color>
-    <color name="grey">#d1dad7</color>
-
-    <color name="bg_scheduled">@color/green</color>
-    <color name="bg_notified">@color/yellow</color>
-    <color name="bg_done">@color/grey</color>
-    <color name="bg_cancelled">@color/orange</color>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="appbar_padding_top">8dp</dimen>
 </resources>

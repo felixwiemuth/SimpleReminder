@@ -17,6 +17,7 @@
 
 package felixwiemuth.simplereminder;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -24,12 +25,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
+import felixwiemuth.simplereminder.data.Reminder;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
-import static felixwiemuth.simplereminder.Constants.PREF_STATE_NEXTID;
+import static felixwiemuth.simplereminder.SharedPrefs.PREF_STATE_CURRENT_REMINDERS;
+import static felixwiemuth.simplereminder.SharedPrefs.PREF_STATE_NEXTID;
 
 /**
  * Manages reminders by allowing to add and change reminders.
@@ -37,11 +42,21 @@ import static felixwiemuth.simplereminder.Constants.PREF_STATE_NEXTID;
  * @author Felix Wiemuth
  */
 public class ReminderManager {
-    public static void addReminder(Context context, long time, String text) {
+    @SuppressLint("ApplySharedPref")
+    public static void addReminder(Context context, long date, String text) {
         // Get next alarm ID
-        SharedPreferences prefs = context.getSharedPreferences(Constants.PREFS_STATE, MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(SharedPrefs.PREFS_STATE, MODE_PRIVATE);
         final int nextId = prefs.getInt(PREF_STATE_NEXTID, 0);
-        prefs.edit().putInt(PREF_STATE_NEXTID, nextId + 1).commit(); // use commit so that the ID really cannot be used again
+        Reminder reminder = new Reminder(nextId, date, text);
+
+        List<Reminder> currentReminders = getRemindersFromPrefs(prefs);
+        List<Reminder> updatedReminders = new ArrayList<>(currentReminders);
+        updatedReminders.add(reminder);
+
+        prefs.edit()
+                .putInt(PREF_STATE_NEXTID, nextId + 1)
+                .putString(PREF_STATE_CURRENT_REMINDERS, Reminder.toJson(updatedReminders))
+                .commit(); // use commit so that the ID really cannot be used again
 
 
         // Prepare pending intent
@@ -54,14 +69,28 @@ public class ReminderManager {
 
         // Schedule alarm
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, alarmIntent);
-            Log.d("ReminderManager", "Set alarm (\"exact and allow while idle\") for " + DateFormat.getDateTimeInstance().format(time));
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, date, alarmIntent);
+            Log.d("ReminderManager", "Set alarm (\"exact and allow while idle\") for " + DateFormat.getDateTimeInstance().format(date));
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, alarmIntent);
-            Log.d("ReminderManager", "Set alarm (\"exact\") for " + DateFormat.getDateTimeInstance().format(time));
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, date, alarmIntent);
+            Log.d("ReminderManager", "Set alarm (\"exact\") for " + DateFormat.getDateTimeInstance().format(date));
         } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, time, alarmIntent);
-            Log.d("ReminderManager", "Set alarm for " + DateFormat.getDateTimeInstance().format(time));
+            alarmManager.set(AlarmManager.RTC_WAKEUP, date, alarmIntent);
+            Log.d("ReminderManager", "Set alarm for " + DateFormat.getDateTimeInstance().format(date));
         }
+    }
+
+    public static List<Reminder> getReminders(Context context) {
+        return getRemindersFromPrefs(SharedPrefs.getStatePrefs(context));
+    }
+
+    /**
+     * Returns an immutable list of the saved reminders.
+     *
+     * @param prefs
+     * @return
+     */
+    public static List<Reminder> getRemindersFromPrefs(SharedPreferences prefs) {
+        return Reminder.fromJson(prefs.getString(PREF_STATE_CURRENT_REMINDERS, "[]")); //TODO check
     }
 }

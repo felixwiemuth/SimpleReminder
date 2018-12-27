@@ -15,15 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package felixwiemuth.simplereminder;
+package felixwiemuth.simplereminder.util;
+
+import java.text.DateFormat;
+import java.util.Calendar;
 
 /**
  * @author Felix Wiemuth
  */
-public class Constants {
-    /**
-     * Name of preferences that store the internal state of the app, like scheduled notifications.
-     */
-    public static String PREFS_STATE = "state";
-    public static String PREF_STATE_NEXTID = "nextid";
+public class DateTimeUtil {
+    private static DateFormat dfDateTime;
+
+    private static DateFormat getDateTimeFormat() {
+        if (dfDateTime == null) {
+            dfDateTime = DateFormat.getDateTimeInstance();
+        }
+        return dfDateTime;
+    }
+
+    public static String formatDateTime(Calendar calendar) {
+        return getDateTimeFormat().format(calendar.getTime());
+    }
 }

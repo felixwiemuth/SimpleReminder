@@ -25,4 +25,8 @@
     <string name="channel_name">Reminders</string>
     <string name="channel_description">Shows user set reminders only</string>
     <string name="notification_title">Reminder</string>
+    <string name="title_activity_reminders_list">@string/app_name</string>
+    <string name="tab_scheduled">Scheduled</string>
+    <string name="tab_archive">Archive</string>
+    <string name="action_settings">Settings</string>
 </resources>
