@@ -47,7 +47,7 @@ public class ReminderManager {
     /**
      * Lock guarding the state preferences ({@link SharedPrefs#PREFS_STATE}). This reference being null is equivalent to the lock not being aquired.
      */
-    private static Lock prefStateLock;
+    private static ReentrantLock prefStateLock;
 
     private static void lock() {
         if (prefStateLock == null) {
@@ -57,8 +57,8 @@ public class ReminderManager {
     }
 
     private static void unlock() {
-        if (prefStateLock == null) {
-            return;
+        if (prefStateLock != null) {
+            prefStateLock.unlock();
         }
     }
 
