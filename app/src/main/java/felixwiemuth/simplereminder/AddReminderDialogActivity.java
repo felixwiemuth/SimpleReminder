@@ -65,7 +65,7 @@ public class AddReminderDialogActivity extends AppCompatActivity {
                 tomorrow = true;
             }
 
-            ReminderManager.addReminder(AddReminderDialogActivity.this, time.getTimeInMillis(), nameTextView.getText().toString());
+            ReminderManager.addReminder(AddReminderDialogActivity.this, time.getTime(), nameTextView.getText().toString());
             String text = getString(R.string.toast_reminder_added_for);
             if (tomorrow) {
                 text += getString(R.string.toast_reminder_added_tomorrow);

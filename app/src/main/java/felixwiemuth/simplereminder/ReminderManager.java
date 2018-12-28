@@ -26,9 +26,10 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 import felixwiemuth.simplereminder.data.Reminder;
+import felixwiemuth.simplereminder.util.DateTimeUtil;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -65,6 +66,10 @@ public class ReminderManager {
         void edit(SharedPreferences prefs, SharedPreferences.Editor editor);
     }
 
+    interface RemindersEditOperation {
+        List<Reminder> update(List<Reminder> reminders);
+    }
+
     /**
      * Edit the state preferences ({@link SharedPrefs#PREFS_STATE}) exclusively and commit after the operation has successfully completed. This ensures that different threads editing these preferences do not overwrite their changes.
      *
@@ -84,21 +89,29 @@ public class ReminderManager {
         }
     }
 
+    private static void updateRemindersList(Context context, RemindersEditOperation operation) {
+        performExclusivelyOnStatePrefsAndCommit(context, ((prefs, editor) -> {
+            updateRemindersListInEditor(editor, operation.update(getReminders(context)));
+        }));
+    }
+
+    private static void updateRemindersListInEditor(SharedPreferences.Editor editor, List<Reminder> reminders) {
+        editor.putString(PREF_STATE_CURRENT_REMINDERS, Reminder.toJson(reminders));
+    }
+
     @SuppressLint("ApplySharedPref")
-    public static void addReminder(Context context, long date, String text) {
+    public static void addReminder(Context context, Date date, String text) {
         performExclusivelyOnStatePrefsAndCommit(context, (prefs, editor) -> {
 
             // Get next alarm ID
             final int nextId = prefs.getInt(PREF_STATE_NEXTID, 0);
             Reminder reminder = new Reminder(nextId, date, text);
 
-            List<Reminder> currentReminders = getRemindersFromPrefs(prefs);
-            List<Reminder> updatedReminders = new ArrayList<>(currentReminders);
-            updatedReminders.add(reminder);
+            List<Reminder> reminders = getRemindersFromPrefs(prefs);
+            reminders.add(reminder);
 
-            editor
-                    .putInt(PREF_STATE_NEXTID, nextId + 1)
-                    .putString(PREF_STATE_CURRENT_REMINDERS, Reminder.toJson(updatedReminders));
+            editor.putInt(PREF_STATE_NEXTID, nextId + 1);
+            updateRemindersListInEditor(editor, reminders);
 
             // Prepare pending intent
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
@@ -110,16 +123,63 @@ public class ReminderManager {
 
             // Schedule alarm
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, date, alarmIntent);
-                Log.d("ReminderManager", "Set alarm (\"exact and allow while idle\") for " + DateFormat.getDateTimeInstance().format(date));
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, date.getTime(), alarmIntent);
+                Log.d("ReminderManager", "Set alarm (\"exact and allow while idle\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, date, alarmIntent);
-                Log.d("ReminderManager", "Set alarm (\"exact\") for " + DateFormat.getDateTimeInstance().format(date));
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, date.getTime(), alarmIntent);
+                Log.d("ReminderManager", "Set alarm (\"exact\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
             } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, date, alarmIntent);
-                Log.d("ReminderManager", "Set alarm for " + DateFormat.getDateTimeInstance().format(date));
+                alarmManager.set(AlarmManager.RTC_WAKEUP, date.getTime(), alarmIntent);
+                Log.d("ReminderManager", "Set alarm for " + DateTimeUtil.formatDateTime(reminder.getDate()));
             }
         });
+    }
+
+
+    /**
+     * Removes the first occurrence of a reminder with the ID of the given reminder on the iterator.
+     *
+     * @param it
+     * @param reminder
+     */
+    private static void removeReminderWithSameId(Iterator<Reminder> it, Reminder reminder) {
+        while (it.hasNext()) {
+            Reminder r = it.next();
+            if (r.getId() == reminder.getId()) {
+                it.remove();
+                break;
+            }
+        }
+    }
+
+    /**
+     * Removes the reminder with the ID of the given reminder from the current reminders and adds the given one.
+     *
+     * @param context
+     * @param reminder
+     * @param reschedule whether to cancel the removed reminder's notification and schedule the new one
+     */
+    public static void updateReminder(Context context, Reminder reminder, boolean reschedule) {
+        //TODO implement reschedule, maybe remove switch (always check scheduling)
+        updateRemindersList(context, (reminders -> {
+            removeReminderWithSameId(reminders.iterator(), reminder);
+            reminders.add(reminder);
+            return reminders;
+        }));
+    }
+
+    /**
+     * Remove a reminder from the current reminders.
+     *
+     * @param context
+     * @param reminder
+     */
+    public static void removeReminder(Context context, Reminder reminder) {
+        //TODO unschedule
+        updateRemindersList(context, (reminders -> {
+            removeReminderWithSameId(reminders.iterator(), reminder);
+            return reminders;
+        }));
     }
 
     public static List<Reminder> getReminders(Context context) {

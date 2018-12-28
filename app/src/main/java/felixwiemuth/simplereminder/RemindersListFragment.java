@@ -143,7 +143,7 @@ public class RemindersListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.dateView.setText(DateTimeUtil.formatDateTime(reminders.get(position).getCalendar()));
+            holder.dateView.setText(DateTimeUtil.formatDateTime(reminders.get(position).getDate()));
             holder.descriptionView.setText(reminders.get(position).getText());
             int color;
             switch (reminders.get(position).getStatus()) {

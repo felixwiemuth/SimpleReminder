@@ -17,18 +17,20 @@
 
 package felixwiemuth.simplereminder.data;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
  * @author Felix Wiemuth
  */
 public class Reminder {
+    private static Gson gson;
 
     public enum Status {
         /**
@@ -56,18 +58,11 @@ public class Reminder {
     /**
      * Reminder's due date.
      */
-    private long date;
+    private Date date;
     private String text;
     private Status status;
 
-//    public Reminder(int id, Calendar date, String text) {
-//        this.id = id;
-//        this.date = date;
-//        this.text = text;
-//        this.status = Status.SCHEDULED;
-//    }
-
-    public Reminder(int id, long date, String text) {
+    public Reminder(int id, Date date, String text) {
         this.id = id;
         this.date = date;
         this.text = text;
@@ -78,9 +73,13 @@ public class Reminder {
         return id;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
     public Calendar getCalendar() {
         Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(date);
+        c.setTime(date);
         return c;
     }
 
@@ -93,11 +92,22 @@ public class Reminder {
     }
 
     public static String toJson(List<Reminder> reminders) {
-        return new Gson().toJson(reminders);
+        return getGson().toJson(reminders);
     }
 
     public static List<Reminder> fromJson(String json) {
-        Type collectionType = new TypeToken<Collection<Reminder>>(){}.getType();
-        return new Gson().fromJson(json, collectionType);
+        Type collectionType = new TypeToken<Collection<Reminder>>() {
+        }.getType();
+        return getGson().fromJson(json, collectionType);
+    }
+
+    private static Gson getGson() {
+        if (gson == null) {
+            gson = new GsonBuilder()
+                    .registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, typeOfT, context) -> new Date(json.getAsJsonPrimitive().getAsLong()))
+                    .registerTypeAdapter(Date.class, (JsonSerializer<Date>) (date, type, jsonSerializationContext) -> new JsonPrimitive(date.getTime()))
+                    .create();
+        }
+        return gson;
     }
 }

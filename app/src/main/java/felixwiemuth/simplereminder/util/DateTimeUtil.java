@@ -18,7 +18,7 @@
 package felixwiemuth.simplereminder.util;
 
 import java.text.DateFormat;
-import java.util.Calendar;
+import java.util.Date;
 
 /**
  * @author Felix Wiemuth
@@ -33,7 +33,9 @@ public class DateTimeUtil {
         return dfDateTime;
     }
 
-    public static String formatDateTime(Calendar calendar) {
-        return getDateTimeFormat().format(calendar.getTime());
+    public static String formatDateTime(Date date) {
+        return getDateTimeFormat().format(date);
     }
+
+
 }
