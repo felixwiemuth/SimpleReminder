@@ -31,7 +31,6 @@ import felixwiemuth.simplereminder.util.DateTimeUtil;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static android.content.Context.ALARM_SERVICE;
@@ -44,6 +43,13 @@ import static felixwiemuth.simplereminder.SharedPrefs.PREF_STATE_NEXTID;
  * @author Felix Wiemuth
  */
 public class ReminderManager {
+
+    public static class ReminderNotFoundException extends RuntimeException {
+        public ReminderNotFoundException(String message) {
+            super(message);
+        }
+    }
+
     /**
      * Lock guarding the state preferences ({@link SharedPrefs#PREFS_STATE}). This reference being null is equivalent to the lock not being aquired.
      */
@@ -99,7 +105,6 @@ public class ReminderManager {
         editor.putString(PREF_STATE_CURRENT_REMINDERS, Reminder.toJson(reminders));
     }
 
-    @SuppressLint("ApplySharedPref")
     public static void addReminder(Context context, Date date, String text) {
         performExclusivelyOnStatePrefsAndCommit(context, (prefs, editor) -> {
 
@@ -116,9 +121,7 @@ public class ReminderManager {
             // Prepare pending intent
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
             Intent processIntent = new Intent(context, ReminderService.class);
-            processIntent
-                    .putExtra(ReminderService.EXTRA_INT_ID, nextId)
-                    .putExtra(ReminderService.EXTRA_STRING_REMINDER_TEXT, text);
+            processIntent.putExtra(ReminderService.EXTRA_INT_ID, nextId);
             PendingIntent alarmIntent = PendingIntent.getService(context, nextId, processIntent, 0);
 
             // Schedule alarm
@@ -184,6 +187,23 @@ public class ReminderManager {
 
     public static List<Reminder> getReminders(Context context) {
         return getRemindersFromPrefs(SharedPrefs.getStatePrefs(context));
+    }
+
+    /**
+     * Get the reminder with the specified ID.
+     * @param context
+     * @param id
+     * @return
+     * @throws ReminderNotFoundException if no reminder with the given ID exists
+     */
+    public static Reminder getReminder(Context context, int id) throws ReminderNotFoundException {
+        List<Reminder> reminders = getReminders(context);
+        for (Reminder reminder : reminders) {
+            if (reminder.getId() == id) {
+                return reminder;
+            }
+        }
+        throw new ReminderNotFoundException("Reminder with id " + id + " does not exist.");
     }
 
     /**
