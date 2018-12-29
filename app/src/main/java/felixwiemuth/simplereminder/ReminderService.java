@@ -20,6 +20,7 @@ package felixwiemuth.simplereminder;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.Nullable;
@@ -29,7 +30,7 @@ import android.util.Log;
 import felixwiemuth.simplereminder.data.Reminder;
 
 /**
- * Handles scheduled reminders when they are due.
+ * Handles scheduled reminders when they are due. May only be started with an intent containing an {@link #EXTRA_INT_ID} extra with a valid reminder ID.
  *
  * @author Felix Wiemuth
  */
@@ -54,10 +55,12 @@ public class ReminderService extends IntentService {
             return;
         }
 //        Objects.requireNonNull(intent.getExtras(), "Intent must come with extra.");
-        int id =  intent.getExtras().getInt(EXTRA_INT_ID);
+        int id = intent.getExtras().getInt(EXTRA_INT_ID);
         Reminder reminder = ReminderManager.getReminder(this, id);
         String text = reminder.getText();
         sendNotification(id, text);
+        reminder.setStatus(Reminder.Status.NOTIFIED);
+        ReminderManager.updateReminder(this, reminder, false); //TODO do not reschedule, as this would remove the notification!
     }
 
     private void sendNotification(int id, String text) {
@@ -68,6 +71,11 @@ public class ReminderService extends IntentService {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(id, builder.build());
+    }
+
+    public static void cancelPendingNotification(Context context, int id) {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.cancel(id);
     }
 
     private void createNotificationChannel() {

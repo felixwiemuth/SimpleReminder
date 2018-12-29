@@ -24,6 +24,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import felixwiemuth.simplereminder.data.Reminder;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -65,15 +66,19 @@ public class AddReminderDialogActivity extends AppCompatActivity {
                 tomorrow = true;
             }
 
-            ReminderManager.addReminder(AddReminderDialogActivity.this, time.getTime(), nameTextView.getText().toString());
-            String text = getString(R.string.toast_reminder_added_for);
+            Reminder.ReminderBuilder reminderBuilder = Reminder.builder()
+                    .date(time.getTime())
+                    .text(nameTextView.getText().toString());
+            ReminderManager.addReminder(AddReminderDialogActivity.this, reminderBuilder)
+            ;
+            String toastText = getString(R.string.toast_reminder_added_for);
             if (tomorrow) {
-                text += getString(R.string.toast_reminder_added_tomorrow);
+                toastText += getString(R.string.toast_reminder_added_tomorrow);
             }
-            text += DateFormat.getTimeInstance(DateFormat.SHORT).format(time.getTime());
+            toastText += DateFormat.getTimeInstance(DateFormat.SHORT).format(time.getTime());
             int duration = Toast.LENGTH_LONG;
 
-            Toast toast = Toast.makeText(AddReminderDialogActivity.this, text, duration);
+            Toast toast = Toast.makeText(AddReminderDialogActivity.this, toastText, duration);
             toast.show();
 
             finish(); //TODO change animation

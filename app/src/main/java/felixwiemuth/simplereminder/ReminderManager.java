@@ -28,7 +28,6 @@ import android.util.Log;
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -38,7 +37,7 @@ import static felixwiemuth.simplereminder.SharedPrefs.PREF_STATE_CURRENT_REMINDE
 import static felixwiemuth.simplereminder.SharedPrefs.PREF_STATE_NEXTID;
 
 /**
- * Manages reminders by allowing to add and change reminders.
+ * Manages current reminders by allowing to add and change reminders, scheduling notifications. Due reminders are handled by {@link ReminderService}.
  *
  * @author Felix Wiemuth
  */
@@ -105,37 +104,83 @@ public class ReminderManager {
         editor.putString(PREF_STATE_CURRENT_REMINDERS, Reminder.toJson(reminders));
     }
 
-    public static void addReminder(Context context, Date date, String text) {
-        performExclusivelyOnStatePrefsAndCommit(context, (prefs, editor) -> {
+    /**
+     * Add the reminder described by the given builder. A new ID is assigned by this method.
+     *
+     * @param context
+     * @param reminderBuilder
+     */
+    public static void addReminder(Context context, Reminder.ReminderBuilder reminderBuilder) {
+        performExclusivelyOnStatePrefsAndCommit(context,
+                (prefs, editor) -> {
+                    // Get next reminder ID
+                    final int nextId = prefs.getInt(PREF_STATE_NEXTID, 0);
+                    reminderBuilder.id(nextId);
+                    Reminder reminder = reminderBuilder.build();
 
-            // Get next alarm ID
-            final int nextId = prefs.getInt(PREF_STATE_NEXTID, 0);
-            Reminder reminder = new Reminder(nextId, date, text);
+                    editor.putInt(PREF_STATE_NEXTID, nextId + 1);
+                    addReminderToReminders(prefs, editor, reminder);
 
-            List<Reminder> reminders = getRemindersFromPrefs(prefs);
-            reminders.add(reminder);
+                    scheduleReminder(context, reminder);
+                });
+    }
 
-            editor.putInt(PREF_STATE_NEXTID, nextId + 1);
-            updateRemindersListInEditor(editor, reminders);
+    /**
+     * Add the given reminder (with the given ID).
+     *
+     * @param context
+     * @param reminder
+     */
+    private static void addReminder(Context context, Reminder reminder) {
+        performExclusivelyOnStatePrefsAndCommit(context,
+                (prefs, editor) -> {
+                    addReminderToReminders(prefs, editor, reminder);
+                    scheduleReminder(context, reminder);
+                });
+    }
 
-            // Prepare pending intent
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-            Intent processIntent = new Intent(context, ReminderService.class);
-            processIntent.putExtra(ReminderService.EXTRA_INT_ID, nextId);
-            PendingIntent alarmIntent = PendingIntent.getService(context, nextId, processIntent, 0);
-
-            // Schedule alarm
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, date.getTime(), alarmIntent);
-                Log.d("ReminderManager", "Set alarm (\"exact and allow while idle\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, date.getTime(), alarmIntent);
-                Log.d("ReminderManager", "Set alarm (\"exact\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
-            } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, date.getTime(), alarmIntent);
-                Log.d("ReminderManager", "Set alarm for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+    /**
+     * Add the given reminder to the list of reminders. No reminder with the same ID must exist yet.
+     *
+     * @param prefs
+     * @param editor
+     * @param reminder
+     */
+    private static void addReminderToReminders(SharedPreferences prefs, SharedPreferences.Editor editor, Reminder reminder) {
+        List<Reminder> reminders = getRemindersFromPrefs(prefs);
+        for (Reminder r : reminders) {
+            if (r.getId() == reminder.getId()) {
+                throw new RuntimeException("Cannot add reminder: reminder with id " + reminder.getId() + " already exists.");
             }
-        });
+        }
+        reminders.add(reminder);
+        updateRemindersListInEditor(editor, reminders);
+    }
+
+    /**
+     * Schedules a reminder if its time is not in the past.
+     *
+     * @param context
+     * @param reminder
+     */
+    private static void scheduleReminder(Context context, Reminder reminder) {
+        // Prepare pending intent
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        Intent processIntent = new Intent(context, ReminderService.class);
+        processIntent.putExtra(ReminderService.EXTRA_INT_ID, reminder.getId());
+        PendingIntent alarmIntent = PendingIntent.getService(context, reminder.getId(), processIntent, 0);
+
+        // Schedule alarm
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), alarmIntent);
+            Log.d("ReminderManager", "Set alarm (\"exact and allow while idle\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), alarmIntent);
+            Log.d("ReminderManager", "Set alarm (\"exact\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), alarmIntent);
+            Log.d("ReminderManager", "Set alarm for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+        }
     }
 
 
@@ -160,13 +205,23 @@ public class ReminderManager {
      *
      * @param context
      * @param reminder
-     * @param reschedule whether to cancel the removed reminder's notification and schedule the new one
+     * @param reschedule if true, checks whether the reminder should be rescheduled:  If the given reminder's status is not {@link Reminder.Status#SCHEDULED} or its time is not in the future, a possible scheduled notification is cancelled. If the status is {@link Reminder.Status#SCHEDULED} and its time is in the future, a notification is scheduled.
      */
     public static void updateReminder(Context context, Reminder reminder, boolean reschedule) {
-        //TODO implement reschedule, maybe remove switch (always check scheduling)
         updateRemindersList(context, (reminders -> {
             removeReminderWithSameId(reminders.iterator(), reminder);
             reminders.add(reminder);
+
+            if (reschedule) {
+                boolean isFuture = reminder.getDate().getTime() > System.currentTimeMillis();
+                if (reminder.getStatus() != Reminder.Status.SCHEDULED || !isFuture) {
+                    ReminderService.cancelPendingNotification(context, reminder.getId());
+                }
+                if (reminder.getStatus() == Reminder.Status.SCHEDULED && isFuture) {
+                    scheduleReminder(context, reminder);
+                }
+            }
+
             return reminders;
         }));
     }
@@ -178,9 +233,9 @@ public class ReminderManager {
      * @param reminder
      */
     public static void removeReminder(Context context, Reminder reminder) {
-        //TODO unschedule
         updateRemindersList(context, (reminders -> {
             removeReminderWithSameId(reminders.iterator(), reminder);
+            ReminderService.cancelPendingNotification(context, reminder.getId());
             return reminders;
         }));
     }
@@ -191,6 +246,7 @@ public class ReminderManager {
 
     /**
      * Get the reminder with the specified ID.
+     *
      * @param context
      * @param id
      * @return

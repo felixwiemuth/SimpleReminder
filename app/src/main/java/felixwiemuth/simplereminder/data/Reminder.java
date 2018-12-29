@@ -19,6 +19,9 @@ package felixwiemuth.simplereminder.data;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.lang.reflect.Type;
 import java.util.Calendar;
@@ -29,9 +32,13 @@ import java.util.List;
 /**
  * @author Felix Wiemuth
  */
+@Getter
 public class Reminder {
     private static Gson gson;
 
+    /**
+     * Status of saved reminders.
+     */
     public enum Status {
         /**
          * The reminder has been scheduled but is not due yet.
@@ -54,14 +61,16 @@ public class Reminder {
     /**
      * ID of the reminder, also used for notifications.
      */
-    private int id;
+    @Builder.Default
+    private int id = -1;
     /**
      * Reminder's due date.
      */
-    private Date date;
-    private String text;
-    private Status status;
+    private @Setter Date date;
+    private @Setter String text;
+    private @Setter Status status;
 
+    @Builder //(builderClassName = "Builder")
     public Reminder(int id, Date date, String text) {
         this.id = id;
         this.date = date;
@@ -69,26 +78,10 @@ public class Reminder {
         this.status = Status.SCHEDULED;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
     public Calendar getCalendar() {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
         return c;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public Status getStatus() {
-        return status;
     }
 
     public static String toJson(List<Reminder> reminders) {
