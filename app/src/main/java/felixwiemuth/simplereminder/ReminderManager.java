@@ -27,6 +27,7 @@ import android.os.Build;
 import android.util.Log;
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
+import felixwiemuth.simplereminder.util.EnumUtil;
 
 import java.util.Iterator;
 import java.util.List;
@@ -168,7 +169,8 @@ public class ReminderManager {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         Intent processIntent = new Intent(context, ReminderService.class);
         processIntent.putExtra(ReminderService.EXTRA_INT_ID, reminder.getId());
-        PendingIntent alarmIntent = PendingIntent.getService(context, reminder.getId(), processIntent, 0);
+        EnumUtil.serialize(ReminderService.Action.NOTIFY).to(processIntent);
+        PendingIntent alarmIntent = PendingIntent.getService(context, (int) System.nanoTime(), processIntent, 0); // using lower bits of nano-time as request code to approximate uniqueness
 
         // Schedule alarm
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -182,7 +184,6 @@ public class ReminderManager {
             Log.d("ReminderManager", "Set alarm for " + DateTimeUtil.formatDateTime(reminder.getDate()));
         }
     }
-
 
     /**
      * Removes the first occurrence of a reminder with the ID of the given reminder on the iterator.

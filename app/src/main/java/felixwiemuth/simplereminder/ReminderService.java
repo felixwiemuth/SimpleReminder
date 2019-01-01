@@ -20,6 +20,7 @@ package felixwiemuth.simplereminder;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -28,18 +29,50 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import felixwiemuth.simplereminder.data.Reminder;
+import felixwiemuth.simplereminder.util.EnumUtil;
 
 /**
- * Handles scheduled reminders when they are due. May only be started with an intent containing an {@link #EXTRA_INT_ID} extra with a valid reminder ID.
+ * Handles scheduled reminders when they are due. May only be started with an intent containing an {@link #EXTRA_INT_ID} extra with a valid reminder ID and an {@link Action} value add with {@link EnumUtil#serialize(Enum)}.
  *
  * @author Felix Wiemuth
  */
 public class ReminderService extends IntentService {
     public static final String CHANNEL_REMINDER = "Reminder";
-    public static final String EXTRA_INT_ID = "felixwiemuth.simplereminder.ReminderService.ID";
+    public static final String EXTRA_INT_ID = "felixwiemuth.simplereminder.ReminderService.extra.ID";
+//    public static final String EXTRA_ACTION = "felixwiemuth.simplereminder.ReminderService.extra.ACTION";
 
     public ReminderService() {
         super("SimpleReminder Reminder Service");
+    }
+
+    interface ReminderAction {
+        void run(Context context, Reminder reminder);
+    }
+
+    enum Action {
+        NOTIFY(
+                (context, reminder) -> {
+                    sendNotification(context, reminder.getId(), reminder.getText());
+                    reminder.setStatus(Reminder.Status.NOTIFIED);
+                    ReminderManager.updateReminder(context, reminder, false);
+                }
+        ),
+        MARK_DONE(
+                (context, reminder) -> {
+                    reminder.setStatus(Reminder.Status.DONE);
+                    ReminderManager.updateReminder(context, reminder, false);
+                }
+        );
+
+        private ReminderAction reminderAction;
+
+        Action(ReminderAction reminderAction) {
+            this.reminderAction = reminderAction;
+        }
+
+        void run(Context context, Reminder reminder) {
+            reminderAction.run(context, reminder);
+        }
     }
 
     @Override
@@ -54,22 +87,24 @@ public class ReminderService extends IntentService {
             Log.w("ReminderService", "Service called with no intent.");
             return;
         }
-//        Objects.requireNonNull(intent.getExtras(), "Intent must come with extra.");
         int id = intent.getExtras().getInt(EXTRA_INT_ID);
+        Action action = EnumUtil.deserialize(Action.class).from(intent);
         Reminder reminder = ReminderManager.getReminder(this, id);
-        String text = reminder.getText();
-        sendNotification(id, text);
-        reminder.setStatus(Reminder.Status.NOTIFIED);
-        ReminderManager.updateReminder(this, reminder, false); //TODO do not reschedule, as this would remove the notification!
+        action.run(this, reminder);
     }
 
-    private void sendNotification(int id, String text) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_REMINDER)
+    private static void sendNotification(Context context, int id, String text) {
+        Intent markDoneIntent = new Intent(context, ReminderService.class);
+        EnumUtil.serialize(Action.MARK_DONE).to(markDoneIntent);
+        PendingIntent deleteIntent = PendingIntent.getService(context, (int) System.nanoTime(), markDoneIntent, 0); // using lower bits of nano-time as request code to approximate uniqueness
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_REMINDER)
                 .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-                .setContentTitle(getString(R.string.notification_title))
+                .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(text)
+                .setDeleteIntent(deleteIntent)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(id, builder.build());
     }
 
