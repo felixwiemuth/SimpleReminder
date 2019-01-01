@@ -22,6 +22,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -150,8 +151,18 @@ public class RemindersListFragment extends Fragment {
                 case SCHEDULED:
                     color = ContextCompat.getColor(getContext(), R.color.bg_scheduled);
                     break;
+                case NOTIFIED:
+                    color = ContextCompat.getColor(getContext(), R.color.bg_notified);
+                    break;
+                case DONE:
+                    color = ContextCompat.getColor(getContext(), R.color.bg_done);
+                    break;
+                case CANCELLED:
+                    color = ContextCompat.getColor(getContext(), R.color.bg_cancelled);
+                    break;
                 default:
                     color = 0;
+                    Log.e("RemindersListFragment", "Unknown color requested.");
             }
             holder.dateView.setBackgroundColor(color);
         }
