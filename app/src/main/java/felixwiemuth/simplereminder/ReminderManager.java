@@ -27,7 +27,6 @@ import android.os.Build;
 import android.util.Log;
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
-import felixwiemuth.simplereminder.util.EnumUtil;
 
 import java.util.Iterator;
 import java.util.List;
@@ -167,9 +166,10 @@ public class ReminderManager {
     private static void scheduleReminder(Context context, Reminder reminder) {
         // Prepare pending intent
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        Intent processIntent = new Intent(context, ReminderService.class);
-        processIntent.putExtra(ReminderService.EXTRA_INT_ID, reminder.getId());
-        EnumUtil.serialize(ReminderService.Action.NOTIFY).to(processIntent);
+        Intent processIntent = ReminderService.intentBuilder()
+                .id(reminder.getId())
+                .action(ReminderService.Action.NOTIFY)
+                .build(context);
         PendingIntent alarmIntent = PendingIntent.getService(context, (int) System.nanoTime(), processIntent, 0); // using lower bits of nano-time as request code to approximate uniqueness
 
         // Schedule alarm

@@ -30,16 +30,62 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.util.EnumUtil;
+import lombok.Builder;
 
 /**
- * Handles scheduled reminders when they are due. May only be started with an intent containing an {@link #EXTRA_INT_ID} extra with a valid reminder ID and an {@link Action} value add with {@link EnumUtil#serialize(Enum)}.
+ * Handles scheduled reminders when they are due. May only be started with an intent created via the provided intent builder ({@link #intentBuilder()}).
  *
  * @author Felix Wiemuth
  */
 public class ReminderService extends IntentService {
     public static final String CHANNEL_REMINDER = "Reminder";
     public static final String EXTRA_INT_ID = "felixwiemuth.simplereminder.ReminderService.extra.ID";
-//    public static final String EXTRA_ACTION = "felixwiemuth.simplereminder.ReminderService.extra.ACTION";
+
+    /**
+     * Specifies the arguments to call this service.
+     */
+    @Builder
+    public static class Arguments {
+        @Builder.Default
+        private int id = -1;
+        private Action action;
+
+        public static class ArgumentsBuilder {
+
+            public static class IncompleteArgumentsException extends RuntimeException {
+                public IncompleteArgumentsException(String message) {
+                    super(message);
+                }
+            }
+
+            /**
+             * Create the intent. May only be called after all fields have been set.
+             *
+             * @param context
+             * @return
+             * @throws IncompleteArgumentsException if not all fields have been set
+             */
+            public Intent build(Context context) throws IncompleteArgumentsException {
+                Intent intent = new Intent(context, ReminderService.class);
+
+                if (id < 0) {
+                    throw new IncompleteArgumentsException("Id not specified or not valid (must be >=0).");
+                }
+                if (action == null) {
+                    throw new IncompleteArgumentsException("Action not specified.");
+                }
+
+                intent.putExtra(ReminderService.EXTRA_INT_ID, id);
+                EnumUtil.serialize(action).to(intent);
+
+                return intent;
+            }
+        }
+    }
+
+    public static Arguments.ArgumentsBuilder intentBuilder() {
+        return Arguments.builder();
+    }
 
     public ReminderService() {
         super("SimpleReminder Reminder Service");
@@ -87,15 +133,17 @@ public class ReminderService extends IntentService {
             Log.w("ReminderService", "Service called with no intent.");
             return;
         }
-        int id = intent.getExtras().getInt(EXTRA_INT_ID);
+        int id = intent.getExtras().getInt(EXTRA_INT_ID, -1);
         Action action = EnumUtil.deserialize(Action.class).from(intent);
         Reminder reminder = ReminderManager.getReminder(this, id);
         action.run(this, reminder);
     }
 
     private static void sendNotification(Context context, int id, String text) {
-        Intent markDoneIntent = new Intent(context, ReminderService.class);
-        EnumUtil.serialize(Action.MARK_DONE).to(markDoneIntent);
+        Intent markDoneIntent = intentBuilder()
+                .id(id)
+                .action(Action.MARK_DONE)
+                .build(context);
         PendingIntent deleteIntent = PendingIntent.getService(context, (int) System.nanoTime(), markDoneIntent, 0); // using lower bits of nano-time as request code to approximate uniqueness
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_REMINDER)

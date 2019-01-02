@@ -59,7 +59,7 @@ public class Reminder {
     }
 
     /**
-     * ID of the reminder, also used for notifications.
+     * ID of the reminder, also used for notifications. Must be >= 0.
      */
     @Builder.Default
     private int id = -1;
