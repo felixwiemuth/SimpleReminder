@@ -17,6 +17,7 @@
 
 package felixwiemuth.simplereminder.data;
 
+import android.support.annotation.NonNull;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import lombok.Builder;
@@ -61,8 +62,7 @@ public class Reminder {
     /**
      * ID of the reminder, also used for notifications. Must be >= 0.
      */
-    @Builder.Default
-    private int id = -1;
+    private int id;
     /**
      * Reminder's due date.
      */
@@ -71,7 +71,10 @@ public class Reminder {
     private @Setter Status status;
 
     @Builder //(builderClassName = "Builder")
-    public Reminder(int id, Date date, String text) {
+    public Reminder(int id, @NonNull Date date, @NonNull String text) {
+        if (id < 0) {
+            throw new IllegalArgumentException("Id must be >= 0.");
+        }
         this.id = id;
         this.date = date;
         this.text = text;
