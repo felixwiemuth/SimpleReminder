@@ -270,6 +270,6 @@ public class ReminderManager {
      * @return
      */
     public static List<Reminder> getRemindersFromPrefs(SharedPreferences prefs) {
-        return Reminder.fromJson(prefs.getString(PREF_STATE_CURRENT_REMINDERS, "[]")); //TODO check
+        return Reminder.fromJson(prefs.getString(PREF_STATE_CURRENT_REMINDERS, "[]"));
     }
 }
