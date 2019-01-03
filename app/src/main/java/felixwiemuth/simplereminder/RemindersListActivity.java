@@ -17,9 +17,9 @@
 
 package felixwiemuth.simplereminder;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,7 +27,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuItem;
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.util.ImplementationError;
 
@@ -50,6 +51,7 @@ public class RemindersListActivity extends AppCompatActivity {
      */
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    private RemindersListFragment remindersFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,19 +71,19 @@ public class RemindersListActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         viewPager.setAdapter(mSectionsPagerAdapter);
 
-        // TODO setup
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-
+        fab.setOnClickListener(view -> startActivityForResult(new Intent(this, AddReminderDialogActivity.class), 0));
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (remindersFragment != null) {
+                remindersFragment.reloadRemindersList();
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -126,7 +128,8 @@ public class RemindersListActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return RemindersListFragment.newInstance(Arrays.asList(Reminder.Status.SCHEDULED, Reminder.Status.NOTIFIED));
+                    remindersFragment = RemindersListFragment.newInstance(Arrays.asList(Reminder.Status.SCHEDULED, Reminder.Status.NOTIFIED, Reminder.Status.DONE, Reminder.Status.CANCELLED));
+                    return remindersFragment;
                 case 1:
                     return RemindersListFragment.newInstance(Arrays.asList(Reminder.Status.DONE, Reminder.Status.CANCELLED));
                 default:

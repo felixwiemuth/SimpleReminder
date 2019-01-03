@@ -29,6 +29,9 @@ import felixwiemuth.simplereminder.data.Reminder;
 import java.text.DateFormat;
 import java.util.Calendar;
 
+/**
+ * Shows a dialog allowing to add a reminder. Finishes with {@link #RESULT_OK} if the reminder has been added.
+ */
 public class AddReminderDialogActivity extends AppCompatActivity {
 
     @Override
@@ -84,6 +87,7 @@ public class AddReminderDialogActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(AddReminderDialogActivity.this, toastText, duration);
             toast.show();
 
+            setResult(RESULT_OK);
             finish(); //TODO change animation
         });
     }

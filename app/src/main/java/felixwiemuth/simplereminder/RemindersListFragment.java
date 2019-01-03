@@ -51,6 +51,8 @@ public class RemindersListFragment extends Fragment {
      */
     private SortedList<Reminder> reminders;
 
+    private RecyclerView remindersListRecyclerView;
+
     public RemindersListFragment() {
         // Required empty public constructor
     }
@@ -70,6 +72,21 @@ public class RemindersListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        reloadRemindersList();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_reminders_list, container, false);
+        remindersListRecyclerView = rootView.findViewById(R.id.reminders_list);
+        remindersListRecyclerView.setAdapter(new ReminderItemRecyclerViewAdapter());
+        return rootView;
+    }
+
+    /**
+     * Call when the reminders list has changed, to reload all items.
+     */
+    public void reloadRemindersList() {
         if (getArguments() != null) {
             // Get filter from arguments
             String reminderFilterJson = getArguments().getString(ARG_STRING_REMINDER_FILTER);
@@ -84,17 +101,10 @@ public class RemindersListFragment extends Fragment {
                     reminders.add(reminder);
                 }
             }
-
-
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_reminders_list, container, false);
-        RecyclerView remindersListRecyclerView = rootView.findViewById(R.id.reminders_list);
-        remindersListRecyclerView.setAdapter(new ReminderItemRecyclerViewAdapter());
-        return rootView;
+        if (remindersListRecyclerView != null) {
+            remindersListRecyclerView.getAdapter().notifyDataSetChanged();
+        }
     }
 
     public class SortedListCallback extends SortedList.Callback<Reminder> {
