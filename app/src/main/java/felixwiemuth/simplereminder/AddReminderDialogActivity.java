@@ -56,13 +56,16 @@ public class AddReminderDialogActivity extends AppCompatActivity {
                 minute = timePicker.getCurrentMinute();
             }
 
+            // We use the current day when clicking "Add" as reference
             Calendar time = Calendar.getInstance();
             time.set(Calendar.HOUR_OF_DAY, hour);
             time.set(Calendar.MINUTE, minute);
             time.set(Calendar.SECOND, 0);
+            // We leave milliseconds as-is, as a little randomness in time is probably good
 
-            if (time.compareTo(Calendar.getInstance()) <= 0) { // TODO might want to add margin if ReminderManager does not send out reminder when time has already elapsed
-                time.add(Calendar.DAY_OF_MONTH, 1);  //TODO test: does it wrap over midnight?
+            // If the resulting date is in the past, assume that the next day is meant
+            if (time.compareTo(Calendar.getInstance()) <= 0) { // AlarmManager also seems to fire (directly) when date is in the past, so it is no problem when in the mean time (from this check to scheduling alarm), the date moves to the past
+                time.add(Calendar.DAY_OF_MONTH, 1);  // wraps over end of month
                 tomorrow = true;
             }
 
