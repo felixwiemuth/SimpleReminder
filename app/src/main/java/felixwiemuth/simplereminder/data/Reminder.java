@@ -35,6 +35,8 @@ import java.util.List;
  */
 @Getter
 public class Reminder {
+    // NOTE: when changing this class, check sorting criterea in RemindersListFragment.SortedListCallback
+
     private static Gson gson;
 
     /**

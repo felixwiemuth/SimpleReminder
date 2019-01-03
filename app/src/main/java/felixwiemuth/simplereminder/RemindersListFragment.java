@@ -31,10 +31,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
+import felixwiemuth.simplereminder.util.ImplementationError;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RemindersListFragment extends Fragment {
     /**
@@ -53,7 +56,6 @@ public class RemindersListFragment extends Fragment {
     }
 
     /**
-     *
      * @param reminderFilter A filter of which reminders to show (with which status) (required)
      * @return
      */
@@ -95,12 +97,32 @@ public class RemindersListFragment extends Fragment {
         return rootView;
     }
 
-    // TODO implement based on current sorting criterea
     public class SortedListCallback extends SortedList.Callback<Reminder> {
+        Map<Reminder.Status, Integer> statusVals = new HashMap<Reminder.Status, Integer>() {{
+            put(Reminder.Status.NOTIFIED, 0);
+            put(Reminder.Status.SCHEDULED, 1);
+            put(Reminder.Status.DONE, 2);
+            put(Reminder.Status.CANCELLED, 2);
+        }};
 
         @Override
         public int compare(Reminder o1, Reminder o2) {
-            return 0;
+            // Reminders are sorted by status first, then by date (increasing or decreasing)
+            if (statusVals.get(o1.getStatus()) < statusVals.get(o2.getStatus())) {
+                return -1;
+            } else if (statusVals.get(o1.getStatus()) > statusVals.get(o2.getStatus())) {
+                return 1;
+            } else {
+                switch (o1.getStatus()) {
+                    case SCHEDULED:
+                        return o1.getDate().compareTo(o2.getDate());
+                    case NOTIFIED:
+                    case DONE:
+                    case CANCELLED:
+                        return -o1.getDate().compareTo(o2.getDate());
+                }
+            }
+            throw new ImplementationError("Incomplete sorting criterea");
         }
 
         @Override
@@ -110,12 +132,21 @@ public class RemindersListFragment extends Fragment {
 
         @Override
         public boolean areContentsTheSame(Reminder oldItem, Reminder newItem) {
-            return false;
+            // if both are null, it is okay to return false
+            return oldItem != null
+                    && newItem != null
+//                    && oldItem.getId() == newItem.getId() // ID is not shown
+                    && oldItem.getStatus() == newItem.getStatus()
+                    && oldItem.getDate().equals(newItem.getDate())
+                    && oldItem.getText().equals(newItem.getText());
         }
 
         @Override
         public boolean areItemsTheSame(Reminder item1, Reminder item2) {
-            return false;
+            // if both are null, it is okay to return false
+            return item1 != null
+                    && item2 != null
+                    && item1.getId() == item2.getId();
         }
 
         @Override
