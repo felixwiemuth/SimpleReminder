@@ -116,9 +116,9 @@ public class RemindersListActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return getString(R.string.tab_scheduled);
+                    return getString(R.string.tab_reminders);
                 case 1:
-                    return getString(R.string.tab_archive);
+                    return getString(R.string.tab_favourites);
                 default:
                     throw new ImplementationError("Invalid tab number " + position);
             }
@@ -131,7 +131,7 @@ public class RemindersListActivity extends AppCompatActivity {
                     remindersFragment = RemindersListFragment.newInstance(Arrays.asList(Reminder.Status.SCHEDULED, Reminder.Status.NOTIFIED, Reminder.Status.DONE, Reminder.Status.CANCELLED));
                     return remindersFragment;
                 case 1:
-                    return RemindersListFragment.newInstance(Arrays.asList(Reminder.Status.DONE, Reminder.Status.CANCELLED));
+                    return new Fragment(); //TODO list favourites
                 default:
                     throw new ImplementationError("Invalid tab number " + position);
 
