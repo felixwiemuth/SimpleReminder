@@ -24,9 +24,11 @@
     <color name="yellow">#ffef09</color>
     <color name="orange">#f7a33d</color>
     <color name="grey">#d1dad7</color>
+    <color name="lightblue_transparent">#2800b7ff</color>
 
-    <color name="bg_scheduled">@color/green</color>
-    <color name="bg_notified">@color/yellow</color>
-    <color name="bg_done">@color/grey</color>
-    <color name="bg_cancelled">@color/orange</color>
+    <color name="bg_date_scheduled">@color/green</color>
+    <color name="bg_date_notified">@color/yellow</color>
+    <color name="bg_date_done">@color/grey</color>
+    <color name="bg_date_cancelled">@color/orange</color>
+    <color name="bg_selected">@color/lightblue_transparent</color>
 </resources>

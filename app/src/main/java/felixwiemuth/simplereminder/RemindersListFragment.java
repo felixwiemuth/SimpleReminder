@@ -24,9 +24,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -35,10 +33,7 @@ import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RemindersListFragment extends Fragment {
     /**
@@ -53,6 +48,72 @@ public class RemindersListFragment extends Fragment {
     private SortedList<Reminder> reminders;
 
     private RecyclerView remindersListRecyclerView;
+
+    /**
+     * The current selection of items in {@link #remindersListRecyclerView} (reminder IDs). Must be updated when reminders are removed.
+     */
+    private Set<Integer> selection; // using Reminder objects might be dangerous as the objects might change when reloading the view (even when IDs stay the same)
+
+    /**
+     * The current action mode or null.
+     */
+    private ActionMode actionMode;
+
+    private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.menu_reminders_list_actions, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            updateAvailableActions();
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_edit:
+                    if (selection.size() != 1) {
+                        throw new ImplementationError("Selection must have size 1.");
+                    }
+                    reminders.get(selection.iterator().next());
+                    break;
+                case R.id.action_reuse:
+                    //TODO implement
+                    break;
+                case R.id.action_mark_done:
+                    //TODO implement
+                    break;
+                case R.id.action_add_template:
+                    //TODO implement
+                    break;
+                case R.id.action_delete:
+                    //TODO implement
+                    // also update selection
+                    break;
+                case R.id.action_select_all:
+                    //TODO implement
+                    break;
+                default:
+                    throw new ImplementationError("Action not implemented.");
+
+            }
+            mode.finish();
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            actionMode = null;
+            selection.clear();
+            // For now reload all items as it is difficult to track which changed
+            reloadRemindersListAndUpdateRecyclerView(); // This also updates the visual selection state of items
+        }
+    };
 
     public RemindersListFragment() {
         // Required empty public constructor
@@ -73,7 +134,8 @@ public class RemindersListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        reloadRemindersList();
+        selection = new HashSet<>();
+        reloadRemindersListAndUpdateRecyclerView();
     }
 
     @Override
@@ -87,11 +149,12 @@ public class RemindersListFragment extends Fragment {
     /**
      * Call when the reminders list has changed, to reload all items.
      */
-    public void reloadRemindersList() {
+    public void reloadRemindersListAndUpdateRecyclerView() {
         if (getArguments() != null) {
             // Get filter from arguments
             String reminderFilterJson = getArguments().getString(ARG_STRING_REMINDER_FILTER);
-            Type collectionType = new TypeToken<Collection<Reminder.Status>>(){}.getType();
+            Type collectionType = new TypeToken<Collection<Reminder.Status>>() {
+            }.getType();
             reminderFilter = new Gson().fromJson(reminderFilterJson, collectionType);
 
             // Create reminders list
@@ -176,6 +239,13 @@ public class RemindersListFragment extends Fragment {
         }
     }
 
+    /**
+     * Update the available actions for action mode based on the current selection.
+     */
+    private void updateAvailableActions() {
+
+    }
+
     public class ReminderItemRecyclerViewAdapter extends RecyclerView.Adapter<ReminderItemRecyclerViewAdapter.ViewHolder> {
 
         @NonNull
@@ -187,27 +257,60 @@ public class RemindersListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-            holder.dateView.setText(DateTimeUtil.formatDateTime(reminders.get(position).getDate()));
-            holder.descriptionView.setText(reminders.get(position).getText());
-            int color;
-            switch (reminders.get(position).getStatus()) {
+            Reminder reminder = reminders.get(position);
+            holder.dateView.setText(DateTimeUtil.formatDateTime(reminder.getDate()));
+            holder.descriptionView.setText(reminder.getText());
+
+            // Set color of dateView
+            int dateColor;
+            switch (reminder.getStatus()) {
                 case SCHEDULED:
-                    color = ContextCompat.getColor(getContext(), R.color.bg_scheduled);
+                    dateColor = ContextCompat.getColor(getContext(), R.color.bg_date_scheduled);
                     break;
                 case NOTIFIED:
-                    color = ContextCompat.getColor(getContext(), R.color.bg_notified);
+                    dateColor = ContextCompat.getColor(getContext(), R.color.bg_date_notified);
                     break;
                 case DONE:
-                    color = ContextCompat.getColor(getContext(), R.color.bg_done);
+                    dateColor = ContextCompat.getColor(getContext(), R.color.bg_date_done);
                     break;
                 case CANCELLED:
-                    color = ContextCompat.getColor(getContext(), R.color.bg_cancelled);
+                    dateColor = ContextCompat.getColor(getContext(), R.color.bg_date_cancelled);
                     break;
                 default:
-                    color = 0;
+                    dateColor = 0;
                     Log.e("RemindersListFragment", "Unknown color requested.");
             }
-            holder.dateView.setBackgroundColor(color);
+            holder.dateView.setBackgroundColor(dateColor);
+
+            // Set selection mode of holder
+            if (selection.contains(reminder.getId())) {
+                holder.setSelected();
+            } else {
+                holder.setUnselected();
+            }
+
+            holder.view.setOnLongClickListener(view -> {
+                if (actionMode != null) {
+                    return false;
+                }
+                actionMode = getActivity().startActionMode(actionModeCallback);
+                selection.add(reminder.getId());
+                holder.setSelected();
+                return true;
+            });
+
+            holder.view.setOnClickListener(view -> {
+                if (actionMode != null) {
+                    if (selection.contains(reminder.getId())) {
+                        selection.remove(reminder.getId());
+                        holder.setUnselected();
+                    } else {
+                        selection.add(reminder.getId());
+                        holder.setSelected();
+                    }
+                    updateAvailableActions();
+                }
+            });
         }
 
 
@@ -232,6 +335,14 @@ public class RemindersListFragment extends Fragment {
             @Override
             public String toString() {
                 return super.toString() + " '" + descriptionView.getText() + "'";
+            }
+
+            public void setSelected() {
+                view.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_selected));
+            }
+
+            public void setUnselected() {
+                view.setBackground(null);
             }
         }
     }

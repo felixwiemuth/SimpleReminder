@@ -80,7 +80,7 @@ public class RemindersListActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (remindersFragment != null) {
-                remindersFragment.reloadRemindersList();
+                remindersFragment.reloadRemindersListAndUpdateRecyclerView();
             }
         }
     }
@@ -118,7 +118,7 @@ public class RemindersListActivity extends AppCompatActivity {
                 case 0:
                     return getString(R.string.tab_reminders);
                 case 1:
-                    return getString(R.string.tab_favourites);
+                    return getString(R.string.tab_templates);
                 default:
                     throw new ImplementationError("Invalid tab number " + position);
             }
@@ -131,7 +131,7 @@ public class RemindersListActivity extends AppCompatActivity {
                     remindersFragment = RemindersListFragment.newInstance(Arrays.asList(Reminder.Status.SCHEDULED, Reminder.Status.NOTIFIED, Reminder.Status.DONE, Reminder.Status.CANCELLED));
                     return remindersFragment;
                 case 1:
-                    return new Fragment(); //TODO list favourites
+                    return new Fragment(); //TODO list templates
                 default:
                     throw new ImplementationError("Invalid tab number " + position);
 

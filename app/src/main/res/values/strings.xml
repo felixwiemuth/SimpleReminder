@@ -27,6 +27,12 @@
     <string name="notification_title">Reminder</string>
     <string name="title_activity_reminders_list">@string/app_name</string>
     <string name="tab_reminders">Current</string>
-    <string name="tab_favourites">Favourites</string>
+    <string name="tab_templates">Templates</string>
     <string name="action_settings">Settings</string>
+    <string name="reminder_list_action_edit">Edit</string>
+    <string name="reminder_list_action_reuse">Reuse</string>
+    <string name="reminder_list_action_mark_done">Mark done</string>
+    <string name="reminder_list_action_add_template">Add as template</string>
+    <string name="reminder_list_action_delete">Delete</string>
+    <string name="reminder_list_action_select_all">Select all</string>
 </resources>
