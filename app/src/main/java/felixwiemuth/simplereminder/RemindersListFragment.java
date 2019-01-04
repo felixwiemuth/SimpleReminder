@@ -18,6 +18,7 @@
 package felixwiemuth.simplereminder;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.util.SortedList;
@@ -76,7 +77,7 @@ public class RemindersListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_reminders_list, container, false);
         remindersListRecyclerView = rootView.findViewById(R.id.reminders_list);
         remindersListRecyclerView.setAdapter(new ReminderItemRecyclerViewAdapter());
@@ -177,14 +178,15 @@ public class RemindersListFragment extends Fragment {
 
     public class ReminderItemRecyclerViewAdapter extends RecyclerView.Adapter<ReminderItemRecyclerViewAdapter.ViewHolder> {
 
+        @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.reminder_item, parent, false);
             return new ViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
             holder.dateView.setText(DateTimeUtil.formatDateTime(reminders.get(position).getDate()));
             holder.descriptionView.setText(reminders.get(position).getText());
             int color;
