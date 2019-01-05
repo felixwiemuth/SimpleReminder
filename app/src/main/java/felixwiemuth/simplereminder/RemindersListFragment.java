@@ -69,6 +69,7 @@ public class RemindersListFragment extends Fragment {
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            actionMode = mode;
             updateAvailableActions();
             return false;
         }
@@ -293,7 +294,7 @@ public class RemindersListFragment extends Fragment {
                 if (actionMode != null) {
                     return false;
                 }
-                actionMode = getActivity().startActionMode(actionModeCallback);
+                getActivity().startActionMode(actionModeCallback); // sets actionMode variable via prepare method
                 selection.add(reminder.getId());
                 holder.setSelected();
                 return true;
