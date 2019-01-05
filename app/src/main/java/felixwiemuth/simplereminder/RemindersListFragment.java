@@ -320,6 +320,9 @@ public class RemindersListFragment extends Fragment {
                     if (selection.contains(reminder.getId())) {
                         selection.remove(reminder.getId());
                         holder.setUnselected();
+                        if (selection.isEmpty()) {
+                            actionMode.finish();
+                        }
                     } else {
                         selection.add(reminder.getId());
                         holder.setSelected();
