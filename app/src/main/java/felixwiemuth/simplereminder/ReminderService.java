@@ -17,10 +17,7 @@
 
 package felixwiemuth.simplereminder;
 
-import android.app.IntentService;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -29,11 +26,12 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 import felixwiemuth.simplereminder.data.Reminder;
+import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.EnumUtil;
 import lombok.Builder;
 
 /**
- * Handles scheduled reminders when they are due. May only be started with an intent created via the provided intent builder ({@link #intentBuilder()}).
+ * Responsible for reminder scheduling and notifications. Handles scheduled reminders when they are due. May only be started with an intent created via the provided intent builder ({@link #intentBuilder()}).
  *
  * @author Felix Wiemuth
  */
@@ -85,6 +83,16 @@ public class ReminderService extends IntentService {
 
     public static Arguments.ArgumentsBuilder intentBuilder() {
         return Arguments.builder();
+    }
+
+    /**
+     * Get an intent to be used to cancel a pending intent created with {@link #intentBuilder()}.
+     *
+     * @param context
+     * @return
+     */
+    public static Intent getCancelIntent(Context context) {
+        return new Intent(context, ReminderService.class);
     }
 
     public ReminderService() {
@@ -144,6 +152,7 @@ public class ReminderService extends IntentService {
                 .id(id)
                 .action(Action.MARK_DONE)
                 .build(context);
+
         PendingIntent deleteIntent = PendingIntent.getService(context, (int) System.nanoTime(), markDoneIntent, 0); // using lower bits of nano-time as request code to approximate uniqueness
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_REMINDER)
@@ -156,9 +165,50 @@ public class ReminderService extends IntentService {
         notificationManager.notify(id, builder.build());
     }
 
-    public static void cancelPendingNotification(Context context, int id) {
+    /**
+     * Schedules a reminder if its time is not in the past.
+     *
+     * @param context
+     * @param reminder
+     */
+    public static void scheduleReminder(Context context, Reminder reminder) {
+        // Prepare pending intent
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        Intent notifyIntent = ReminderService.intentBuilder()
+                .id(reminder.getId())
+                .action(ReminderService.Action.NOTIFY)
+                .build(context);
+        PendingIntent alarmIntent = PendingIntent.getService(context, (int) System.nanoTime(), notifyIntent, 0); // using lower bits of nano-time as request code to approximate uniqueness
+
+        // Schedule alarm
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), alarmIntent);
+            Log.d("ReminderManager", "Set alarm (\"exact and allow while idle\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), alarmIntent);
+            Log.d("ReminderManager", "Set alarm (\"exact\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), alarmIntent);
+            Log.d("ReminderManager", "Set alarm for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+        }
+    }
+
+    /**
+     * Cancel a pending or already due reminder (remove the notification).
+     *
+     * @param context
+     * @param id
+     */
+    public static void cancelReminder(Context context, int id) {
+        // Cancel possible notification
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.cancel(id);
+
+        // Cancel possibly scheduled alarm
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        Intent cancelIntent = getCancelIntent(context);
+        PendingIntent cancelPendingIntent = PendingIntent.getService(context, (int) System.nanoTime(), cancelIntent, 0); // must use equal intent as when scheduled (request code can be different); using lower bits of nano-time as request code to approximate uniqueness
+        alarmManager.cancel(cancelPendingIntent);
     }
 
     private void createNotificationChannel() {

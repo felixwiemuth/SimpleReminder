@@ -18,21 +18,16 @@
 package felixwiemuth.simplereminder;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
-import android.util.Log;
 import felixwiemuth.simplereminder.data.Reminder;
-import felixwiemuth.simplereminder.util.DateTimeUtil;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static android.content.Context.ALARM_SERVICE;
 import static felixwiemuth.simplereminder.SharedPrefs.PREF_STATE_CURRENT_REMINDERS;
 import static felixwiemuth.simplereminder.SharedPrefs.PREF_STATE_NEXTID;
 
@@ -121,7 +116,7 @@ public class ReminderManager {
                     editor.putInt(PREF_STATE_NEXTID, nextId + 1);
                     addReminderToReminders(prefs, editor, reminder);
 
-                    scheduleReminder(context, reminder);
+                    ReminderService.scheduleReminder(context, reminder);
                 });
     }
 
@@ -135,7 +130,7 @@ public class ReminderManager {
         performExclusivelyOnStatePrefsAndCommit(context,
                 (prefs, editor) -> {
                     addReminderToReminders(prefs, editor, reminder);
-                    scheduleReminder(context, reminder);
+                    ReminderService.scheduleReminder(context, reminder);
                 });
     }
 
@@ -158,34 +153,6 @@ public class ReminderManager {
     }
 
     /**
-     * Schedules a reminder if its time is not in the past.
-     *
-     * @param context
-     * @param reminder
-     */
-    private static void scheduleReminder(Context context, Reminder reminder) {
-        // Prepare pending intent
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        Intent processIntent = ReminderService.intentBuilder()
-                .id(reminder.getId())
-                .action(ReminderService.Action.NOTIFY)
-                .build(context);
-        PendingIntent alarmIntent = PendingIntent.getService(context, (int) System.nanoTime(), processIntent, 0); // using lower bits of nano-time as request code to approximate uniqueness
-
-        // Schedule alarm
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), alarmIntent);
-            Log.d("ReminderManager", "Set alarm (\"exact and allow while idle\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), alarmIntent);
-            Log.d("ReminderManager", "Set alarm (\"exact\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
-        } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), alarmIntent);
-            Log.d("ReminderManager", "Set alarm for " + DateTimeUtil.formatDateTime(reminder.getDate()));
-        }
-    }
-
-    /**
      * Removes the first occurrence of a reminder with the ID of the given reminder on the iterator.
      *
      * @param it
@@ -201,43 +168,157 @@ public class ReminderManager {
         }
     }
 
+
     /**
-     * Removes the reminder with the ID of the given reminder from the current reminders and adds the given one.
+     * Removes all occurrence of reminders with the IDs of the given reminders on the iterator.
+     *
+     * @param it
+     * @param reminders
+     */
+    private static void removeRemindersWithSameId(Iterator<Reminder> it, Iterable<Reminder> reminders) {
+        Set<Integer> idsToRemove = new HashSet<>();
+        for (Reminder r : reminders) {
+            idsToRemove.add(r.getId());
+        }
+        while (it.hasNext()) {
+            Reminder r = it.next();
+            if (idsToRemove.contains(r.getId())) {
+                it.remove();
+            }
+        }
+    }
+
+
+    /**
+     * Removes all occurrence of reminders with the given IDs.
+     *
+     * @param it
+     * @param ids
+     */
+    private static void removeRemindersById(Iterator<Reminder> it, Set<Integer> ids) {
+        while (it.hasNext()) {
+            Reminder r = it.next();
+            if (ids.contains(r.getId())) {
+                it.remove();
+            }
+        }
+    }
+
+    /**
+     * Replaces the reminder with the ID of the given reminder with the given one.
      *
      * @param context
      * @param reminder
-     * @param reschedule if true, checks whether the reminder should be rescheduled:  If the given reminder's status is not {@link Reminder.Status#SCHEDULED} or its time is not in the future, a possible scheduled notification is cancelled. If the status is {@link Reminder.Status#SCHEDULED} and its time is in the future, a notification is scheduled.
+     * @param reschedule if true, checks whether the reminder should be rescheduled: If the given reminder's status is not {@link Reminder.Status#SCHEDULED} or its time is not in the future, a possible scheduled notification is cancelled. If the status is {@link Reminder.Status#SCHEDULED} and its time is in the future, a notification is scheduled.
      */
     public static void updateReminder(Context context, Reminder reminder, boolean reschedule) {
-        updateRemindersList(context, (reminders -> {
-            removeReminderWithSameId(reminders.iterator(), reminder);
-            reminders.add(reminder);
+        updateRemindersList(context, (currentReminders -> {
+            removeReminderWithSameId(currentReminders.iterator(), reminder);
+            currentReminders.add(reminder);
 
             if (reschedule) {
-                boolean isFuture = reminder.getDate().getTime() > System.currentTimeMillis();
-                if (reminder.getStatus() != Reminder.Status.SCHEDULED || !isFuture) {
-                    ReminderService.cancelPendingNotification(context, reminder.getId());
-                }
-                if (reminder.getStatus() == Reminder.Status.SCHEDULED && isFuture) {
-                    scheduleReminder(context, reminder);
-                }
+                rescheduleReminder(context, reminder);
             }
 
-            return reminders;
+            return currentReminders;
         }));
     }
 
     /**
-     * Remove a reminder from the current reminders.
+     * For each given reminder, replaces the existing reminder with the ID of the given reminder with the given one.
      *
      * @param context
-     * @param reminder
+     * @param reminders
+     * @param reschedule if true, checks whether the reminder should be rescheduled: If the given reminder's status is not {@link Reminder.Status#SCHEDULED} or its time is not in the future, a possible scheduled notification is cancelled. If the status is {@link Reminder.Status#SCHEDULED} and its time is in the future, a notification is scheduled.
      */
-    public static void removeReminder(Context context, Reminder reminder) {
-        updateRemindersList(context, (reminders -> {
-            removeReminderWithSameId(reminders.iterator(), reminder);
-            ReminderService.cancelPendingNotification(context, reminder.getId());
-            return reminders;
+    public static void updateReminders(Context context, Iterable<Reminder> reminders, boolean reschedule) {
+        updateRemindersList(context, (currentReminders -> {
+            removeRemindersWithSameId(currentReminders.iterator(), reminders);
+            for (Reminder reminder : reminders) {
+                currentReminders.add(reminder);
+                if (reschedule) {
+                    rescheduleReminder(context, reminder);
+                }
+            }
+
+            return currentReminders;
+        }));
+    }
+
+    @FunctionalInterface
+    interface ReminderTransformation {
+        void run(Reminder reminder);
+    }
+
+    /**
+     * Update the reminders with the given IDs with the given transformation.
+     *
+     * @param context
+     * @param transformation
+     * @param ids
+     */
+    public static void updateReminders(Context context, ReminderTransformation transformation, Set<Integer> ids, boolean reschedule) {
+        updateRemindersList(context, (currentReminders -> {
+            for (Reminder reminder : currentReminders) {
+                if (ids.contains(reminder.getId())) {
+                    transformation.run(reminder);
+                    if (reschedule) {
+                        rescheduleReminder(context, reminder);
+                    }
+                }
+            }
+            return currentReminders;
+        }));
+    }
+
+    private static void rescheduleReminder(Context context, Reminder reminder) {
+        boolean isFuture = reminder.getDate().getTime() > System.currentTimeMillis();
+        if (reminder.getStatus() != Reminder.Status.SCHEDULED || !isFuture) {
+            ReminderService.cancelReminder(context, reminder.getId());
+        }
+        if (reminder.getStatus() == Reminder.Status.SCHEDULED && isFuture) {
+            ReminderService.scheduleReminder(context, reminder);
+        }
+    }
+
+//    public static void removeReminder(Context context, Reminder reminder) {
+//        updateRemindersList(context, (reminders -> {
+//            removeReminderWithSameId(reminders.iterator(), reminder);
+//            ReminderService.cancelReminder(context, reminder.getId());
+//            return reminders;
+//        }));
+//    }
+//
+//    /**
+//     * Remove reminders from the current reminders. Cancels pending notifications.
+//     *
+//     * @param context
+//     * @param reminders
+//     */
+//    public static void removeReminders(Context context, Iterable<Reminder> reminders) {
+//        updateRemindersList(context, (currentReminders -> {
+//            removeRemindersWithSameId(currentReminders.iterator(), reminders);
+//            for (Reminder r : reminders) {
+//                ReminderService.cancelReminder(context, r.getId());
+//            }
+//            return currentReminders;
+//        }));
+//    }
+
+
+    /**
+     * Remove the reminders with the given IDs from the current reminders. Cancels pending notifications.
+     *
+     * @param context
+     * @param ids
+     */
+    public static void removeReminders(Context context, Set<Integer> ids) {
+        updateRemindersList(context, (currentReminders -> {
+            removeRemindersById(currentReminders.iterator(), ids);
+            for (Integer id : ids) {
+                ReminderService.cancelReminder(context, id);
+            }
+            return currentReminders;
         }));
     }
 

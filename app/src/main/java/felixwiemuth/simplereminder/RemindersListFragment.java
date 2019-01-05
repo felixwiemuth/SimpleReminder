@@ -82,29 +82,36 @@ public class RemindersListFragment extends Fragment {
                         throw new ImplementationError("Selection must have size 1.");
                     }
                     reminders.get(selection.iterator().next());
+                    mode.finish();
                     break;
                 case R.id.action_reuse:
                     //TODO implement
+                    mode.finish();
                     break;
                 case R.id.action_mark_done:
-                    //TODO implement
+                    ReminderManager.updateReminders(getContext(), r -> r.setStatus(Reminder.Status.DONE), selection, true); // have to reschedule as some might still be scheduled
+                    mode.finish();
                     break;
                 case R.id.action_add_template:
                     //TODO implement
+                    mode.finish();
                     break;
                 case R.id.action_delete:
-                    //TODO implement
-                    // also update selection
+                    ReminderManager.removeReminders(getContext(), selection);
+                    // TODO also update selection
+                    mode.finish();
                     break;
                 case R.id.action_select_all:
-                    //TODO implement
+                    for (int i = 0; i < reminders.size(); i++) {
+                        selection.add(reminders.get(i).getId());
+                        remindersListRecyclerView.getAdapter().notifyItemChanged(i);
+                    }
+//                    setAllSelected(); // less expensive alternative, but does not work yet
                     break;
                 default:
                     throw new ImplementationError("Action not implemented.");
-
             }
-            mode.finish();
-            return false;
+            return true;
         }
 
         @Override
@@ -244,8 +251,16 @@ public class RemindersListFragment extends Fragment {
      * Update the available actions for action mode based on the current selection.
      */
     private void updateAvailableActions() {
-
+        //TODO implement
     }
+
+
+    // This is an alternative to rebind all view holders but does not work yet
+//    public void setAllSelected() {
+//        for (int i = 0; i < remindersListRecyclerView.getAdapter().getItemCount(); i++) {
+//            ((ReminderItemRecyclerViewAdapter.ViewHolder) remindersListRecyclerView.findViewHolderForAdapterPosition(i)).setSelected();
+//        }
+//    }
 
     public class ReminderItemRecyclerViewAdapter extends RecyclerView.Adapter<ReminderItemRecyclerViewAdapter.ViewHolder> {
 
