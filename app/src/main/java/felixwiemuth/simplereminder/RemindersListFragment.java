@@ -58,12 +58,18 @@ public class RemindersListFragment extends Fragment {
      * The current action mode or null.
      */
     private ActionMode actionMode;
+    private MenuItem menuActionReuse;
+    private MenuItem menuActionMarkDone;
+    private MenuItem menuActionEdit;
 
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.menu_reminders_list_actions, menu);
+            menuActionReuse = menu.findItem(R.id.action_reuse);
+            menuActionMarkDone = menu.findItem(R.id.action_mark_done);
+            menuActionEdit = menu.findItem(R.id.action_edit);
             return true;
         }
 
@@ -251,7 +257,26 @@ public class RemindersListFragment extends Fragment {
      * Update the available actions for action mode based on the current selection.
      */
     private void updateAvailableActions() {
-        //TODO implement
+        setMenuItemAvailability(
+                menuActionReuse,
+                selection.size() == 1 );
+        boolean selectionContainsDone = false;
+        for (Integer i : selection) {
+            if (findReminderById(i).getStatus() == Reminder.Status.DONE) {
+                selectionContainsDone = true;
+            }
+        }
+        setMenuItemAvailability(
+                menuActionMarkDone,
+                !selectionContainsDone);
+        setMenuItemAvailability(
+                menuActionEdit,
+                selection.size() == 1 && findReminderById(selection.iterator().next()).getStatus() == Reminder.Status.SCHEDULED);
+    }
+
+    private void setMenuItemAvailability(MenuItem menuItem, boolean available) {
+        menuItem.setEnabled(available);
+        menuItem.setVisible(available);
     }
 
 
@@ -261,6 +286,15 @@ public class RemindersListFragment extends Fragment {
 //            ((ReminderItemRecyclerViewAdapter.ViewHolder) remindersListRecyclerView.findViewHolderForAdapterPosition(i)).setSelected();
 //        }
 //    }
+
+    private Reminder findReminderById(int id) {
+        for (int i = 0; i < reminders.size(); i++) {
+            if (reminders.get(i).getId() == id) {
+                return reminders.get(i);
+            }
+        }
+        return null;
+    }
 
     public class ReminderItemRecyclerViewAdapter extends RecyclerView.Adapter<ReminderItemRecyclerViewAdapter.ViewHolder> {
 
@@ -309,8 +343,8 @@ public class RemindersListFragment extends Fragment {
                 if (actionMode != null) {
                     return false;
                 }
+                selection.add(reminder.getId()); // selection must be up-to-date when initializing action-mode
                 getActivity().startActionMode(actionModeCallback); // sets actionMode variable via prepare method
-                selection.add(reminder.getId());
                 holder.setSelected();
                 return true;
             });
