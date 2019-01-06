@@ -87,7 +87,7 @@ public class RemindersListFragment extends Fragment {
                     if (selection.size() != 1) {
                         throw new ImplementationError("Selection must have size 1.");
                     }
-                    reminders.get(selection.iterator().next());
+                    findReminderById(selection.iterator().next());
                     mode.finish();
                     break;
                 case R.id.action_reuse:
