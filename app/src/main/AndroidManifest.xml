@@ -28,7 +28,8 @@
             android:name=".AddReminderDialogActivity"
             android:label="@string/add_reminder_title"
             android:theme="@style/Theme.AppCompat.Dialog"
-            android:windowSoftInputMode="stateVisible">
+            android:windowSoftInputMode="stateVisible"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="android.intent.action.MAIN" />
@@ -44,7 +45,8 @@
         <activity
             android:name=".RemindersListActivity"
             android:label="@string/title_activity_reminders_list"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

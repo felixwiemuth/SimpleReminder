@@ -72,7 +72,13 @@ public class RemindersListActivity extends AppCompatActivity {
         viewPager.setAdapter(mSectionsPagerAdapter);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> startActivityForResult(new Intent(this, AddReminderDialogActivity.class), 0));
+        fab.setOnClickListener(view -> startActivityForResult(new Intent(this, AddReminderDialogActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0));
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // Intent content is not used
     }
 
     @Override
