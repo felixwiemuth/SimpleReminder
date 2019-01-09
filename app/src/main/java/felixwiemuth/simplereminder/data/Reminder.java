@@ -17,7 +17,7 @@
 
 package felixwiemuth.simplereminder.data;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import lombok.Builder;
