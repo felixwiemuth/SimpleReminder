@@ -246,7 +246,7 @@ public class ReminderManager {
     }
 
     @FunctionalInterface
-    interface ReminderTransformation {
+    public interface ReminderTransformation {
         void run(Reminder reminder);
     }
 

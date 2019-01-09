@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Felix Wiemuth
+ * Copyright (C) 2019 Felix Wiemuth
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package felixwiemuth.simplereminder;
+package felixwiemuth.simplereminder.ui;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -28,6 +28,8 @@ import android.view.*;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import felixwiemuth.simplereminder.R;
+import felixwiemuth.simplereminder.ReminderManager;
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;

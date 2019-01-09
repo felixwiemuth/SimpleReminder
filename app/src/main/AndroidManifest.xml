@@ -25,7 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".AddReminderDialogActivity"
+            android:name=".ui.AddReminderDialogActivity"
             android:label="@string/add_reminder_title"
             android:theme="@style/Theme.AppCompat.Dialog"
             android:windowSoftInputMode="stateVisible"
@@ -43,7 +43,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".RemindersListActivity"
+            android:name=".ui.RemindersListActivity"
             android:label="@string/title_activity_reminders_list"
             android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTop">

@@ -22,7 +22,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".RemindersListActivity">
+    tools:context=".ui.RemindersListActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
