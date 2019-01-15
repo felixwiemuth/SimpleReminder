@@ -27,7 +27,7 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * @author Felix Wiemuth
  */
-public class SharedPrefs {
+public class Prefs {
     /**
      * Name of preferences that store the internal state of the app, like scheduled notifications.
      */

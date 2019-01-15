@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static felixwiemuth.simplereminder.SharedPrefs.PREF_STATE_CURRENT_REMINDERS;
-import static felixwiemuth.simplereminder.SharedPrefs.PREF_STATE_NEXTID;
+import static felixwiemuth.simplereminder.Prefs.PREF_STATE_CURRENT_REMINDERS;
+import static felixwiemuth.simplereminder.Prefs.PREF_STATE_NEXTID;
 
 /**
  * Manages current reminders by allowing to add and change reminders, scheduling notifications. Due reminders are handled by {@link ReminderService}.
@@ -45,7 +45,7 @@ public class ReminderManager {
     }
 
     /**
-     * Lock guarding the state preferences ({@link SharedPrefs#PREFS_STATE}). This reference being null is equivalent to the lock not being aquired.
+     * Lock guarding the state preferences ({@link Prefs#PREFS_STATE}). This reference being null is equivalent to the lock not being aquired.
      */
     private static ReentrantLock prefStateLock;
 
@@ -71,7 +71,7 @@ public class ReminderManager {
     }
 
     /**
-     * Edit the state preferences ({@link SharedPrefs#PREFS_STATE}) exclusively and commit after the operation has successfully completed. This ensures that different threads editing these preferences do not overwrite their changes.
+     * Edit the state preferences ({@link Prefs#PREFS_STATE}) exclusively and commit after the operation has successfully completed. This ensures that different threads editing these preferences do not overwrite their changes.
      *
      * @param context
      * @param operation
@@ -80,7 +80,7 @@ public class ReminderManager {
     private static void performExclusivelyOnStatePrefsAndCommit(Context context, StatePrefEditOperation operation) {
         lock();
         try {
-            SharedPreferences prefs = SharedPrefs.getStatePrefs(context);
+            SharedPreferences prefs = Prefs.getStatePrefs(context);
             SharedPreferences.Editor editor = prefs.edit();
             operation.edit(prefs, editor);
             editor.commit();
@@ -323,7 +323,7 @@ public class ReminderManager {
     }
 
     public static List<Reminder> getReminders(Context context) {
-        return getRemindersFromPrefs(SharedPrefs.getStatePrefs(context));
+        return getRemindersFromPrefs(Prefs.getStatePrefs(context));
     }
 
     /**

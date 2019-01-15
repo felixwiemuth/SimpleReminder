@@ -163,9 +163,9 @@ public class ReminderService extends IntentService {
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(text)
                 .setDeleteIntent(deleteIntent)
-                .setPriority(Integer.valueOf(SharedPrefs.getStringPref(R.string.prefkey_priority, "0", context)));
+                .setPriority(Integer.valueOf(Prefs.getStringPref(R.string.prefkey_priority, "0", context)));
 
-        if (SharedPrefs.getBooleanPref(R.string.prefkey_enable_sound, false, context)) {
+        if (Prefs.getBooleanPref(R.string.prefkey_enable_sound, false, context)) {
             builder.setSound(getDefaultSound()); // Set default notification sound
         }
 
