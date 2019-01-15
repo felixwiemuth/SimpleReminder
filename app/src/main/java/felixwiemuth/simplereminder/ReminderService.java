@@ -160,7 +160,7 @@ public class ReminderService extends IntentService {
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(text)
                 .setDeleteIntent(deleteIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(Integer.valueOf(SharedPrefs.getStringPref(R.string.prefkey_importance, "0", context)));
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(id, builder.build());
     }

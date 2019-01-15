@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2019 Felix Wiemuth
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!-- This file stores mappings for persistable enums and arrays of internal vs. displayed values. The names of the enum constants must be used here exactly as in the enum definition. -->
+<resources>
+    <string-array name="array_priority_names">
+        <item>@string/priority_min</item>
+        <item>@string/priority_low</item>
+        <item>@string/priority_default</item>
+        <item>@string/priority_high</item>
+        <item>@string/priority_max</item>
+    </string-array>
+    <!-- These are the constants from NotificationCompat.PRIORITY_* -->
+    <string-array name="array_priority_values">
+        <item>-2</item>
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+</resources>

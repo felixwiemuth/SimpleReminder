@@ -19,6 +19,8 @@ package felixwiemuth.simplereminder;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import androidx.annotation.StringRes;
+import androidx.preference.PreferenceManager;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -31,12 +33,32 @@ public class SharedPrefs {
      */
     public static String PREFS_STATE = "state";
     public static String PREF_STATE_NEXTID = "nextid";
+
+    public static String PREFS_SETTINGS = "settings";
+
     /**
      * GSON-serialized list of {@link felixwiemuth.simplereminder.data.Reminder}s.
      */
     public static String PREF_STATE_CURRENT_REMINDERS = "reminders";
 
     public static SharedPreferences getStatePrefs(Context context) {
-        return context.getSharedPreferences(SharedPrefs.PREFS_STATE, MODE_PRIVATE);
+        return context.getSharedPreferences(PREFS_STATE, MODE_PRIVATE);
+    }
+
+    public static SharedPreferences getSettings(Context context) {
+        return context.getSharedPreferences(PREFS_SETTINGS, MODE_PRIVATE);
+    }
+
+
+    /**
+     * Get a string from settings preferences using a key from a string resource.
+     *
+     * @param key         {@link} the resource id of the key
+     * @param defValue    the default value to be used it the preference is not set
+     * @param context
+     * @return
+     */
+    public static String getStringPref(@StringRes int key, String defValue, Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(key), defValue);
     }
 }
