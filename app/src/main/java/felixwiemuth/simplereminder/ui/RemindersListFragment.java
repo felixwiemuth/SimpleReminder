@@ -106,7 +106,6 @@ public class RemindersListFragment extends Fragment {
                     break;
                 case R.id.action_delete:
                     ReminderManager.removeReminders(getContext(), selection);
-                    // TODO also update selection
                     mode.finish();
                     break;
                 case R.id.action_select_all:
