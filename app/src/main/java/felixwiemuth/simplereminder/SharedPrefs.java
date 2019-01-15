@@ -61,4 +61,16 @@ public class SharedPrefs {
     public static String getStringPref(@StringRes int key, String defValue, Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(context.getString(key), defValue);
     }
+
+    /**
+     * Get a boolean from default preferences using a key from a string resource.
+     *
+     * @param key         {@link} the resource id of the key
+     * @param defValue    the default value to be used it the preference is not set
+     * @param context
+     * @return
+     */
+    public static boolean getBooleanPref(@StringRes int key, boolean defValue, Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getString(key), defValue);
+    }
 }

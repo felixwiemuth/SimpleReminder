@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2019 Felix Wiemuth
   ~
   ~ This program is free software: you can redistribute it and/or modify
@@ -18,30 +17,36 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <!--<PreferenceCategory-->
-        <!--android:title="@string/preference_category_general">-->
-        <!--<ListPreference-->
-            <!--android:key="pref_key_language"-->
-            <!--android:title="@string/preferences_language"-->
-            <!--android:dialogTitle="@string/preferences_language"-->
-            <!--android:entries="@array/settings_language_values"-->
-            <!--android:entryValues="@array/locales"-->
-            <!--android:defaultValue="@string/system_locale"-->
-            <!--android:summary="%s">-->
-        <!--</ListPreference>-->
+    <!--android:title="@string/preference_category_general">-->
+    <!--<ListPreference-->
+    <!--android:key="pref_key_language"-->
+    <!--android:title="@string/preferences_language"-->
+    <!--android:dialogTitle="@string/preferences_language"-->
+    <!--android:entries="@array/settings_language_values"-->
+    <!--android:entryValues="@array/locales"-->
+    <!--android:defaultValue="@string/system_locale"-->
+    <!--android:summary="%s">-->
+    <!--</ListPreference>-->
     <!--</PreferenceCategory>-->
-    <PreferenceCategory
-        android:title="@string/preference_category_notifications">
+    <PreferenceCategory android:title="@string/preference_category_notifications">
 
-    <!-- NOTE: @null hides buttons to simplify the UI. Users can touch outside the dialog to
-         dismiss it. -->
-    <ListPreference
-        android:defaultValue="0"
-        android:entries="@array/array_priority_names"
-        android:entryValues="@array/array_priority_values"
-        android:key="@string/prefkey_importance"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/preference_importance"
-        android:summary="%s"/>
+        <!-- NOTE: @null hides buttons to simplify the UI. Users can touch outside the dialog to
+             dismiss it. -->
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/array_priority_names"
+            android:entryValues="@array/array_priority_values"
+            android:key="@string/prefkey_priority"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:summary="%s"
+            android:title="@string/preference_priority" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/prefkey_enable_sound"
+            android:title="@string/preference_enable_sound"
+             />
     </PreferenceCategory>
+
 </PreferenceScreen>

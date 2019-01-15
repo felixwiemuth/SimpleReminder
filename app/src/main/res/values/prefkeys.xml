@@ -20,5 +20,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- NOTE: enum keys must match exactly the constant names -->
 
-    <string name="prefkey_importance">notification_importance</string>
+    <string name="prefkey_priority">notification_priority</string>
+    <string name="prefkey_enable_sound">notification_enable_sound</string>
 </resources>

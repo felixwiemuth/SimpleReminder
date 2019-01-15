@@ -20,11 +20,12 @@ package felixwiemuth.simplereminder;
 import android.app.*;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import android.util.Log;
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.EnumUtil;
@@ -38,6 +39,8 @@ import lombok.Builder;
 public class ReminderService extends IntentService {
     public static final String CHANNEL_REMINDER = "Reminder";
     public static final String EXTRA_INT_ID = "felixwiemuth.simplereminder.ReminderService.extra.ID";
+
+    private static Uri defaultSound;
 
     /**
      * Specifies the arguments to call this service.
@@ -160,7 +163,12 @@ public class ReminderService extends IntentService {
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(text)
                 .setDeleteIntent(deleteIntent)
-                .setPriority(Integer.valueOf(SharedPrefs.getStringPref(R.string.prefkey_importance, "0", context)));
+                .setPriority(Integer.valueOf(SharedPrefs.getStringPref(R.string.prefkey_priority, "0", context)));
+
+        if (SharedPrefs.getBooleanPref(R.string.prefkey_enable_sound, false, context)) {
+            builder.setSound(getDefaultSound()); // Set default notification sound
+        }
+
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(id, builder.build());
     }
@@ -221,5 +229,12 @@ public class ReminderService extends IntentService {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    private static Uri getDefaultSound() {
+        if (defaultSound == null) {
+            defaultSound = Uri.parse("content://settings/system/notification_sound");
+        }
+        return defaultSound;
     }
 }
