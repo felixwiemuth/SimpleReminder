@@ -29,6 +29,7 @@ import androidx.core.app.NotificationManagerCompat;
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.EnumUtil;
+import felixwiemuth.simplereminder.util.ImplementationError;
 import lombok.Builder;
 
 /**
@@ -81,6 +82,28 @@ public class ReminderService extends IntentService {
 
                 return intent;
             }
+
+            /**
+             * Create a pending intent that will start the service. Sets correct request code.
+             *
+             * @param context
+             * @return
+             */
+            public PendingIntent buildPendingIntent(Context context) {
+                // NOTE: This relies on reminder IDs always being even integers.
+                int requestCode;
+                switch (action) {
+                    case NOTIFY:
+                        requestCode = id;
+                        break;
+                    case MARK_DONE:
+                        requestCode = id + 1;
+                        break;
+                    default:
+                        throw new ImplementationError("Unkown action.");
+                }
+                return PendingIntent.getService(context, requestCode, build(context), 0);
+            }
         }
     }
 
@@ -89,13 +112,14 @@ public class ReminderService extends IntentService {
     }
 
     /**
-     * Get an intent to be used to cancel a pending intent created with {@link #intentBuilder()}.
+     * Get a pending intent to be used to cancel a pending {@link Action#NOTIFY} intent created with {@link #intentBuilder()}.
      *
      * @param context
+     * @param id      the ID of the reminder to be cancelled
      * @return
      */
-    public static Intent getCancelIntent(Context context) {
-        return new Intent(context, ReminderService.class);
+    public static PendingIntent getCancelNotifyIntent(Context context, int id) {
+        return PendingIntent.getService(context, id, new Intent(context, ReminderService.class), 0); // must use equal intent and same request code as when scheduled
     }
 
     public ReminderService() {
@@ -151,18 +175,17 @@ public class ReminderService extends IntentService {
     }
 
     private static void sendNotification(Context context, int id, String text) {
-        Intent markDoneIntent = intentBuilder()
+        PendingIntent markDoneIntent = intentBuilder()
                 .id(id)
                 .action(Action.MARK_DONE)
-                .build(context);
+                .buildPendingIntent(context);
 
-        PendingIntent deleteIntent = PendingIntent.getService(context, (int) System.nanoTime(), markDoneIntent, 0); // using lower bits of nano-time as request code to approximate uniqueness
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_REMINDER)
                 .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(text)
-                .setDeleteIntent(deleteIntent)
+                .setDeleteIntent(markDoneIntent)
                 .setPriority(Integer.valueOf(Prefs.getStringPref(R.string.prefkey_priority, "0", context)));
 
         if (Prefs.getBooleanPref(R.string.prefkey_enable_sound, false, context)) {
@@ -182,21 +205,20 @@ public class ReminderService extends IntentService {
     public static void scheduleReminder(Context context, Reminder reminder) {
         // Prepare pending intent
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        Intent notifyIntent = ReminderService.intentBuilder()
+        PendingIntent notifyIntent = intentBuilder()
                 .id(reminder.getId())
-                .action(ReminderService.Action.NOTIFY)
-                .build(context);
-        PendingIntent alarmIntent = PendingIntent.getService(context, (int) System.nanoTime(), notifyIntent, 0); // using lower bits of nano-time as request code to approximate uniqueness
+                .action(Action.NOTIFY)
+                .buildPendingIntent(context);
 
         // Schedule alarm
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), alarmIntent);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), notifyIntent);
             Log.d("ReminderManager", "Set alarm (\"exact and allow while idle\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), alarmIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), notifyIntent);
             Log.d("ReminderManager", "Set alarm (\"exact\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
         } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), alarmIntent);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), notifyIntent);
             Log.d("ReminderManager", "Set alarm for " + DateTimeUtil.formatDateTime(reminder.getDate()));
         }
     }
@@ -214,9 +236,7 @@ public class ReminderService extends IntentService {
 
         // Cancel possibly scheduled alarm
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        Intent cancelIntent = getCancelIntent(context);
-        PendingIntent cancelPendingIntent = PendingIntent.getService(context, (int) System.nanoTime(), cancelIntent, 0); // must use equal intent as when scheduled (request code can be different); using lower bits of nano-time as request code to approximate uniqueness
-        alarmManager.cancel(cancelPendingIntent);
+        alarmManager.cancel(getCancelNotifyIntent(context, id));
     }
 
     private void createNotificationChannel() {

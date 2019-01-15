@@ -62,7 +62,7 @@ public class Reminder {
     }
 
     /**
-     * ID of the reminder, also used for notifications. Must be >= 0.
+     * ID of the reminder, also used for notifications. Must be >= 0 and even (used by {@link felixwiemuth.simplereminder.ReminderService for correct scheduling}).
      */
     private int id;
     /**

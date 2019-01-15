@@ -113,7 +113,7 @@ public class ReminderManager {
                     reminderBuilder.id(nextId);
                     Reminder reminder = reminderBuilder.build();
 
-                    editor.putInt(PREF_STATE_NEXTID, nextId + 1);
+                    editor.putInt(PREF_STATE_NEXTID, nextId + 2); // Reminder IDs may only be even
                     addReminderToReminders(prefs, editor, reminder);
 
                     ReminderService.scheduleReminder(context, reminder);
