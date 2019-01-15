@@ -17,15 +17,18 @@
 
 package felixwiemuth.simplereminder.ui;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.SortedList;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.*;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import felixwiemuth.simplereminder.R;
@@ -37,6 +40,9 @@ import felixwiemuth.simplereminder.util.ImplementationError;
 import java.lang.reflect.Type;
 import java.util.*;
 
+/**
+ * A fragment displaying a list of reminders. May only be used in an {@link AppCompatActivity} with a toolbar.
+ */
 public class RemindersListFragment extends Fragment {
     /**
      * A GSON-serialized list of {@link Reminder.Status} values.
@@ -306,6 +312,7 @@ public class RemindersListFragment extends Fragment {
             return new ViewHolder(view);
         }
 
+        @SuppressLint("RestrictedApi") //TODO the warning is probably a bug
         @Override
         public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
             Reminder reminder = reminders.get(position);
@@ -345,7 +352,7 @@ public class RemindersListFragment extends Fragment {
                     return false;
                 }
                 selection.add(reminder.getId()); // selection must be up-to-date when initializing action-mode
-                getActivity().startActionMode(actionModeCallback); // sets actionMode variable via prepare method
+                ((AppCompatActivity) getActivity()).startSupportActionMode(actionModeCallback);
                 holder.setSelected();
                 return true;
             });

@@ -54,6 +54,7 @@ public class RemindersListActivity extends AppCompatActivity {
      */
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    private Toolbar toolbar;
     private RemindersListFragment remindersFragment;
 
     @Override
@@ -61,7 +62,7 @@ public class RemindersListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reminders_list);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         tabLayout = findViewById(R.id.tabLayout);
