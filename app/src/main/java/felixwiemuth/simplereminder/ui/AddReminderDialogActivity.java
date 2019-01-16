@@ -20,11 +20,13 @@ package felixwiemuth.simplereminder.ui;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+import android.text.InputType;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderManager;
 import felixwiemuth.simplereminder.data.Reminder;
@@ -43,12 +45,25 @@ public class AddReminderDialogActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_reminder_dialog);
 
         final AutoCompleteTextView nameTextView = findViewById(R.id.nameTextView);
-        nameTextView.requestFocus();
-
+        final Button addButton = findViewById(R.id.addButton);
         final TimePicker timePicker = findViewById(R.id.timePicker);
+
+
+        nameTextView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        nameTextView.setImeActionLabel(getString(R.string.keyboard_action_add_reminder), EditorInfo.IME_ACTION_DONE);
+        nameTextView.requestFocus();
+        nameTextView.setRawInputType(InputType.TYPE_CLASS_TEXT);
+        nameTextView.setOnEditorActionListener((textView, actionId, keyEvent) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                addButton.callOnClick();
+                return true;
+            }
+            return false;
+
+        });
+
         timePicker.setIs24HourView(true);
 
-        Button addButton = findViewById(R.id.addButton);
         addButton.setOnClickListener(v -> {
             int hour;
             int minute;

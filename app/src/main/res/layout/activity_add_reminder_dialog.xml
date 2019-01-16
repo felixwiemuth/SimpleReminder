@@ -30,6 +30,8 @@
         android:layout_width="match_parent"
         android:layout_margin="4dp"
         android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:maxLines="5"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp"
         tools:ignore="MissingConstraints"
