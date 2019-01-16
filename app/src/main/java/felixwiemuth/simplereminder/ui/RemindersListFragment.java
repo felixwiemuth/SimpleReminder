@@ -119,6 +119,7 @@ public class RemindersListFragment extends Fragment {
                         selection.add(reminders.get(i).getId());
                         remindersListRecyclerView.getAdapter().notifyItemChanged(i);
                     }
+                    updateAvailableActions();
 //                    setAllSelected(); // less expensive alternative, but does not work yet
                     break;
                 default:
