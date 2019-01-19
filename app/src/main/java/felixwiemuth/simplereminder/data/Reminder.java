@@ -34,7 +34,7 @@ import java.util.List;
  * @author Felix Wiemuth
  */
 @Getter
-public class Reminder {
+public class Reminder implements Comparable<Reminder> {
     // NOTE: when changing this class, check sorting criterea in RemindersListFragment.SortedListCallback
 
     private static Gson gson;
@@ -54,11 +54,7 @@ public class Reminder {
         /**
          * The reminder has been marked as "done" by the user.
          */
-        DONE,
-        /**
-         * The reminder has been cancelled by the user before it was due.
-         */
-        CANCELLED
+        DONE
     }
 
     /**
@@ -87,6 +83,11 @@ public class Reminder {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
         return c;
+    }
+
+    @Override
+    public int compareTo(Reminder reminder) {
+        return date.compareTo(reminder.date);
     }
 
     public static String toJson(List<Reminder> reminders) {

@@ -17,9 +17,9 @@
 
 package felixwiemuth.simplereminder.ui;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.*;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -28,32 +28,29 @@ import androidx.appcompat.view.ActionMode;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SortedList;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderManager;
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
+import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A fragment displaying a list of reminders. May only be used in an {@link AppCompatActivity} with a toolbar.
  */
 public class RemindersListFragment extends Fragment {
-    /**
-     * A GSON-serialized list of {@link Reminder.Status} values.
-     */
-    private static final String ARG_STRING_REMINDER_FILTER = "felixwiemuth.simplereminder.arg.REMINDER_FILTER";
 
-    private List<Reminder.Status> reminderFilter;
     /**
-     * Filtered list of reminders to be displayed in this fragment.
+     * Mapping containing currently displayed reminders, the key being the reminder ID. May only be updated via {@link #reloadRemindersListAndUpdateRecyclerView()}.
      */
-    private SortedList<Reminder> reminders;
+    private SparseArray<Reminder> reminders;
 
     private RecyclerView remindersListRecyclerView;
 
@@ -95,7 +92,7 @@ public class RemindersListFragment extends Fragment {
                     if (selection.size() != 1) {
                         throw new ImplementationError("Selection must have size 1.");
                     }
-                    findReminderById(selection.iterator().next());
+                    reminders.get(selection.iterator().next());
                     mode.finish();
                     break;
                 case R.id.action_reuse:
@@ -142,123 +139,46 @@ public class RemindersListFragment extends Fragment {
     }
 
     /**
-     * @param reminderFilter A filter of which reminders to show (with which status) (required)
+     * Create a new instance of this fragment.
+     *
      * @return
      */
-    public static RemindersListFragment newInstance(List<Reminder.Status> reminderFilter) {
-        RemindersListFragment fragment = new RemindersListFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_STRING_REMINDER_FILTER, new Gson().toJson(reminderFilter));
-        fragment.setArguments(args);
-        return fragment;
+    public static RemindersListFragment newInstance() {
+        return new RemindersListFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         selection = new HashSet<>();
-        reloadRemindersListAndUpdateRecyclerView();
+        reminders = new SparseArray<>();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_reminders_list, container, false);
         remindersListRecyclerView = rootView.findViewById(R.id.reminders_list);
-        remindersListRecyclerView.setAdapter(new ReminderItemRecyclerViewAdapter());
+        reloadRemindersListAndUpdateRecyclerView();
         return rootView;
     }
 
     /**
      * Call when the reminders list has changed, to reload all items.
      */
-    public void reloadRemindersListAndUpdateRecyclerView() {
-        if (getArguments() != null) {
-            // Get filter from arguments
-            String reminderFilterJson = getArguments().getString(ARG_STRING_REMINDER_FILTER);
-            Type collectionType = new TypeToken<Collection<Reminder.Status>>() {
-            }.getType();
-            reminderFilter = new Gson().fromJson(reminderFilterJson, collectionType);
-
-            // Create reminders list
-            reminders = new SortedList<>(Reminder.class, new SortedListCallback());
-            // Filter
-            for (Reminder reminder : ReminderManager.getReminders(getContext())) {
-                if (reminderFilter.contains(reminder.getStatus())) {
-                    reminders.add(reminder);
-                }
-            }
-        }
-        if (remindersListRecyclerView != null) {
-            remindersListRecyclerView.getAdapter().notifyDataSetChanged();
-        }
-    }
-
-    public class SortedListCallback extends SortedList.Callback<Reminder> {
-        Map<Reminder.Status, Integer> statusVals = new HashMap<Reminder.Status, Integer>() {{
-            put(Reminder.Status.NOTIFIED, 0);
-            put(Reminder.Status.SCHEDULED, 1);
-            put(Reminder.Status.DONE, 2);
-            put(Reminder.Status.CANCELLED, 2);
-        }};
-
-        @Override
-        public int compare(Reminder o1, Reminder o2) {
-            // Reminders are sorted by status first, then by date (increasing or decreasing)
-            if (statusVals.get(o1.getStatus()) < statusVals.get(o2.getStatus())) {
-                return -1;
-            } else if (statusVals.get(o1.getStatus()) > statusVals.get(o2.getStatus())) {
-                return 1;
-            } else {
-                switch (o1.getStatus()) {
-                    case SCHEDULED:
-                        return o1.getDate().compareTo(o2.getDate());
-                    case NOTIFIED:
-                    case DONE:
-                    case CANCELLED:
-                        return -o1.getDate().compareTo(o2.getDate());
-                }
-            }
-            throw new ImplementationError("Incomplete sorting criterea");
+    void reloadRemindersListAndUpdateRecyclerView() {
+        // Load reminders list
+        List<Reminder> remindersList = ReminderManager.getReminders(getContext());
+        // Add entries to map (SparseArray)
+        reminders.clear();
+        for (Reminder reminder : remindersList) {
+            reminders.put(reminder.getId(), reminder);
         }
 
-        @Override
-        public void onChanged(int position, int count) {
-
-        }
-
-        @Override
-        public boolean areContentsTheSame(Reminder oldItem, Reminder newItem) {
-            // if both are null, it is okay to return false
-            return oldItem != null
-                    && newItem != null
-//                    && oldItem.getId() == newItem.getId() // ID is not shown
-                    && oldItem.getStatus() == newItem.getStatus()
-                    && oldItem.getDate().equals(newItem.getDate())
-                    && oldItem.getText().equals(newItem.getText());
-        }
-
-        @Override
-        public boolean areItemsTheSame(Reminder item1, Reminder item2) {
-            // if both are null, it is okay to return false
-            return item1 != null
-                    && item2 != null
-                    && item1.getId() == item2.getId();
-        }
-
-        @Override
-        public void onInserted(int position, int count) {
-
-        }
-
-        @Override
-        public void onRemoved(int position, int count) {
-
-        }
-
-        @Override
-        public void onMoved(int fromPosition, int toPosition) {
-
-        }
+        SectionedRecyclerViewAdapter sectionAdapter = new SectionedRecyclerViewAdapter();
+        Collections.sort(remindersList);
+        //TODO add sections for each status
+        sectionAdapter.addSection(new ReminderItemSection("All", remindersList));
+        remindersListRecyclerView.setAdapter(sectionAdapter); // This relayouts the view
     }
 
     /**
@@ -267,10 +187,10 @@ public class RemindersListFragment extends Fragment {
     private void updateAvailableActions() {
         setMenuItemAvailability(
                 menuActionReuse,
-                selection.size() == 1 );
+                selection.size() == 1);
         boolean selectionContainsDone = false;
         for (Integer i : selection) {
-            if (findReminderById(i).getStatus() == Reminder.Status.DONE) {
+            if (reminders.get(i).getStatus() == Reminder.Status.DONE) {
                 selectionContainsDone = true;
             }
         }
@@ -279,7 +199,7 @@ public class RemindersListFragment extends Fragment {
                 !selectionContainsDone);
         setMenuItemAvailability(
                 menuActionEdit,
-                selection.size() == 1 && findReminderById(selection.iterator().next()).getStatus() == Reminder.Status.SCHEDULED);
+                selection.size() == 1 && reminders.get(selection.iterator().next()).getStatus() == Reminder.Status.SCHEDULED);
     }
 
     private void setMenuItemAvailability(MenuItem menuItem, boolean available) {
@@ -295,27 +215,45 @@ public class RemindersListFragment extends Fragment {
 //        }
 //    }
 
-    private Reminder findReminderById(int id) {
-        for (int i = 0; i < reminders.size(); i++) {
-            if (reminders.get(i).getId() == id) {
-                return reminders.get(i);
-            }
-        }
-        return null;
-    }
+    public class ReminderItemSection extends StatelessSection {
+        private String title;
+        private List<Reminder> reminders;
 
-    public class ReminderItemRecyclerViewAdapter extends RecyclerView.Adapter<ReminderItemRecyclerViewAdapter.ViewHolder> {
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.reminder_item, parent, false);
-            return new ViewHolder(view);
+        public ReminderItemSection(@NonNull String title, @NonNull List<Reminder> reminders) {
+            super(SectionParameters.builder()
+                    .itemResourceId(R.layout.reminder_item)
+                    .headerResourceId(R.layout.reminder_section_header)
+                    .build());
+            this.title = title;
+            this.reminders = reminders;
         }
 
-        @SuppressLint("RestrictedApi") //TODO the warning is probably a bug
         @Override
-        public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        public int getContentItemsTotal() {
+            return reminders.size();
+        }
+
+        @Override
+        public RecyclerView.ViewHolder getHeaderViewHolder(View view) {
+            return new HeaderViewHolder(view);
+        }
+
+        @Override
+        public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder) {
+            super.onBindHeaderViewHolder(holder);
+            HeaderViewHolder headerHolder = (HeaderViewHolder) holder;
+            headerHolder.titleView.setText(title);
+        }
+
+        @Override
+        public RecyclerView.ViewHolder getItemViewHolder(View view) {
+            return new ItemViewHolder(view);
+        }
+
+        @Override
+        public void onBindItemViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+            ItemViewHolder holder = (ItemViewHolder) viewHolder;
+
             Reminder reminder = reminders.get(position);
             holder.dateView.setText(DateTimeUtil.formatDateTime(reminder.getDate()));
             holder.descriptionView.setText(reminder.getText());
@@ -331,9 +269,6 @@ public class RemindersListFragment extends Fragment {
                     break;
                 case DONE:
                     dateColor = ContextCompat.getColor(getContext(), R.color.bg_date_done);
-                    break;
-                case CANCELLED:
-                    dateColor = ContextCompat.getColor(getContext(), R.color.bg_date_cancelled);
                     break;
                 default:
                     dateColor = 0;
@@ -373,21 +308,26 @@ public class RemindersListFragment extends Fragment {
                     updateAvailableActions();
                 }
             });
+
         }
 
+        private class HeaderViewHolder extends RecyclerView.ViewHolder {
 
-        @Override
-        public int getItemCount() {
-            return reminders.size();
+            private final TextView titleView;
+
+            HeaderViewHolder(View view) {
+                super(view);
+                titleView = view.findViewById(R.id.title);
+            }
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
+        public class ItemViewHolder extends RecyclerView.ViewHolder {
 
-            public final View view;
-            public final TextView dateView;
-            public final TextView descriptionView;
+            private final View view;
+            private final TextView dateView;
+            private final TextView descriptionView;
 
-            public ViewHolder(View view) {
+            public ItemViewHolder(View view) {
                 super(view);
                 this.view = view;
                 dateView = view.findViewById(R.id.date);
@@ -408,5 +348,4 @@ public class RemindersListFragment extends Fragment {
             }
         }
     }
-
 }
