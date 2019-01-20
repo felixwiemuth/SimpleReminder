@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.core.content.ContextCompat;
+import androidx.core.util.Supplier;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import felixwiemuth.simplereminder.R;
@@ -37,15 +38,23 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
- * A fragment displaying a list of reminders. May only be used in an {@link AppCompatActivity} with a toolbar.
+ * A fragment displaying a list of reminders. May only be used in an {@link AppCompatActivity} with a toolbar. Displays reminders in sections:
+ * - One section for due reminders (for those with status SCHEDULED OR
+ * NOTIFIED)
+ * - One section for each of the next 7 (MAX_DAY_SECTIONS) days (including
+ * today) for the scheduled reminders of those days
+ * - One section for the remaining scheduled reminders
+ * - One section for reminders with status DONE
  */
 public class RemindersListFragment extends Fragment {
+
+    /**
+     * Maximum number of sections (days in the future) for the recycler view to display scheduled reminders in their own section.
+     */
+    private final int MAX_DAY_SECTIONS = 7;
 
     /**
      * Mapping containing currently displayed reminders, the key being the reminder ID. May only be updated via {@link #reloadRemindersListAndUpdateRecyclerView()}.
@@ -175,9 +184,97 @@ public class RemindersListFragment extends Fragment {
         }
 
         SectionedRecyclerViewAdapter sectionAdapter = new SectionedRecyclerViewAdapter();
-        Collections.sort(remindersList);
-        //TODO add sections for each status
-        sectionAdapter.addSection(new ReminderItemSection("All", remindersList));
+
+        // Section reminders by status
+        List<Reminder> remindersDue = new ArrayList<>();
+        List<Reminder> remindersScheduled = new ArrayList<>();
+        List<Reminder> remindersDone = new ArrayList<>();
+        for (Reminder reminder : remindersList) {
+            switch (reminder.getStatus()) {
+                case NOTIFIED:
+                    remindersDue.add(reminder);
+                    break;
+                case SCHEDULED:
+                    remindersScheduled.add(reminder);
+                    break;
+                case DONE:
+                    remindersDone.add(reminder);
+                    break;
+            }
+        }
+
+        // Sort each section
+        Collections.sort(remindersDue, (o1, o2) -> -o1.compareTo(o2));
+        Collections.sort(remindersScheduled);
+        Collections.sort(remindersDone, (o1, o2) -> -o1.compareTo(o2));
+
+        // Further section scheduled reminders
+        Calendar currentTime = Calendar.getInstance(); // represents the day for the current section
+        ListIterator<Reminder> it = remindersScheduled.listIterator(); // iterates through all reminders to be divided among the sections
+
+        // If some of the scheduled reminders are actually already due (in mean time or because the status was not correctly updated) move them to the due list
+        while (it.hasNext()) {
+            Reminder reminder = it.next();
+            if (!reminder.getDate().after(currentTime.getTime())) {
+                remindersDue.add(reminder);
+                it.remove();
+            } else {
+                break; // Reminders are sorted, so the condition will never hold
+            }
+        }
+
+        // Section for due reminders (with a date not in the future)
+        sectionAdapter.addSection(new ReminderItemSection("Due", remindersDue)); // TODO use resource string
+
+        it = remindersScheduled.listIterator();
+
+        // Construct sections for the next MAX_DAY_SECTIONS days
+        if (MAX_DAY_SECTIONS != 0) {
+            int dayOffset = 0; // days from the current day
+            Supplier<String> makeSectionTitle = () -> {
+                return "Day " + currentTime.get(Calendar.DAY_OF_MONTH); //TODO use pretty printed day
+            };
+            List<Reminder> remindersCurrentDay = new ArrayList<>();
+            ReminderItemSection section = new ReminderItemSection(makeSectionTitle.get(), remindersCurrentDay); // the current section
+
+            iteratorLoop:
+            while (it.hasNext()) {
+                Reminder reminder = it.next();
+                // If the current reminder does not belong to the current day, advance the current day until it matches the reminder's or the maximum day is reached
+                while (!DateTimeUtil.isSameDay(reminder.getDate(), currentTime.getTime())) {
+                    // If there were reminders for the current section, add it to the adapter and create a new list for the next section
+                    if (!remindersCurrentDay.isEmpty()) {
+                        sectionAdapter.addSection(section);
+                        remindersCurrentDay = new ArrayList<>();
+                    }
+                    // Now remindersCurrentDay is empty and can take the reminders for the next day
+                    dayOffset++;
+                    if (dayOffset == MAX_DAY_SECTIONS) { // The maximum allowed sections are already reached (maximum offset = MAX_DAY_SECTIONS-1)
+                        it.previous(); // The current reminder has to be processed with the remaining reminders
+                        break iteratorLoop;
+                    }
+                    currentTime.add(Calendar.DAY_OF_MONTH, 1);
+                    // Create the new section
+                    section = new ReminderItemSection(makeSectionTitle.get(), remindersCurrentDay);
+                }
+                remindersCurrentDay.add(reminder);
+            }
+
+            // The last section may not have been added yet (if the dayOffset has not been tried to be raised above maximum when the iterator reached the end of the list)
+            if (!remindersCurrentDay.isEmpty()) {
+                sectionAdapter.addSection(section);
+            }
+        }
+
+        List<Reminder> futureReminders = new ArrayList<>(); // Scheduled reminders which are further in the future than the days which have an own section
+        while (it.hasNext()) {
+            futureReminders.add(it.next());
+        }
+        sectionAdapter.addSection(new ReminderItemSection("Future", futureReminders)); // TODO use resource string, test
+
+        // Section for DONE reminders
+        sectionAdapter.addSection(new ReminderItemSection("Done", remindersDone)); // TODO use resource string
+
         remindersListRecyclerView.setAdapter(sectionAdapter); // This relayouts the view
     }
 

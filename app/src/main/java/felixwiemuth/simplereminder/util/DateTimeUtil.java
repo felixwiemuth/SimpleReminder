@@ -17,7 +17,10 @@
 
 package felixwiemuth.simplereminder.util;
 
+import android.annotation.SuppressLint;
+
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -33,9 +36,32 @@ public class DateTimeUtil {
         return dfDateTime;
     }
 
+    /**
+     * Used to compare whether two dates are on the same day:
+     */
+    private static SimpleDateFormat dfCompareDay;
+
+    @SuppressLint("SimpleDateFormat")
+    private static SimpleDateFormat getDfCompareDay() {
+        if (dfCompareDay == null) {
+            dfCompareDay = new SimpleDateFormat("ddMMyyyy");
+        }
+        return dfCompareDay;
+    }
+
     public static String formatDateTime(Date date) {
         return getDateTimeFormat().format(date);
     }
 
-
+    /**
+     * Check whether two dates are on the same day.
+     *
+     * @param d1
+     * @param d2
+     * @return
+     */
+    public static boolean isSameDay(Date d1, Date d2) {
+        getDfCompareDay();
+        return dfCompareDay.format(d1).equals(dfCompareDay.format(d2));
+    }
 }
