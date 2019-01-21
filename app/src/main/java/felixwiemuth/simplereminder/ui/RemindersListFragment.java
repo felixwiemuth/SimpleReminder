@@ -42,12 +42,11 @@ import java.util.*;
 
 /**
  * A fragment displaying a list of reminders. May only be used in an {@link AppCompatActivity} with a toolbar. Displays reminders in sections:
- * - One section for due reminders (for those with status SCHEDULED OR
+ * - A "Due" section: SCHEDULED and NOTIFIED reminders which are due according to the current time, sorted descending by date
  * NOTIFIED)
- * - One section for each of the next 7 (MAX_DAY_SECTIONS) days (including
- * today) for the scheduled reminders of those days
- * - One section for the remaining scheduled reminders
- * - One section for reminders with status DONE
+ * - One section for each of the next 7 (MAX_DAY_SECTIONS) days (including today) for the reminders schedules for those days, each sorted ascending by date
+ * - A "Future" section for the remaining scheduled reminders, sorted ascending by date
+ * - A "Done" section for reminders with status DONE, sorted descending by date
  */
 public class RemindersListFragment extends Fragment {
 
@@ -203,8 +202,7 @@ public class RemindersListFragment extends Fragment {
             }
         }
 
-        // Sort each section
-        Collections.sort(remindersDue, (o1, o2) -> -o1.compareTo(o2));
+        // Sort scheduled and done reminders
         Collections.sort(remindersScheduled);
         Collections.sort(remindersDone, (o1, o2) -> -o1.compareTo(o2));
 
@@ -222,6 +220,9 @@ public class RemindersListFragment extends Fragment {
                 break; // Reminders are sorted, so the condition will never hold
             }
         }
+
+        // Sort due reminders after being composed completely
+        Collections.sort(remindersDue, (o1, o2) -> -o1.compareTo(o2));
 
         // Section for due reminders (with a date not in the future)
         sectionAdapter.addSection(new ReminderItemSection("Due", remindersDue)); // TODO use resource string
