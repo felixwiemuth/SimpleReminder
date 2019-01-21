@@ -18,6 +18,7 @@
 package felixwiemuth.simplereminder.ui;
 
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.*;
@@ -25,8 +26,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
+import androidx.arch.core.util.Function;
 import androidx.core.content.ContextCompat;
-import androidx.core.util.Supplier;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import felixwiemuth.simplereminder.R;
@@ -38,6 +39,7 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
+import java.text.DateFormatSymbols;
 import java.util.*;
 
 /**
@@ -207,13 +209,14 @@ public class RemindersListFragment extends Fragment {
         Collections.sort(remindersDone, (o1, o2) -> -o1.compareTo(o2));
 
         // Further section scheduled reminders
+        Calendar now = Calendar.getInstance();
         Calendar currentTime = Calendar.getInstance(); // represents the day for the current section
         ListIterator<Reminder> it = remindersScheduled.listIterator(); // iterates through all reminders to be divided among the sections
 
         // If some of the scheduled reminders are actually already due (in mean time or because the status was not correctly updated) move them to the due list
         while (it.hasNext()) {
             Reminder reminder = it.next();
-            if (!reminder.getDate().after(currentTime.getTime())) {
+            if (!reminder.getDate().after(now.getTime())) {
                 remindersDue.add(reminder);
                 it.remove();
             } else {
@@ -232,11 +235,16 @@ public class RemindersListFragment extends Fragment {
         // Construct sections for the next MAX_DAY_SECTIONS days
         if (MAX_DAY_SECTIONS != 0) {
             int dayOffset = 0; // days from the current day
-            Supplier<String> makeSectionTitle = () -> {
-                return "Day " + currentTime.get(Calendar.DAY_OF_MONTH); //TODO use pretty printed day
+            Function<Integer, String> makeSectionTitle = (Integer d) -> {
+                if (d < 2) { // Use relative notion of the day only for "today" and "tomorrow"
+                    return DateUtils.getRelativeTimeSpanString(currentTime.getTimeInMillis(), now.getTimeInMillis(), DateUtils.DAY_IN_MILLIS, DateUtils.FORMAT_SHOW_WEEKDAY).toString();
+                } else { // Use the full name of the day of week otherwise
+                    return DateFormatSymbols.getInstance().getWeekdays()[currentTime.get(Calendar.DAY_OF_WEEK)];
+                }
             };
+
             List<Reminder> remindersCurrentDay = new ArrayList<>();
-            ReminderItemSection section = new ReminderItemSection(makeSectionTitle.get(), remindersCurrentDay); // the current section
+            ReminderItemSection section = new ReminderItemSection(makeSectionTitle.apply(dayOffset), remindersCurrentDay); // the current section
 
             iteratorLoop:
             while (it.hasNext()) {
@@ -256,7 +264,7 @@ public class RemindersListFragment extends Fragment {
                     }
                     currentTime.add(Calendar.DAY_OF_MONTH, 1);
                     // Create the new section
-                    section = new ReminderItemSection(makeSectionTitle.get(), remindersCurrentDay);
+                    section = new ReminderItemSection(makeSectionTitle.apply(dayOffset), remindersCurrentDay);
                 }
                 remindersCurrentDay.add(reminder);
             }
