@@ -228,7 +228,7 @@ public class RemindersListFragment extends Fragment {
         Collections.sort(remindersDue, (o1, o2) -> -o1.compareTo(o2));
 
         // Section for due reminders (with a date not in the future)
-        sectionAdapter.addSection(new ReminderItemSection("Due", remindersDue)); // TODO use resource string
+        sectionAdapter.addSection(new ReminderItemSection(getString(R.string.reminder_section_due), remindersDue));
 
         it = remindersScheduled.listIterator();
 
@@ -279,10 +279,10 @@ public class RemindersListFragment extends Fragment {
         while (it.hasNext()) {
             futureReminders.add(it.next());
         }
-        sectionAdapter.addSection(new ReminderItemSection("Future", futureReminders)); // TODO use resource string, test
+        sectionAdapter.addSection(new ReminderItemSection(getString(R.string.reminder_section_future), futureReminders));
 
         // Section for DONE reminders
-        sectionAdapter.addSection(new ReminderItemSection("Done", remindersDone)); // TODO use resource string
+        sectionAdapter.addSection(new ReminderItemSection(getString(R.string.reminder_section_done), remindersDone));
 
         remindersListRecyclerView.setAdapter(sectionAdapter); // This relayouts the view
     }

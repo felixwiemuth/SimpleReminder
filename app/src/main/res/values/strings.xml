@@ -36,6 +36,9 @@
     <string name="reminder_list_action_add_template">Add as template</string>
     <string name="reminder_list_action_delete">Delete</string>
     <string name="reminder_list_action_select_all">Select all</string>
+    <string name="reminder_section_due">Due</string>
+    <string name="reminder_section_done">Done</string>
+    <string name="reminder_section_future">Future</string>
     <string name="title_activity_settings">Settings</string>
     <string name="preference_category_general">General</string>
     <string name="preference_category_notifications">Notifications</string>
