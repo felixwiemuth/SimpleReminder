@@ -123,7 +123,7 @@ public class RemindersListFragment extends Fragment {
                     break;
                 case R.id.action_select_all:
                     for (int i = 0; i < reminders.size(); i++) {
-                        selection.add(reminders.get(i).getId());
+                        selection.add(reminders.valueAt(i).getId());
                         remindersListRecyclerView.getAdapter().notifyItemChanged(i);
                     }
                     updateAvailableActions();
