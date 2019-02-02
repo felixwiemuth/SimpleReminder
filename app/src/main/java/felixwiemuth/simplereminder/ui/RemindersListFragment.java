@@ -327,7 +327,7 @@ public class RemindersListFragment extends Fragment {
 
         public ReminderItemSection(@NonNull String title, @NonNull List<Reminder> reminders) {
             super(SectionParameters.builder()
-                    .itemResourceId(R.layout.reminder_item)
+                    .itemResourceId(R.layout.reminder_card)
                     .headerResourceId(R.layout.reminder_section_header)
                     .build());
             this.title = title;
@@ -361,10 +361,10 @@ public class RemindersListFragment extends Fragment {
             ItemViewHolder holder = (ItemViewHolder) viewHolder;
 
             Reminder reminder = reminders.get(position);
-            holder.dateView.setText(DateTimeUtil.formatDateTime(reminder.getDate()));
+            holder.timeView.setText(DateTimeUtil.formatTime(reminder.getDate()));
             holder.descriptionView.setText(reminder.getText());
 
-            // Set color of dateView
+            // Set color of timeView
             int dateColor;
             switch (reminder.getStatus()) {
                 case SCHEDULED:
@@ -380,7 +380,7 @@ public class RemindersListFragment extends Fragment {
                     dateColor = 0;
                     Log.e("RemindersListFragment", "Unknown color requested.");
             }
-            holder.dateView.setBackgroundColor(dateColor);
+            holder.timeView.setBackgroundColor(dateColor);
 
             // Set selection mode of holder
             if (selection.contains(reminder.getId())) {
@@ -430,13 +430,13 @@ public class RemindersListFragment extends Fragment {
         public class ItemViewHolder extends RecyclerView.ViewHolder {
 
             private final View view;
-            private final TextView dateView;
+            private final TextView timeView;
             private final TextView descriptionView;
 
             public ItemViewHolder(View view) {
                 super(view);
                 this.view = view;
-                dateView = view.findViewById(R.id.date);
+                timeView = view.findViewById(R.id.time);
                 descriptionView = view.findViewById(R.id.description);
             }
 

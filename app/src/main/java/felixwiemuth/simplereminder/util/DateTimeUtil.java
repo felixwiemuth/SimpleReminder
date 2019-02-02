@@ -28,12 +28,21 @@ import java.util.Date;
  */
 public class DateTimeUtil {
     private static DateFormat dfDateTime;
+    private static DateFormat dfTime;
 
     private static DateFormat getDateTimeFormat() {
         if (dfDateTime == null) {
             dfDateTime = DateFormat.getDateTimeInstance();
         }
         return dfDateTime;
+    }
+
+
+    private static DateFormat getTimeFormat() {
+        if (dfTime == null) {
+            dfTime = DateFormat.getTimeInstance();
+        }
+        return dfTime;
     }
 
     /**
@@ -51,6 +60,10 @@ public class DateTimeUtil {
 
     public static String formatDateTime(Date date) {
         return getDateTimeFormat().format(date);
+    }
+
+    public static String formatTime(Date date) {
+        return getTimeFormat().format(date);
     }
 
     /**
