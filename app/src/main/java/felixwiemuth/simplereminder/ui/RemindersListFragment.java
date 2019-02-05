@@ -17,6 +17,7 @@
 
 package felixwiemuth.simplereminder.ui;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -27,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.arch.core.util.Function;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -353,7 +355,7 @@ public class RemindersListFragment extends Fragment {
 
         @Override
         public RecyclerView.ViewHolder getItemViewHolder(View view) {
-            return new ItemViewHolder(view);
+            return new ItemViewHolder((CardView) view);
         }
 
         @Override
@@ -429,15 +431,17 @@ public class RemindersListFragment extends Fragment {
 
         public class ItemViewHolder extends RecyclerView.ViewHolder {
 
-            private final View view;
+            private final CardView view;
             private final TextView timeView;
             private final TextView descriptionView;
+            private final ColorStateList cardBackgroundColor;
 
-            public ItemViewHolder(View view) {
+            public ItemViewHolder(CardView view) {
                 super(view);
                 this.view = view;
                 timeView = view.findViewById(R.id.time);
                 descriptionView = view.findViewById(R.id.description);
+                cardBackgroundColor = view.getCardBackgroundColor();
             }
 
             @Override
@@ -446,11 +450,11 @@ public class RemindersListFragment extends Fragment {
             }
 
             public void setSelected() {
-                view.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_selected));
+                view.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_selected));
             }
 
             public void setUnselected() {
-                view.setBackground(null);
+                view.setCardBackgroundColor(cardBackgroundColor);
             }
         }
     }
