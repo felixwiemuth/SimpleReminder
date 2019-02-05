@@ -40,7 +40,8 @@ public class DateTimeUtil {
 
     private static DateFormat getTimeFormat() {
         if (dfTime == null) {
-            dfTime = DateFormat.getTimeInstance();
+            dfTime = new SimpleDateFormat("HH:mm");
+            DateFormat.getTimeInstance(DateFormat.MEDIUM);
         }
         return dfTime;
     }
