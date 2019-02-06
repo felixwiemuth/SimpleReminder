@@ -439,6 +439,9 @@ public class RemindersListFragment extends Fragment {
             public ItemViewHolder(CardView view) {
                 super(view);
                 this.view = view;
+                ViewStub viewStub = view.findViewById(R.id.datefield_stub);
+                viewStub.setLayoutResource(R.layout.reminder_card_datefield_time_only);
+                viewStub.inflate();
                 timeView = view.findViewById(R.id.time);
                 descriptionView = view.findViewById(R.id.description);
                 cardBackgroundColor = view.getCardBackgroundColor();
