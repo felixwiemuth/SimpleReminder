@@ -28,6 +28,7 @@ import java.util.Date;
  */
 public class DateTimeUtil {
     private static DateFormat dfDateTime;
+    private static DateFormat dfDate;
     private static DateFormat dfTime;
 
     private static DateFormat getDateTimeFormat() {
@@ -44,6 +45,14 @@ public class DateTimeUtil {
             DateFormat.getTimeInstance(DateFormat.MEDIUM);
         }
         return dfTime;
+    }
+
+
+    private static DateFormat getDateFormat() {
+        if (dfDate == null) {
+            dfDate = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        }
+        return dfDate;
     }
 
     /**
@@ -63,6 +72,10 @@ public class DateTimeUtil {
         return getDateTimeFormat().format(date);
     }
 
+    public static String formatDate(Date date) {
+        return getDateFormat().format(date);
+    }
+
     public static String formatTime(Date date) {
         return getTimeFormat().format(date);
     }
@@ -77,5 +90,14 @@ public class DateTimeUtil {
     public static boolean isSameDay(Date d1, Date d2) {
         getDfCompareDay();
         return dfCompareDay.format(d1).equals(dfCompareDay.format(d2));
+    }
+
+    /**
+     * Check whether the given date is at the current day.
+     * @param d
+     * @return
+     */
+    public static boolean isToday(Date d) {
+        return isSameDay(d, new Date());
     }
 }

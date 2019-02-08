@@ -17,6 +17,7 @@
 
 package felixwiemuth.simplereminder.ui;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.format.DateUtils;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.*;
 import android.widget.TextView;
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
@@ -37,6 +39,7 @@ import felixwiemuth.simplereminder.ReminderManager;
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;
+import io.github.luizgrp.sectionedrecyclerviewadapter.CustomViewType;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
@@ -55,6 +58,27 @@ import java.util.*;
 public class RemindersListFragment extends Fragment {
 
     /**
+     * Ways of displaying the date of a reminder item.
+     */
+    enum DisplayType {
+        /**
+         * Display only hour and minute.
+         */
+        TIME_ONLY,
+        /**
+         * Display day, month, year, hour and minute.
+         */
+        FULL,
+        /**
+         * Like {@link #TIME_ONLY} if the date is the current day, like {@link #FULL} otherwise.
+         */
+        TIME_ONLY_IF_TODAY
+    }
+
+    private CustomViewType reminderCardTimeOnlyViewType = new CustomViewType(TimeOnlyItemViewHolder.class, R.layout.reminder_card);
+    private CustomViewType reminderCardFullDateViewType = new CustomViewType(FullDateItemViewHolder.class, R.layout.reminder_card);
+
+    /**
      * Maximum number of sections (days in the future) for the recycler view to display scheduled reminders in their own section.
      */
     private final int MAX_DAY_SECTIONS = 7;
@@ -65,6 +89,7 @@ public class RemindersListFragment extends Fragment {
     private SparseArray<Reminder> reminders;
 
     private RecyclerView remindersListRecyclerView;
+    private SectionedRecyclerViewAdapter sectionAdapter;
 
     /**
      * The current selection of items in {@link #remindersListRecyclerView} (reminder IDs). Must be updated when reminders are removed.
@@ -186,7 +211,7 @@ public class RemindersListFragment extends Fragment {
             reminders.put(reminder.getId(), reminder);
         }
 
-        SectionedRecyclerViewAdapter sectionAdapter = new SectionedRecyclerViewAdapter();
+        sectionAdapter = new SectionedRecyclerViewAdapter(reminderCardTimeOnlyViewType, reminderCardFullDateViewType);
 
         // Section reminders by status
         List<Reminder> remindersDue = new ArrayList<>();
@@ -230,7 +255,7 @@ public class RemindersListFragment extends Fragment {
         Collections.sort(remindersDue, (o1, o2) -> -o1.compareTo(o2));
 
         // Section for due reminders (with a date not in the future)
-        sectionAdapter.addSection(new ReminderItemSection(getString(R.string.reminder_section_due), remindersDue));
+        sectionAdapter.addSection(new ReminderItemSection(getString(R.string.reminder_section_due), DisplayType.TIME_ONLY_IF_TODAY, remindersDue));
 
         it = remindersScheduled.listIterator();
 
@@ -246,7 +271,7 @@ public class RemindersListFragment extends Fragment {
             };
 
             List<Reminder> remindersCurrentDay = new ArrayList<>();
-            ReminderItemSection section = new ReminderItemSection(makeSectionTitle.apply(dayOffset), remindersCurrentDay); // the current section
+            ReminderItemSection section = new ReminderItemSection(makeSectionTitle.apply(dayOffset), DisplayType.TIME_ONLY, remindersCurrentDay); // the current section
 
             iteratorLoop:
             while (it.hasNext()) {
@@ -266,7 +291,7 @@ public class RemindersListFragment extends Fragment {
                     }
                     currentTime.add(Calendar.DAY_OF_MONTH, 1);
                     // Create the new section
-                    section = new ReminderItemSection(makeSectionTitle.apply(dayOffset), remindersCurrentDay);
+                    section = new ReminderItemSection(makeSectionTitle.apply(dayOffset), DisplayType.TIME_ONLY, remindersCurrentDay);
                 }
                 remindersCurrentDay.add(reminder);
             }
@@ -281,10 +306,10 @@ public class RemindersListFragment extends Fragment {
         while (it.hasNext()) {
             futureReminders.add(it.next());
         }
-        sectionAdapter.addSection(new ReminderItemSection(getString(R.string.reminder_section_future), futureReminders));
+        sectionAdapter.addSection(new ReminderItemSection(getString(R.string.reminder_section_future), DisplayType.FULL, futureReminders));
 
         // Section for DONE reminders
-        sectionAdapter.addSection(new ReminderItemSection(getString(R.string.reminder_section_done), remindersDone));
+        sectionAdapter.addSection(new ReminderItemSection(getString(R.string.reminder_section_done), DisplayType.FULL, remindersDone));
 
         remindersListRecyclerView.setAdapter(sectionAdapter); // This relayouts the view
     }
@@ -319,20 +344,23 @@ public class RemindersListFragment extends Fragment {
     // This is an alternative to rebind all view holders but does not work yet
 //    public void setAllSelected() {
 //        for (int i = 0; i < remindersListRecyclerView.getAdapter().getItemCount(); i++) {
-//            ((ReminderItemRecyclerViewAdapter.ViewHolder) remindersListRecyclerView.findViewHolderForAdapterPosition(i)).setSelected();
+//            ((ReminderItemRecyclerViewAdapter.ItemViewHolder) remindersListRecyclerView.findViewHolderForAdapterPosition(i)).setSelected();
 //        }
 //    }
 
-    public class ReminderItemSection extends StatelessSection {
+    private class ReminderItemSection extends StatelessSection {
+
         private String title;
+        private DisplayType displayType;
         private List<Reminder> reminders;
 
-        public ReminderItemSection(@NonNull String title, @NonNull List<Reminder> reminders) {
+        public ReminderItemSection(@NonNull String title, DisplayType displayType, @NonNull List<Reminder> reminders) {
             super(SectionParameters.builder()
                     .itemResourceId(R.layout.reminder_card)
                     .headerResourceId(R.layout.reminder_section_header)
                     .build());
             this.title = title;
+            this.displayType = displayType;
             this.reminders = reminders;
         }
 
@@ -354,19 +382,43 @@ public class RemindersListFragment extends Fragment {
         }
 
         @Override
+        public int getItemViewType(int position) {
+            Reminder reminder = reminders.get(position);
+            if (displayType == DisplayType.TIME_ONLY
+                    || displayType == DisplayType.TIME_ONLY_IF_TODAY && DateTimeUtil.isToday(reminder.getDate())) {
+                return sectionAdapter.getCustomViewTypeKey(reminderCardTimeOnlyViewType);
+            } else {
+                return sectionAdapter.getCustomViewTypeKey(reminderCardFullDateViewType);
+            }
+        }
+
+        @Override
         public RecyclerView.ViewHolder getItemViewHolder(View view) {
-            return new ItemViewHolder((CardView) view);
+            throw new ImplementationError("getItemViewHolder should not be called.");
         }
 
         @Override
         public void onBindItemViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-            ItemViewHolder holder = (ItemViewHolder) viewHolder;
+
+            if (viewHolder instanceof SectionedRecyclerViewAdapter.EmptyViewHolder) {
+                Log.d("onBindItemViewHolder", "Got EmptyViewHolder at section" + title + " for item at position " + position);
+                return;
+            }
 
             Reminder reminder = reminders.get(position);
-            holder.timeView.setText(DateTimeUtil.formatTime(reminder.getDate()));
-            holder.descriptionView.setText(reminder.getText());
 
-            // Set color of timeView
+            ItemViewHolder holder = (ItemViewHolder) viewHolder;
+            holder.descriptionView.setText(reminder.getText());
+            holder.timeView.setText(DateTimeUtil.formatTime(reminder.getDate()));
+
+            if (reminderCardTimeOnlyViewType.isInstanceOf(viewHolder)) {
+                TimeOnlyItemViewHolder timeOnlyHolder = (TimeOnlyItemViewHolder) viewHolder;
+            } else if (reminderCardFullDateViewType.isInstanceOf(viewHolder)) {
+                FullDateItemViewHolder fullDateHolder = (FullDateItemViewHolder) viewHolder;
+                fullDateHolder.dateView.setText(DateTimeUtil.formatDate(reminder.getDate()));
+            }
+
+            // Set color of datefield
             int dateColor;
             switch (reminder.getStatus()) {
                 case SCHEDULED:
@@ -382,26 +434,26 @@ public class RemindersListFragment extends Fragment {
                     dateColor = 0;
                     Log.e("RemindersListFragment", "Unknown color requested.");
             }
-            holder.timeView.setBackgroundColor(dateColor);
+            holder.datefieldView.setBackgroundColor(dateColor);
 
             // Set selection mode of holder
             if (selection.contains(reminder.getId())) {
-                holder.setSelected();
+                holder.setSelected(getContext());
             } else {
                 holder.setUnselected();
             }
 
-            holder.view.setOnLongClickListener(view -> {
+            holder.itemView.setOnLongClickListener(view -> {
                 if (actionMode != null) {
                     return false;
                 }
                 selection.add(reminder.getId()); // selection must be up-to-date when initializing action-mode
                 ((AppCompatActivity) getActivity()).startSupportActionMode(actionModeCallback);
-                holder.setSelected();
+                holder.setSelected(getContext());
                 return true;
             });
 
-            holder.view.setOnClickListener(view -> {
+            holder.itemView.setOnClickListener(view -> {
                 if (actionMode != null) {
                     if (selection.contains(reminder.getId())) {
                         selection.remove(reminder.getId());
@@ -411,7 +463,7 @@ public class RemindersListFragment extends Fragment {
                         }
                     } else {
                         selection.add(reminder.getId());
-                        holder.setSelected();
+                        holder.setSelected(getContext());
                     }
                     updateAvailableActions();
                 }
@@ -428,37 +480,57 @@ public class RemindersListFragment extends Fragment {
                 titleView = view.findViewById(R.id.title);
             }
         }
+    }
 
-        public class ItemViewHolder extends RecyclerView.ViewHolder {
+    /**
+     * The base item view holder.
+     */
+    private static class ItemViewHolder extends RecyclerView.ViewHolder {
+        private final CardView itemView;
+        private final View datefieldView;
+        private final ColorStateList cardBackgroundColor;
+        private final TextView timeView;
+        private final TextView descriptionView;
 
-            private final CardView view;
-            private final TextView timeView;
-            private final TextView descriptionView;
-            private final ColorStateList cardBackgroundColor;
+        ItemViewHolder(@LayoutRes int datefieldRes, @NonNull CardView itemView) {
+            super(itemView);
+            this.itemView = itemView;
+            this.descriptionView = itemView.findViewById(R.id.description);
+            cardBackgroundColor = itemView.getCardBackgroundColor();
+            ViewStub datefieldViewStub = itemView.findViewById(R.id.datefield_stub);
+            datefieldViewStub.setLayoutResource(datefieldRes);
+            this.datefieldView = datefieldViewStub.inflate();
+            this.timeView = itemView.findViewById(R.id.time);
+        }
 
-            public ItemViewHolder(CardView view) {
-                super(view);
-                this.view = view;
-                ViewStub viewStub = view.findViewById(R.id.datefield_stub);
-                viewStub.setLayoutResource(R.layout.reminder_card_datefield_time_only);
-                viewStub.inflate();
-                timeView = view.findViewById(R.id.time);
-                descriptionView = view.findViewById(R.id.description);
-                cardBackgroundColor = view.getCardBackgroundColor();
-            }
+        void setSelected(Context context) {
+            itemView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.bg_selected));
+        }
 
-            @Override
-            public String toString() {
-                return super.toString() + " '" + descriptionView.getText() + "'";
-            }
+        void setUnselected() {
+            itemView.setCardBackgroundColor(cardBackgroundColor);
+        }
+    }
 
-            public void setSelected() {
-                view.setCardBackgroundColor(ContextCompat.getColor(getContext(), R.color.bg_selected));
-            }
+    /**
+     * View holder for items where only time is to be shown.
+     */
+    private static class TimeOnlyItemViewHolder extends ItemViewHolder {
 
-            public void setUnselected() {
-                view.setCardBackgroundColor(cardBackgroundColor);
-            }
+        public TimeOnlyItemViewHolder(@NonNull View itemView) {
+            super(R.layout.reminder_card_datefield_time_only, (CardView) itemView);
+        }
+    }
+
+    /**
+     * View holder for items where time and date is to be shown.
+     */
+    private static class FullDateItemViewHolder extends ItemViewHolder {
+        private final TextView dateView;
+
+        public FullDateItemViewHolder(@NonNull View itemView) {
+            super(R.layout.reminder_card_datefield_full_date, (CardView) itemView);
+            dateView = itemView.findViewById(R.id.date);
         }
     }
 }
