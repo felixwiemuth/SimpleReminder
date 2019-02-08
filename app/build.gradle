@@ -48,7 +48,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-alpha03'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.preference:preference:1.0.0'
-    implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:1.2.0'
+    implementation project(':sectionedrecyclerviewadapter')
     compileOnly 'org.projectlombok:lombok:1.18.4'
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
     testImplementation 'junit:junit:4.12'
