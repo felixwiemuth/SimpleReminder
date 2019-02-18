@@ -78,6 +78,10 @@ public class DateTimeUtil {
         return DateUtils.formatDateTime(context, date.getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_ALL);
     }
 
+    public static String formatDateWithDayOfWeek(Context context, Date date) {
+        return DateUtils.formatDateTime(context, date.getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_ALL);
+    }
+
     public static String formatTime(Date date) {
         return getTimeFormat().format(date);
     }

@@ -44,7 +44,6 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
 
-import java.text.DateFormatSymbols;
 import java.util.*;
 
 /**
@@ -263,10 +262,18 @@ public class RemindersListFragment extends Fragment {
         if (MAX_DAY_SECTIONS != 0) {
             int dayOffset = 0; // days from the current day
             Function<Integer, String> makeSectionTitle = (Integer d) -> {
+//                String date = DateTimeUtil.formatDateWithDayOfWeek(getContext(), currentTime.getTime()); // same as below but with all abbreviated
+                String date = DateUtils.formatDateTime(getContext(), currentTime.getTimeInMillis(),
+                        DateUtils.FORMAT_SHOW_DATE
+                                |DateUtils.FORMAT_SHOW_WEEKDAY
+                                | DateUtils.FORMAT_ABBREV_MONTH
+                                | DateUtils.FORMAT_NO_YEAR);
                 if (d < 2) { // Use relative notion of the day only for "today" and "tomorrow"
-                    return DateUtils.getRelativeTimeSpanString(currentTime.getTimeInMillis(), now.getTimeInMillis(), DateUtils.DAY_IN_MILLIS, DateUtils.FORMAT_SHOW_WEEKDAY).toString();
+                    return DateUtils.getRelativeTimeSpanString(currentTime.getTimeInMillis(), now.getTimeInMillis(), DateUtils.DAY_IN_MILLIS, DateUtils.FORMAT_SHOW_WEEKDAY).toString()
+                            + " \u2014 " + date;
                 } else { // Use the full name of the day of week otherwise
-                    return DateFormatSymbols.getInstance().getWeekdays()[currentTime.get(Calendar.DAY_OF_WEEK)];
+                    return date;
+//                    return DateFormatSymbols.getInstance().getWeekdays()[currentTime.get(Calendar.DAY_OF_WEEK)]; // just show weekday
                 }
             };
 
