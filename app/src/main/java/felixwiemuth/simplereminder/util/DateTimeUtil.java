@@ -18,6 +18,8 @@
 package felixwiemuth.simplereminder.util;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.text.format.DateUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -72,8 +74,8 @@ public class DateTimeUtil {
         return getDateTimeFormat().format(date);
     }
 
-    public static String formatDate(Date date) {
-        return getDateFormat().format(date);
+    public static String formatDate(Context context, Date date) {
+        return DateUtils.formatDateTime(context, date.getTime(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR | DateUtils.FORMAT_ABBREV_ALL);
     }
 
     public static String formatTime(Date date) {

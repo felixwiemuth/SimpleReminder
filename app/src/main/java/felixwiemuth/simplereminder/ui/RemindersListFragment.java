@@ -415,7 +415,7 @@ public class RemindersListFragment extends Fragment {
                 TimeOnlyItemViewHolder timeOnlyHolder = (TimeOnlyItemViewHolder) viewHolder;
             } else if (reminderCardFullDateViewType.isInstanceOf(viewHolder)) {
                 FullDateItemViewHolder fullDateHolder = (FullDateItemViewHolder) viewHolder;
-                fullDateHolder.dateView.setText(DateTimeUtil.formatDate(reminder.getDate()));
+                fullDateHolder.dateView.setText(DateTimeUtil.formatDate(getContext(), reminder.getDate()));
             }
 
             // Set color of datefield
