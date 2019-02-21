@@ -16,4 +16,4 @@
  */
 
 include ':app', ':sectionedrecyclerviewadapter'
-project(':sectionedrecyclerviewadapter').projectDir = new File('SectionedRecyclerViewAdapter/library')
+project(':sectionedrecyclerviewadapter').projectDir = new File('app/lib/SectionedRecyclerViewAdapter/library')
