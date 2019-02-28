@@ -130,12 +130,15 @@ public class RemindersListFragment extends Fragment {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_edit:
-                    getOnlySelectedReminder(); //TODO implement
-                    mode.finish();
+                    //TODO implement
+                    getOnlySelectedReminder();
+                    Toast.makeText(getContext(), getString(R.string.reminder_list_action_placeholder), Toast.LENGTH_SHORT).show();
+//                    mode.finish();
                     break;
                 case R.id.action_reuse:
                     //TODO implement
-                    mode.finish();
+                    Toast.makeText(getContext(), getString(R.string.reminder_list_action_placeholder), Toast.LENGTH_SHORT).show();
+//                    mode.finish();
                     break;
                 case R.id.action_copy_text:
                     ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
@@ -148,7 +151,8 @@ public class RemindersListFragment extends Fragment {
                     break;
                 case R.id.action_add_template:
                     //TODO implement
-                    mode.finish();
+                    Toast.makeText(getContext(), getString(R.string.reminder_list_action_placeholder), Toast.LENGTH_SHORT).show();
+//                    mode.finish();
                     break;
                 case R.id.action_delete:
                     ReminderManager.removeReminders(getContext(), selection);

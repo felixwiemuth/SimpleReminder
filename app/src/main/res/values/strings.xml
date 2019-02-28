@@ -30,6 +30,7 @@
     <string name="tab_reminders">Current</string>
     <string name="tab_templates">Templates</string>
     <string name="action_settings">Settings</string>
+    <string name="reminder_list_action_placeholder">Coming soon!</string> <!-- TODO remove when implemented -->
     <string name="reminder_list_action_edit">Edit</string>
     <string name="reminder_list_action_copy_text">Copy text</string>
     <string name="reminder_list_action_copy_text_feedback">Copied to clipboard</string>
