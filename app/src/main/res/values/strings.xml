@@ -31,6 +31,8 @@
     <string name="tab_templates">Templates</string>
     <string name="action_settings">Settings</string>
     <string name="reminder_list_action_edit">Edit</string>
+    <string name="reminder_list_action_copy_text">Copy text</string>
+    <string name="reminder_list_action_copy_text_feedback">Copied to clipboard</string>
     <string name="reminder_list_action_reuse">Reuse</string>
     <string name="reminder_list_action_mark_done">Mark done</string>
     <string name="reminder_list_action_add_template">Add as template</string>

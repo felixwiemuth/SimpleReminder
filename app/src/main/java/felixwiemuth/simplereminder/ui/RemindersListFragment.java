@@ -17,6 +17,8 @@
 
 package felixwiemuth.simplereminder.ui;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.*;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -100,6 +103,7 @@ public class RemindersListFragment extends Fragment {
      */
     private ActionMode actionMode;
     private MenuItem menuActionReuse;
+    private MenuItem menuActionCopyText;
     private MenuItem menuActionMarkDone;
     private MenuItem menuActionEdit;
 
@@ -109,6 +113,7 @@ public class RemindersListFragment extends Fragment {
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.menu_reminders_list_actions, menu);
             menuActionReuse = menu.findItem(R.id.action_reuse);
+            menuActionCopyText = menu.findItem(R.id.action_copy_text);
             menuActionMarkDone = menu.findItem(R.id.action_mark_done);
             menuActionEdit = menu.findItem(R.id.action_edit);
             return true;
@@ -125,15 +130,17 @@ public class RemindersListFragment extends Fragment {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_edit:
-                    if (selection.size() != 1) {
-                        throw new ImplementationError("Selection must have size 1.");
-                    }
-                    reminders.get(selection.iterator().next());
+                    getOnlySelectedReminder(); //TODO implement
                     mode.finish();
                     break;
                 case R.id.action_reuse:
                     //TODO implement
                     mode.finish();
+                    break;
+                case R.id.action_copy_text:
+                    ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                    clipboardManager.setPrimaryClip(ClipData.newPlainText("Reminder text", getOnlySelectedReminder().getText()));
+                    Toast.makeText(getContext(), getString(R.string.reminder_list_action_copy_text_feedback), Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.action_mark_done:
                     ReminderManager.updateReminders(getContext(), r -> r.setStatus(Reminder.Status.DONE), selection, true); // have to reschedule as some might still be scheduled
@@ -159,6 +166,13 @@ public class RemindersListFragment extends Fragment {
                     throw new ImplementationError("Action not implemented.");
             }
             return true;
+        }
+
+        private Reminder getOnlySelectedReminder() {
+            if (selection.size() != 1) {
+                throw new ImplementationError("Selection must have size 1.");
+            }
+            return reminders.get(selection.iterator().next());
         }
 
         @Override
@@ -327,6 +341,9 @@ public class RemindersListFragment extends Fragment {
     private void updateAvailableActions() {
         setMenuItemAvailability(
                 menuActionReuse,
+                selection.size() == 1);
+        setMenuItemAvailability(
+                menuActionCopyText,
                 selection.size() == 1);
         boolean selectionContainsDone = false;
         for (Integer i : selection) {
