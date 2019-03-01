@@ -18,6 +18,8 @@
 package felixwiemuth.simplereminder.ui;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +34,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import felixwiemuth.simplereminder.R;
+import felixwiemuth.simplereminder.ui.util.HtmlDialogFragment;
 import felixwiemuth.simplereminder.util.ImplementationError;
 
 public class RemindersListActivity extends AppCompatActivity {
@@ -103,12 +106,18 @@ public class RemindersListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
+        } else if (id == R.id.action_about) {
+            try {
+                PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                String title = getString(R.string.app_name) + " " + packageInfo.versionName;
+                HtmlDialogFragment.displayHtmlDialogFragment(getSupportFragmentManager(), title, R.raw.about); // TODO add action to display change log
+            } catch (PackageManager.NameNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
         }
-
         return super.onOptionsItemSelected(item);
     }
 
