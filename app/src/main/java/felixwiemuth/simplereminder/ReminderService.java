@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import felixwiemuth.simplereminder.data.Reminder;
+import felixwiemuth.simplereminder.ui.RemindersListActivity;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.EnumUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;
@@ -180,12 +181,16 @@ public class ReminderService extends IntentService {
                 .action(Action.MARK_DONE)
                 .buildPendingIntent(context);
 
+        Intent intent = new Intent(context, RemindersListActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent openRemindersListIntent = PendingIntent.getActivity(context, 0, intent, 0); //TODO will this request code interfere with ID=0 reminder? (should not, as different kinds of pending intent)
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_REMINDER)
                 .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(text)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setContentIntent(openRemindersListIntent)
                 .setDeleteIntent(markDoneIntent)
                 .setPriority(Integer.valueOf(Prefs.getStringPref(R.string.prefkey_priority, "0", context)));
 
