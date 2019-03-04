@@ -17,9 +17,7 @@
 
 package felixwiemuth.simplereminder.ui;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
+import android.content.*;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.format.DateUtils;
@@ -36,6 +34,7 @@ import androidx.arch.core.util.Function;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderManager;
@@ -76,6 +75,9 @@ public class RemindersListFragment extends Fragment {
          */
         TIME_ONLY_IF_TODAY
     }
+
+    public static final String BROADCAST_REMINDERS_UPDATED = "felixwiemuth.simplereminder.BROADCAST_REMINDERS_UPDATED";
+    private BroadcastReceiver broadcastReceiver;
 
     private CustomViewType reminderCardTimeOnlyViewType = new CustomViewType(TimeOnlyItemViewHolder.class, R.layout.reminder_card);
     private CustomViewType reminderCardFullDateViewType = new CustomViewType(FullDateItemViewHolder.class, R.layout.reminder_card);
@@ -188,6 +190,10 @@ public class RemindersListFragment extends Fragment {
         }
     };
 
+    public static Intent getRemindersUpdatedBroadcastIntent() {
+        return new Intent(BROADCAST_REMINDERS_UPDATED);
+    }
+
     public RemindersListFragment() {
         // Required empty public constructor
     }
@@ -206,6 +212,15 @@ public class RemindersListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         selection = new HashSet<>();
         reminders = new SparseArray<>();
+
+
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                reloadRemindersListAndUpdateRecyclerView();
+            }
+        };
+
     }
 
     @Override
@@ -214,6 +229,18 @@ public class RemindersListFragment extends Fragment {
         remindersListRecyclerView = rootView.findViewById(R.id.reminders_list);
         reloadRemindersListAndUpdateRecyclerView();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter(BROADCAST_REMINDERS_UPDATED));
+    }
+
+    @Override
+    public void onPause() {
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
+        super.onPause();
     }
 
     /**

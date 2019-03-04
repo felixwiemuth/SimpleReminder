@@ -26,8 +26,10 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.ui.RemindersListActivity;
+import felixwiemuth.simplereminder.ui.RemindersListFragment;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.EnumUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;
@@ -137,12 +139,14 @@ public class ReminderService extends IntentService {
                     sendNotification(context, reminder.getId(), reminder.getText());
                     reminder.setStatus(Reminder.Status.NOTIFIED);
                     ReminderManager.updateReminder(context, reminder, false);
+                    sendRemindersChangedBroadcast(context);
                 }
         ),
         MARK_DONE(
                 (context, reminder) -> {
                     reminder.setStatus(Reminder.Status.DONE);
                     ReminderManager.updateReminder(context, reminder, false);
+                    sendRemindersChangedBroadcast(context);
                 }
         );
 
@@ -200,6 +204,14 @@ public class ReminderService extends IntentService {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(id, builder.build());
+    }
+
+    /**
+     * Sends a local broadcast indicating that the list of reminders changed.
+     * @param context
+     */
+    private static void sendRemindersChangedBroadcast(Context context) {
+        LocalBroadcastManager.getInstance(context).sendBroadcast(RemindersListFragment.getRemindersUpdatedBroadcastIntent());
     }
 
     /**
