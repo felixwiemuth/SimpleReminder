@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.format.DateUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -31,7 +32,6 @@ import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderManager;
 import felixwiemuth.simplereminder.data.Reminder;
 
-import java.text.DateFormat;
 import java.util.Calendar;
 
 /**
@@ -93,15 +93,10 @@ public class AddReminderDialogActivity extends AppCompatActivity {
             Reminder.ReminderBuilder reminderBuilder = Reminder.builder()
                     .date(time.getTime())
                     .text(nameTextView.getText().toString());
-            ReminderManager.addReminder(AddReminderDialogActivity.this, reminderBuilder)
-            ;
-            String toastText = getString(R.string.toast_reminder_added_for);
-            if (tomorrow) {
-                toastText += getString(R.string.toast_reminder_added_tomorrow);
-            }
-            toastText += DateFormat.getTimeInstance(DateFormat.SHORT).format(time.getTime());
-            int duration = Toast.LENGTH_LONG;
+            ReminderManager.addReminder(AddReminderDialogActivity.this, reminderBuilder);
 
+            String toastText = getString(R.string.toast_reminder_due, DateUtils.getRelativeTimeSpanString(time.getTimeInMillis(), System.currentTimeMillis(), 0));
+            int duration = Toast.LENGTH_LONG;
             Toast toast = Toast.makeText(AddReminderDialogActivity.this, toastText, duration);
             toast.show();
 
