@@ -25,36 +25,59 @@ import androidx.preference.PreferenceManager;
 import static android.content.Context.MODE_PRIVATE;
 
 /**
+ * Stores preferences and current status of the app.
+ *
  * @author Felix Wiemuth
  */
 public class Prefs {
     /**
      * Name of preferences that store the internal state of the app, like scheduled notifications.
      */
-    public static String PREFS_STATE = "state";
-    public static String PREF_STATE_NEXTID = "nextid";
+    private static String PREFS_STATE = "state";
 
-    public static String PREFS_SETTINGS = "settings";
+
+    // User settings are in the default shared preferences
+//    /**
+//     * Name of preferences that store user settings.
+//     */
+//    private static String PREFS_SETTINGS = "settings";
+
+    /**
+     * The next ID for a reminder.
+     */
+    static String PREF_STATE_NEXTID = "nextid";
 
     /**
      * GSON-serialized list of {@link felixwiemuth.simplereminder.data.Reminder}s.
      */
-    public static String PREF_STATE_CURRENT_REMINDERS = "reminders";
+    static String PREF_STATE_CURRENT_REMINDERS = "reminders";
 
-    public static SharedPreferences getStatePrefs(Context context) {
+    /**
+     * Indicates whether the list of reminders {@link #PREF_STATE_CURRENT_REMINDERS} has been updated.
+     */
+    private static String PREF_STATE_REMINDERS_UPDATED = "remindersUpdated";
+
+    static SharedPreferences getStatePrefs(Context context) {
         return context.getSharedPreferences(PREFS_STATE, MODE_PRIVATE);
     }
 
-    public static SharedPreferences getSettings(Context context) {
-        return context.getSharedPreferences(PREFS_SETTINGS, MODE_PRIVATE);
+//    public static SharedPreferences getSettings(Context context) {
+//        return context.getSharedPreferences(PREFS_SETTINGS, MODE_PRIVATE);
+//    }
+
+    public static boolean isRemindersUpdated(Context context) {
+        return getStatePrefs(context).getBoolean(PREF_STATE_REMINDERS_UPDATED, false);
     }
 
+    public static void setRemindersUpdated(boolean b, Context context) {
+        getStatePrefs(context).edit().putBoolean(PREF_STATE_REMINDERS_UPDATED, b).commit();
+    }
 
     /**
      * Get a string from settings preferences using a key from a string resource.
      *
-     * @param key         {@link} the resource id of the key
-     * @param defValue    the default value to be used it the preference is not set
+     * @param key      {@link} the resource id of the key
+     * @param defValue the default value to be used it the preference is not set
      * @param context
      * @return
      */
@@ -65,8 +88,8 @@ public class Prefs {
     /**
      * Get a boolean from default preferences using a key from a string resource.
      *
-     * @param key         {@link} the resource id of the key
-     * @param defValue    the default value to be used it the preference is not set
+     * @param key      {@link} the resource id of the key
+     * @param defValue the default value to be used it the preference is not set
      * @param context
      * @return
      */
