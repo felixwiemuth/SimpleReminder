@@ -36,6 +36,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
+import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderManager;
 import felixwiemuth.simplereminder.data.Reminder;
@@ -211,6 +212,7 @@ public class RemindersListFragment extends Fragment {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                Prefs.setRemindersUpdated(false, getContext()); // clear flag
                 reloadRemindersListAndUpdateRecyclerView();
             }
         };
@@ -229,6 +231,10 @@ public class RemindersListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter(BROADCAST_REMINDERS_UPDATED));
+        if (Prefs.isRemindersUpdated(getContext())) {
+            Prefs.setRemindersUpdated(false, getContext());
+            reloadRemindersListAndUpdateRecyclerView();
+        }
     }
 
     @Override

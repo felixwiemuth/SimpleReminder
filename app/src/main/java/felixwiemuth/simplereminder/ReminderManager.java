@@ -86,7 +86,7 @@ public class ReminderManager {
             SharedPreferences.Editor editor = prefs.edit();
             operation.edit(prefs, editor);
             editor.commit();
-            sendRemindersChangedBroadcast(context);
+            notifyRemindersChangedBroadcast(context);
         } finally {
             unlock();
         }
@@ -326,11 +326,12 @@ public class ReminderManager {
     }
 
     /**
-     * Sends a local broadcast indicating that the list of reminders changed.
+     * Set the {@link Prefs#setRemindersUpdated(boolean, Context)} flag and send a local broadcast indicating that the list of reminders changed.
      *
      * @param context
      */
-    private static void sendRemindersChangedBroadcast(Context context) {
+    private static void notifyRemindersChangedBroadcast(Context context) {
+        Prefs.setRemindersUpdated(true, context);
         LocalBroadcastManager.getInstance(context).sendBroadcast(RemindersListFragment.getRemindersUpdatedBroadcastIntent());
     }
 
