@@ -20,7 +20,9 @@ package felixwiemuth.simplereminder;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import felixwiemuth.simplereminder.data.Reminder;
+import felixwiemuth.simplereminder.ui.RemindersListFragment;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -71,7 +73,7 @@ public class ReminderManager {
     }
 
     /**
-     * Edit the state preferences ({@link Prefs#PREFS_STATE}) exclusively and commit after the operation has successfully completed. This ensures that different threads editing these preferences do not overwrite their changes.
+     * Edit the state preferences ({@link Prefs#PREFS_STATE}) exclusively and commit after the operation has successfully completed. This ensures that different threads editing these preferences do not overwrite their changes. Also sends a {@link RemindersListFragment#BROADCAST_REMINDERS_UPDATED} broadcast to inform about a change. Only change reminders via this method.
      *
      * @param context
      * @param operation
@@ -84,6 +86,7 @@ public class ReminderManager {
             SharedPreferences.Editor editor = prefs.edit();
             operation.edit(prefs, editor);
             editor.commit();
+            sendRemindersChangedBroadcast(context);
         } finally {
             unlock();
         }
@@ -320,6 +323,15 @@ public class ReminderManager {
             }
             return currentReminders;
         }));
+    }
+
+    /**
+     * Sends a local broadcast indicating that the list of reminders changed.
+     *
+     * @param context
+     */
+    private static void sendRemindersChangedBroadcast(Context context) {
+        LocalBroadcastManager.getInstance(context).sendBroadcast(RemindersListFragment.getRemindersUpdatedBroadcastIntent());
     }
 
     public static List<Reminder> getReminders(Context context) {
