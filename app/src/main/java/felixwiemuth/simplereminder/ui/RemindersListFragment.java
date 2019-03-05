@@ -161,12 +161,8 @@ public class RemindersListFragment extends Fragment {
                     mode.finish();
                     break;
                 case R.id.action_select_all:
-                    for (int i = 0; i < reminders.size(); i++) {
-                        selection.add(reminders.valueAt(i).getId());
-                        remindersListRecyclerView.getAdapter().notifyItemChanged(i);
-                    }
+                    selectAll();
                     updateAvailableActions();
-//                    setAllSelected(); // less expensive alternative, but does not work yet
                     break;
                 default:
                     throw new ImplementationError("Action not implemented.");
@@ -184,9 +180,7 @@ public class RemindersListFragment extends Fragment {
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             actionMode = null;
-            selection.clear();
-            // For now reload all items as it is difficult to track which changed
-            reloadRemindersListAndUpdateRecyclerView(); // This also updates the visual selection state of items
+            unselectAll();
         }
     };
 
@@ -395,13 +389,27 @@ public class RemindersListFragment extends Fragment {
         menuItem.setVisible(available);
     }
 
+    public void selectAll() {
+        for (int i = 0; i < remindersListRecyclerView.getAdapter().getItemCount(); i++) {
+            RecyclerView.ViewHolder viewHolder = remindersListRecyclerView.findViewHolderForAdapterPosition(i);
+            if (viewHolder instanceof ItemViewHolder) {
+                ((ItemViewHolder) viewHolder).setSelected(getContext());
+            }
+        }
+        for (int i = 0; i < reminders.size(); i++) {
+            selection.add(reminders.valueAt(i).getId());
+        }
+    }
 
-    // This is an alternative to rebind all view holders but does not work yet
-//    public void setAllSelected() {
-//        for (int i = 0; i < remindersListRecyclerView.getAdapter().getItemCount(); i++) {
-//            ((ReminderItemRecyclerViewAdapter.ItemViewHolder) remindersListRecyclerView.findViewHolderForAdapterPosition(i)).setSelected();
-//        }
-//    }
+    public void unselectAll() {
+        for (int i = 0; i < remindersListRecyclerView.getAdapter().getItemCount(); i++) {
+            RecyclerView.ViewHolder viewHolder = remindersListRecyclerView.findViewHolderForAdapterPosition(i);
+            if (viewHolder instanceof ItemViewHolder) {
+                ((ItemViewHolder) viewHolder).setUnselected();
+            }
+        }
+        selection.clear();
+    }
 
     private class ReminderItemSection extends StatelessSection {
 
@@ -558,12 +566,20 @@ public class RemindersListFragment extends Fragment {
             this.timeView = itemView.findViewById(R.id.time);
         }
 
+        boolean isSelected() {
+            return itemView.isSelected();
+        }
+
         void setSelected(Context context) {
+            itemView.setSelected(true);
             itemView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.bg_selected));
         }
 
         void setUnselected() {
-            itemView.setCardBackgroundColor(cardBackgroundColor);
+            if (isSelected()) {
+                itemView.setSelected(false);
+                itemView.setCardBackgroundColor(cardBackgroundColor);
+            }
         }
     }
 
