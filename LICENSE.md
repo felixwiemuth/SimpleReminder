@@ -34,6 +34,7 @@ The following lists included unmodified third-party software.
 | Name                                                                                   | Copyright                       | License                           |
 |----------------------------------------------------------------------------------------|---------------------------------|-----------------------------------|
 |[SectionedRecyclerViewAdapter](https://github.com/felixwiemuth/SectionedRecyclerViewAdapter/tree/feature/multipleItemViewTypes) | 2016 Gustavo Pagani and contributors (see VCS) | [MIT](LICENSES/MIT) |
+| [ACRA (Application Crash Reporting for Android)](https://github.com/ACRA/acra) | 2013 Kevin Gaudin | [Apache 2.0](LICENSES/APACHE-2.0) |
 | [Gson](https://github.com/google/gson)                                                 | 2008 Google Inc.                | [Apache 2.0](LICENSES/APACHE-2.0) |
 | [Material Components for Android](https://github.com/material-components/material-components-android) | The Android Open Source Project | [Apache 2.0](LICENSES/APACHE-2.0) |
 | [AndroidX libraries](https://android.googlesource.com/platform/frameworks/support.git) | The Android Open Source Project | [Apache 2.0](LICENSES/APACHE-2.0) |
