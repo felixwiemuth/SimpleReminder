@@ -15,10 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package felixwiemuth.simplereminder.ui;
+package felixwiemuth.simplereminder.ui.reminderslist;
 
 import android.content.*;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -26,12 +25,10 @@ import android.util.SparseArray;
 import android.view.*;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.arch.core.util.Function;
-import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -551,63 +548,4 @@ public class RemindersListFragment extends Fragment {
         }
     }
 
-    /**
-     * The base item view holder.
-     */
-    private static class ItemViewHolder extends RecyclerView.ViewHolder {
-        private final CardView itemView;
-        private final View datefieldView;
-        private final ColorStateList cardBackgroundColor;
-        private final TextView timeView;
-        private final TextView descriptionView;
-
-        ItemViewHolder(@LayoutRes int datefieldRes, @NonNull CardView itemView) {
-            super(itemView);
-            this.itemView = itemView;
-            this.descriptionView = itemView.findViewById(R.id.description);
-            cardBackgroundColor = itemView.getCardBackgroundColor();
-            ViewStub datefieldViewStub = itemView.findViewById(R.id.datefield_stub);
-            datefieldViewStub.setLayoutResource(datefieldRes);
-            this.datefieldView = datefieldViewStub.inflate();
-            this.timeView = itemView.findViewById(R.id.time);
-        }
-
-        boolean isSelected() {
-            return itemView.isSelected();
-        }
-
-        void setSelected(Context context) {
-            itemView.setSelected(true);
-            itemView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.bg_selected));
-        }
-
-        void setUnselected() {
-            if (isSelected()) {
-                itemView.setSelected(false);
-                itemView.setCardBackgroundColor(cardBackgroundColor);
-            }
-        }
-    }
-
-    /**
-     * View holder for items where only time is to be shown.
-     */
-    private static class TimeOnlyItemViewHolder extends ItemViewHolder {
-
-        public TimeOnlyItemViewHolder(@NonNull View itemView) {
-            super(R.layout.reminder_card_datefield_time_only, (CardView) itemView);
-        }
-    }
-
-    /**
-     * View holder for items where time and date is to be shown.
-     */
-    private static class FullDateItemViewHolder extends ItemViewHolder {
-        private final TextView dateView;
-
-        public FullDateItemViewHolder(@NonNull View itemView) {
-            super(R.layout.reminder_card_datefield_full_date, (CardView) itemView);
-            dateView = itemView.findViewById(R.id.date);
-        }
-    }
 }

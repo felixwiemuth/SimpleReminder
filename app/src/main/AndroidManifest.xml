@@ -46,7 +46,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".ui.RemindersListActivity"
+            android:name=".ui.reminderslist.RemindersListActivity"
             android:label="@string/title_activity_reminders_list"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">

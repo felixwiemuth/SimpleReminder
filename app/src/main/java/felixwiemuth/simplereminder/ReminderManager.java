@@ -22,7 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import felixwiemuth.simplereminder.data.Reminder;
-import felixwiemuth.simplereminder.ui.RemindersListFragment;
+import felixwiemuth.simplereminder.ui.reminderslist.RemindersListFragment;
 
 import java.util.HashSet;
 import java.util.Iterator;

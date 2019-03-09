@@ -18,7 +18,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="felixwiemuth.simplereminder.ui.RemindersListActivity">
+    tools:context="felixwiemuth.simplereminder.ui.reminderslist.RemindersListActivity">
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

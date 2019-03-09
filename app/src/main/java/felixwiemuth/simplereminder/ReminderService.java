@@ -27,7 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import felixwiemuth.simplereminder.data.Reminder;
-import felixwiemuth.simplereminder.ui.RemindersListActivity;
+import felixwiemuth.simplereminder.ui.reminderslist.RemindersListActivity;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.EnumUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;

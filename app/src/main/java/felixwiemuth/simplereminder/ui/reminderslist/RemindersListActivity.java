@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package felixwiemuth.simplereminder.ui;
+package felixwiemuth.simplereminder.ui.reminderslist;
 
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -34,6 +34,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import felixwiemuth.simplereminder.R;
+import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
+import felixwiemuth.simplereminder.ui.SettingsActivity;
 import felixwiemuth.simplereminder.ui.util.HtmlDialogFragment;
 import felixwiemuth.simplereminder.util.ImplementationError;
 
