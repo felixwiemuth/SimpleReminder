@@ -33,10 +33,12 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
 import felixwiemuth.simplereminder.ui.SettingsActivity;
 import felixwiemuth.simplereminder.ui.util.HtmlDialogFragment;
+import felixwiemuth.simplereminder.ui.util.UIUtils;
 import felixwiemuth.simplereminder.util.ImplementationError;
 
 public class RemindersListActivity extends AppCompatActivity {
@@ -79,6 +81,11 @@ public class RemindersListActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> startActivityForResult(new Intent(this, AddReminderDialogActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0));
+
+        // Show welcome dialog if version changed
+        if (!Prefs.checkWelcomeMessageShown(this)) {
+            UIUtils.showMessageDialog(R.string.dialog_welcome_title, getString(R.string.welcome_message), this);
+        }
     }
 
     @Override

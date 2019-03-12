@@ -19,6 +19,7 @@ package felixwiemuth.simplereminder;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import androidx.annotation.StringRes;
 import androidx.preference.PreferenceManager;
 
@@ -57,6 +58,8 @@ public class Prefs {
      */
     private static String PREF_STATE_REMINDERS_UPDATED = "remindersUpdated";
 
+    private static String PREF_STATE_WELCOME_MESSAGE_SHOWN = "welcomeMessageShown";
+
     static SharedPreferences getStatePrefs(Context context) {
         return context.getSharedPreferences(PREFS_STATE, MODE_PRIVATE);
     }
@@ -71,6 +74,28 @@ public class Prefs {
 
     public static void setRemindersUpdated(boolean b, Context context) {
         getStatePrefs(context).edit().putBoolean(PREF_STATE_REMINDERS_UPDATED, b).commit();
+    }
+
+    /**
+     * Checks whether the welcome message for the current version has already been shown and updates the shown status to the current version.
+     *
+     * @param context
+     * @return
+     */
+    public static boolean checkWelcomeMessageShown(Context context) {
+        int lastShown = getStatePrefs(context).getInt(PREF_STATE_WELCOME_MESSAGE_SHOWN, -1);
+        int currentVersion;
+        try {
+            currentVersion = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException("Cannot show welcome message", e);
+        }
+        if (lastShown != currentVersion) {
+            getStatePrefs(context).edit().putInt(PREF_STATE_WELCOME_MESSAGE_SHOWN, currentVersion).apply();
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**

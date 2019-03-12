@@ -17,6 +17,8 @@
 
 <resources>
     <string name="app_name" translatable="false">SimpleReminder</string>
+    <string name="dialog_welcome_title">Welcome</string>
+    <string name="welcome_message">Welcome to SimpleReminder! This is an early version which is not complete and might contain some problems - see \"About\" on how to report them.\n\nUse the launcher icon \"Add reminder\" and start adding reminders!\n\nSimpleReminder is free software (licensed under the GNU General Public License) and comes without any warranty.</string>
     <string name="add_reminder_title">Add reminder</string>
     <string name="add_reminder_name_hint">Reminder text (optional)</string>
     <string name="button_add_reminder">Add</string>
