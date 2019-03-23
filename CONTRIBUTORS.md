@@ -7,3 +7,4 @@ The app is currently developed and maintained by Felix Wiemuth (Github: [felixwi
 ## Ideas
 The following people contributed ideas and inspiration:
 - Nick Faulwetter
+- Hanna Beißwenger
