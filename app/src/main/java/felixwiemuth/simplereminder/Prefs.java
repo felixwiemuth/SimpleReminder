@@ -44,6 +44,11 @@ public class Prefs {
 //    private static String PREFS_SETTINGS = "settings";
 
     /**
+     * The version of the format reminders are saved at key {@link #PREF_STATE_CURRENT_REMINDERS}.
+     */
+    private static String PREF_STATE_REMINDERS_FORMAT_VERSION = "remindersFormatVersion";
+
+    /**
      * The next ID for a reminder.
      */
     static String PREF_STATE_NEXTID = "nextid";
@@ -74,6 +79,14 @@ public class Prefs {
 
     public static void setRemindersUpdated(boolean b, Context context) {
         getStatePrefs(context).edit().putBoolean(PREF_STATE_REMINDERS_UPDATED, b).commit();
+    }
+
+    public static int getStoredRemindersListFormatVersion(Context context) {
+        SharedPreferences prefs = getStatePrefs(context);
+        if (!prefs.contains(PREF_STATE_REMINDERS_FORMAT_VERSION)) {
+            prefs.edit().putInt(PREF_STATE_REMINDERS_FORMAT_VERSION, Main.REMINDERS_LIST_FORMAT_VERSION).commit();
+        }
+        return prefs.getInt(PREF_STATE_REMINDERS_FORMAT_VERSION, Main.REMINDERS_LIST_FORMAT_VERSION);
     }
 
     /**

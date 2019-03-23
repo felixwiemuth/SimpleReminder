@@ -35,6 +35,12 @@ import org.acra.annotation.AcraMailSender;
         resText = R.string.acra_prompt,
         resCommentPrompt = R.string.acra_comment_prompt)
 public class Main extends Application {
+
+    /**
+     * The current (newest) version of storing reminders in {@link Prefs}.
+     */
+    public static int REMINDERS_LIST_FORMAT_VERSION = 1;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -42,6 +48,7 @@ public class Main extends Application {
             return;
         }
         PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
+        Prefs.getStoredRemindersListFormatVersion(this); // Initialize if not set
     }
 
     @Override
