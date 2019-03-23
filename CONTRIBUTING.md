@@ -18,3 +18,8 @@ To get the best results and avoid problems, please follow these steps:
 
 - When creating a file, make sure that the project's copyright header (see other project files) is added.
 - Do not change the copyright year of existing files.
+
+## Attribution ##
+Add or update entries in the following places (the description may be left out) in the given format (name and email address are optional): 
+- [CONTRIBUTORS.md](CONTRIBUTORS.md): `[Full Name or github-username](https://github.com/felixwiemuth/SimpleReminder/commits?author=github-username) ([Full Name or email](mailto:Full Name <email>))`
+- Acknowledgment section of the app's [about page](app/src/main/res/raw/about.html): `<a href="https://github.com/github-username">Full name or github-username</a> (<a href="mailto:Full Name <email>">Full Name or email</a>)`
