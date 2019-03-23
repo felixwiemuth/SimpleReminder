@@ -1,0 +1,40 @@
+diff --git a/OPEN_SOURCE_LICENSES.md b/OPEN_SOURCE_LICENSES.md
+index 518d540..78d3a56 100644
+--- a/OPEN_SOURCE_LICENSES.md
++++ b/OPEN_SOURCE_LICENSES.md
+@@ -1,25 +1,7 @@
+-# License information #
+-
+-This project is licensed under the GNU General Public License (GPL), see [LICENSES/GPL3](LICENSES/GPL3) for the full text.
+-
+-
+-## Contributions ##
+-
+-Each contribution to this project is implicitly made under the project's license. For a list of contributors, see [CONTRIBUTORS.md](CONTRIBUTORS.md).
+-
+-
+-## Included work ##
+-
+-This project incorporates third-party work covered by licenses other than this project's license. Third-party work is incorporated in two forms: modified and unmodified. Work incorporated into the `src/` directories of this project's modules may have been modified whereas work included in source or binary form under `lib/` directories or as a mere dependency link in build files (and thus only included in compiled executable forms of this project) is always unmodified. Full texts of the original licenses can be found under [LICENSES](LICENSES).
+-
+-Note that the attributions for third-party work in the following are only complete for this project (the fork) and may not mention all third-party work included by the original project.
++## Open source licenses ##
+ 
+ ### Included modified work ###
+ 
+-Included modified third-party work is hereby redistributed under GPL. On first modification under GPL, a file's original copyright header may have been replaced by this project's copyright header, indicating that the derived work is distributed under GPL. The exact modifications, including license information, are tracked by the version control system (Git).
+-
+-The following lists possibly modified thiry-party work incorporated into this project, with the commit of incorporation.
+-
+ | Original work                                                          | Copyright                                                                   | License                                                     | Commit  |
+ |------------------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------|---------|
+ | [Android Licenses Page](https://github.com/adamsp/AndroidLicensesPage) | 2013 Adam Speakman                                                          | [Apache 2.0](LICENSES/APACHE-2.0)                           | e4de56f |
+@@ -27,8 +9,6 @@ The following lists possibly modified thiry-party work incorporated into this pr
+ 
+ ### Included umodified work ###
+ 
+-The following lists included unmodified third-party software.
+-
+ #### Included libraries ####
+ 
+ | Name                                                                                   | Copyright                       | License                           |
