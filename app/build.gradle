@@ -29,8 +29,8 @@ android {
         applicationId "felixwiemuth.simplereminder"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 5
-        versionName "0.9.3"
+        versionCode 6
+        versionName "0.9.3-dev"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
