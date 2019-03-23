@@ -156,7 +156,7 @@ public class RemindersListActivity extends AppCompatActivity {
                     remindersFragment = RemindersListFragment.newInstance();
                     return remindersFragment;
                 case 1:
-                    return new Fragment(); //TODO list templates
+                    return TemplatesFragment.newInstance();
                 default:
                     throw new ImplementationError("Invalid tab number " + position);
 
