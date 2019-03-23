@@ -51,6 +51,8 @@ If you have ideas on how to improve SimpleReminder, you are welcome to contribut
 - Translate SimpleReminder (please wait until the app has reached a more complete state)
 - Implement features: please see [Contributing](CONTRIBUTING.md) for more information
 
+For a list of contributors, see [CONTRIBUTORS.md](CONTRIBUTORS.md).
+
 
 ## Bug reports and feature requests
 Please report bugs on [Github](https://github.com/felixwiemuth/SimpleReminder/issues). Feature requests may also be filed as an issue.
