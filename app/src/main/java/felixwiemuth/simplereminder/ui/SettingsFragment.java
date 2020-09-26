@@ -18,15 +18,42 @@
 package felixwiemuth.simplereminder.ui;
 
 
+import android.content.ComponentName;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import androidx.preference.PreferenceFragmentCompat;
 import felixwiemuth.simplereminder.R;
+import felixwiemuth.simplereminder.BootReceiver;
 
-public class SettingsFragment extends PreferenceFragmentCompat {
+public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    public static final String KEY_PREF_RUN_ON_BOOT = "pref_key_run_on_boot";
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        switch (key) {
+            case KEY_PREF_RUN_ON_BOOT:
+                ComponentName receiver = new ComponentName(getContext(), BootReceiver.class);
+                PackageManager pm = getContext().getPackageManager();
+
+                if (sharedPreferences.getBoolean(key, false)) {
+                    // Enable run on boot
+                    pm.setComponentEnabledSetting(receiver,
+                            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                            PackageManager.DONT_KILL_APP);
+                } else {
+                    // Disable run on boot
+                    pm.setComponentEnabledSetting(receiver,
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                            PackageManager.DONT_KILL_APP);
+                }
+                break;
+        }
+    }
 }

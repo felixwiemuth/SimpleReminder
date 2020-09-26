@@ -284,6 +284,23 @@ public class ReminderManager {
         }
     }
 
+    /**
+     * Schedule all future reminders and show all due reminders.
+     * @param context
+     */
+    public static void scheduleAllReminders(Context context) {
+        long currentTime = System.currentTimeMillis();
+        for (Reminder r : getReminders(context)) {
+            if (r.getStatus() == Reminder.Status.SCHEDULED) {
+                if (r.getDate().getTime() <= currentTime) {
+                    ReminderService.showReminder(context, r);
+                } else {
+                    ReminderService.scheduleReminder(context, r);
+                }
+            }
+        }
+    }
+
 //    public static void removeReminder(Context context, Reminder reminder) {
 //        updateRemindersList(context, (reminders -> {
 //            removeReminderWithSameId(reminders.iterator(), reminder);

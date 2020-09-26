@@ -17,6 +17,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="felixwiemuth.simplereminder">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
         android:name=".Main"
         android:allowBackup="false"
@@ -44,6 +46,15 @@
             android:name=".ReminderService"
             android:enabled="true"
             android:exported="false" />
+
+        <receiver
+            android:name=".BootReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".ui.reminderslist.RemindersListActivity"

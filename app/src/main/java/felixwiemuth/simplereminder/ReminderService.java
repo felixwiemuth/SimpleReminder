@@ -134,9 +134,7 @@ public class ReminderService extends IntentService {
     enum Action {
         NOTIFY(
                 (context, reminder) -> {
-                    sendNotification(context, reminder.getId(), reminder.getText());
-                    reminder.setStatus(Reminder.Status.NOTIFIED);
-                    ReminderManager.updateReminder(context, reminder, false);
+                    showReminder(context, reminder);
                 }
         ),
         MARK_DONE(
@@ -173,6 +171,17 @@ public class ReminderService extends IntentService {
         Action action = EnumUtil.deserialize(Action.class).from(intent);
         Reminder reminder = ReminderManager.getReminder(this, id);
         action.run(this, reminder);
+    }
+
+    /**
+     * Show the reminder as appropriate and update its status. Should be used on due reminders.
+     * @param context
+     * @param reminder
+     */
+    public static void showReminder(Context context, Reminder reminder) {
+        sendNotification(context, reminder.getId(), reminder.getText());
+        reminder.setStatus(Reminder.Status.NOTIFIED);
+        ReminderManager.updateReminder(context, reminder, false);
     }
 
     private static void sendNotification(Context context, int id, String text) {
