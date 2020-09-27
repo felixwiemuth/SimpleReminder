@@ -17,10 +17,13 @@
 
 package felixwiemuth.simplereminder;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+
 import androidx.annotation.StringRes;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -31,6 +34,8 @@ import static android.content.Context.MODE_PRIVATE;
  * @author Felix Wiemuth
  */
 public class Prefs {
+    public static final String PREF_KEY_RUN_ON_BOOT = "run_on_boot";
+
     /**
      * Name of preferences that store the internal state of the app, like scheduled notifications.
      */
@@ -108,6 +113,23 @@ public class Prefs {
             return false;
         } else {
             return true;
+        }
+    }
+
+    /**
+     * Check whether reschedule on boot is activated. If yes, check whether the required permission is granted (if not, deactivate this option). If no, reschedule reminders.
+     *
+     * @param context
+     * @return if true, schedule on boot is not activated and it should be manually rescheduled at the start of the app
+     */
+    public static void checkRescheduleOnBoot(Context context) {
+        if (getBooleanPref(R.string.prefkey_run_on_boot, false, context)) {
+            if (ContextCompat.checkSelfPermission(context.getApplicationContext(), Manifest.permission.RECEIVE_BOOT_COMPLETED) != PackageManager.PERMISSION_GRANTED) {
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_KEY_RUN_ON_BOOT, false).apply();
+                BootReceiver.setBootReceiverEnabled(context, false);
+            }
+        } else {
+            ReminderManager.scheduleAllReminders(context);
         }
     }
 

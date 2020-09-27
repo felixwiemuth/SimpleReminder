@@ -18,8 +18,10 @@
 package felixwiemuth.simplereminder;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 
 /**
  * Handles broadcasts.
@@ -36,5 +38,17 @@ public class BootReceiver extends BroadcastReceiver {
         || intent.getAction().equals("android.intent.action.QUICKBOOT_POWERON")) {
             ReminderManager.scheduleAllReminders(context);
         }
+    }
+
+    public static void setBootReceiverEnabled(Context context, boolean enabled) {
+        ComponentName receiver = new ComponentName(context, BootReceiver.class);
+        PackageManager pm = context.getPackageManager();
+        int newState;
+        if (enabled) {
+            newState = PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+        } else {
+            newState = PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+        }
+        pm.setComponentEnabledSetting(receiver, newState, PackageManager.DONT_KILL_APP);
     }
 }

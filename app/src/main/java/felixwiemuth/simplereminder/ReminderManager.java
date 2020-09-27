@@ -286,6 +286,7 @@ public class ReminderManager {
 
     /**
      * Schedule all future reminders and show all due reminders.
+     * If some of the reminders are already scheduled, the new registration should replace the previous.
      * @param context
      */
     public static void scheduleAllReminders(Context context) {

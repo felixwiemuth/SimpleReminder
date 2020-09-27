@@ -49,6 +49,8 @@ public class Main extends Application {
         }
         PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
         Prefs.getStoredRemindersListFormatVersion(this); // Initialize if not set
+
+        Prefs.checkRescheduleOnBoot(this);
     }
 
     @Override

@@ -18,7 +18,7 @@
 <resources>
     <string name="app_name" translatable="false">SimpleReminder</string>
     <string name="dialog_welcome_title">Welcome</string>
-    <string name="welcome_message">Welcome to SimpleReminder! This is an early version which is not complete and might contain some problems - see \"About\" on how to report them.\n\nUse the launcher icon \"Add reminder\" and start adding reminders!\n\nSimpleReminder is free software (licensed under the GNU General Public License) and comes without any warranty.</string>
+    <string name="welcome_message">Welcome to SimpleReminder! This is an early version which is not complete and might contain some problems - see \"About\" on how to report them.\n\nUse the launcher icon \"Add reminder\" and start adding reminders!\n\nIf you experience reminders not showing, take a look at the settings!\n\nSimpleReminder is free software (licensed under the GNU General Public License) and comes without any warranty.</string>
     <string name="add_reminder_title">Add reminder</string>
     <string name="add_reminder_name_hint">Reminder text (optional)</string>
     <string name="button_add_reminder">Add</string>
@@ -51,7 +51,8 @@
     <string name="preference_enable_sound">Enable sound of notifications</string>
     <string name="preference_category_app">General</string>
     <string name="preference_run_on_boot">Activate on device startup</string>
-    <string name="preference_run_on_boot_descr">Reschedule existing reminders when the device is started (requires permission). If not enabled, previously scheduled reminders cannot be shown after a restar.</string>
+    <string name="preference_run_on_boot_descr">Reschedule existing reminders when the device is started (requires permission). If not enabled, previously scheduled reminders cannot be shown after a restart.</string>
+    <string name="toast_permission_not_granted">Permission not granted.</string>
     <string name="priority_min">Min</string>
     <string name="priority_low">Low</string>
     <string name="priority_default">Middle</string>
