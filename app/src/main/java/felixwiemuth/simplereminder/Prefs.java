@@ -18,11 +18,14 @@
 package felixwiemuth.simplereminder;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.widget.Toast;
 
 import androidx.annotation.StringRes;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
@@ -70,6 +73,11 @@ public class Prefs {
 
     private static String PREF_STATE_WELCOME_MESSAGE_SHOWN = "welcomeMessageShown";
 
+    private static String PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN = "battery_optimization_dont_show_again";
+    private static String PREF_STATE_RUN_ON_BOOT_DONT_SHOW_AGAIN = "run_on_boot_dont_show_again";
+
+    public static final int PERMISSION_REQUEST_CODE_BOOT = 1;
+
     static SharedPreferences getStatePrefs(Context context) {
         return context.getSharedPreferences(PREFS_STATE, MODE_PRIVATE);
     }
@@ -116,8 +124,28 @@ public class Prefs {
         }
     }
 
+//    public static boolean isBatteryOptimizationDontShowAgain(Context context) {
+//        return getStatePrefs(context).getBoolean(PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN, false);
+//    }
+//
+//    public static void setBatteryOptimizationDontShowAgain(Context context) {
+//        getStatePrefs(context).edit().putBoolean(PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN, true).apply();
+//    }
+
+    public static boolean isRunOnBootDontShowAgain(Context context) {
+        return getStatePrefs(context).getBoolean(PREF_STATE_RUN_ON_BOOT_DONT_SHOW_AGAIN, false);
+    }
+
+    public static void setRunOnBootDontShowAgain(Context context) {
+        getStatePrefs(context).edit().putBoolean(PREF_STATE_RUN_ON_BOOT_DONT_SHOW_AGAIN, true).apply();
+    }
+
+    public static boolean isRunOnBoot(Context context) {
+        return getBooleanPref(R.string.prefkey_run_on_boot, false, context);
+    }
+
     /**
-     * Check whether reschedule on boot is activated. If yes, check whether the required permission is granted (if not, deactivate this option). If no, reschedule reminders.
+     * Check whether reschedule on boot is activated. If yes, check whether the required permission is granted (if not, deactivate this option). If not, reschedule reminders.
      *
      * @param context
      * @return if true, schedule on boot is not activated and it should be manually rescheduled at the start of the app
@@ -130,6 +158,25 @@ public class Prefs {
             }
         } else {
             ReminderManager.scheduleAllReminders(context);
+        }
+    }
+
+    /**
+     * Try to enable running on boot; if the required permission is not granted, ask the user on the given activity.
+     * @param context
+     * @param activity
+     */
+    public static void enableRunOnBoot(Context context, Activity activity) {
+        // If the required permission is not granted yet, ask the user
+        if (ContextCompat.checkSelfPermission(context.getApplicationContext(), Manifest.permission.RECEIVE_BOOT_COMPLETED) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, PERMISSION_REQUEST_CODE_BOOT);
+        }
+        // If permission is now given, enable run on boot
+        if (ContextCompat.checkSelfPermission(context.getApplicationContext(), Manifest.permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_GRANTED) {
+            BootReceiver.setBootReceiverEnabled(context, true);
+            getStatePrefs(context).edit().putBoolean(PREF_KEY_RUN_ON_BOOT, true).apply();
+        } else {
+            Toast.makeText(context, R.string.toast_permission_not_granted, Toast.LENGTH_LONG).show();
         }
     }
 

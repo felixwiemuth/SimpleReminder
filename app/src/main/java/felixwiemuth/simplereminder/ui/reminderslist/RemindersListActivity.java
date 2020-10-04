@@ -17,12 +17,18 @@
 
 package felixwiemuth.simplereminder.ui.reminderslist;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -31,8 +37,10 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
@@ -82,6 +90,14 @@ public class RemindersListActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> startActivityForResult(new Intent(this, AddReminderDialogActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0));
 
+        // NOTE: Only enable the following if it turns out to be a very common problem.
+        // Check whether battery optimization is disabled and show dialog to disable it otherwise.
+        // This should be shown before the welcome dialog, so that the welcome dialog is on top.
+        // checkBatteryOptimization(this);
+
+        // Check whether run on boot is enabled and whether should ask user to enable it.
+        checkRunOnBoot();
+
         // Show welcome dialog if version changed
         if (!Prefs.checkWelcomeMessageShown(this)) {
             UIUtils.showMessageDialog(R.string.dialog_welcome_title, getString(R.string.welcome_message), this);
@@ -129,6 +145,49 @@ public class RemindersListActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void checkRunOnBoot() {
+        if (Prefs.isRunOnBoot(this) || Prefs.isRunOnBootDontShowAgain(this)) {
+            return;
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_startup_run_on_boot_title)
+                .setMessage(R.string.dialog_startup_run_on_boot_message)
+                .setPositiveButton(R.string.dialog_startup_run_on_boot_turn_off, (d, i) -> {
+                    Prefs.enableRunOnBoot(this, this);
+                })
+                .setNeutralButton(R.string.dialog_startup_later, null)
+                .setNegativeButton(R.string.dialog_startup_dont_show_again, (d, i) -> {
+                    Prefs.setRunOnBootDontShowAgain(this);
+                })
+                .show();
+    }
+
+//    @TargetApi(23)
+//    private void checkBatteryOptimization(Context context) {
+//        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+//
+//        if (Prefs.isBatteryOptimizationDontShowAgain(context)
+//                || Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+//                || pm.isIgnoringBatteryOptimizations(getPackageName())) {
+//            return;
+//        }
+//
+//        new AlertDialog.Builder(this)
+//                .setTitle(R.string.dialog_disable_battery_optimization_title)
+//                .setMessage(R.string.dialog_disable_battery_optimization_message)
+//                .setPositiveButton(R.string.dialog_disable_battery_optimization_turn_off, (d, i) -> {
+//                    @SuppressLint("BatteryLife") Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+//                    intent.setData(Uri.parse("package:" + getPackageName()));
+//                    startActivity(intent);
+//                })
+//                .setNeutralButton(R.string.dialog_disable_battery_optimization_later, null)
+//                .setNegativeButton(R.string.dialog_disable_battery_optimization_dont_show_again, (d, i) -> {
+//                    Prefs.setBatteryOptimizationDontShowAgain(context);
+//                })
+//                .show();
+//    }
 
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

@@ -18,15 +18,9 @@
 package felixwiemuth.simplereminder.ui;
 
 
-import android.Manifest;
-import android.content.ComponentName;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceFragmentCompat;
 
 import felixwiemuth.simplereminder.Prefs;
@@ -34,8 +28,6 @@ import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.BootReceiver;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
-
-    public static final int PERMISSION_REQUEST_CODE_BOOT = 1;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -53,16 +45,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         switch (key) {
             case Prefs.PREF_KEY_RUN_ON_BOOT:
                 if (sharedPreferences.getBoolean(key, false)) {
-                    // If the required permission is not granted yet, ask the user
-                    if (ContextCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.RECEIVE_BOOT_COMPLETED) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, PERMISSION_REQUEST_CODE_BOOT);
-                    }
-                    // If permission is now given, enable run on boot
-                    if (ContextCompat.checkSelfPermission(getContext().getApplicationContext(), Manifest.permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_GRANTED) {
-                        BootReceiver.setBootReceiverEnabled(getContext(), true);
-                    } else {
-                        Toast.makeText(getContext(), R.string.toast_permission_not_granted, Toast.LENGTH_LONG).show();
-                    }
+                    // Note: this will set the preference again through SharedPreferences, but that should not result in calling this listener again.
+                    Prefs.enableRunOnBoot(getContext(), getActivity());
                 } else {
                     // Disable run on boot
                     BootReceiver.setBootReceiverEnabled(getContext(), false);
