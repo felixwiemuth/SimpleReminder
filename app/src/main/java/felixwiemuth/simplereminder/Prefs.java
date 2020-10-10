@@ -174,7 +174,7 @@ public class Prefs {
         // If permission is now given, enable run on boot
         if (ContextCompat.checkSelfPermission(context.getApplicationContext(), Manifest.permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_GRANTED) {
             BootReceiver.setBootReceiverEnabled(context, true);
-            getStatePrefs(context).edit().putBoolean(PREF_KEY_RUN_ON_BOOT, true).apply();
+            PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_KEY_RUN_ON_BOOT, true).apply();
         } else {
             Toast.makeText(context, R.string.toast_permission_not_granted, Toast.LENGTH_LONG).show();
         }
