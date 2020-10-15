@@ -45,16 +45,17 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="@string/prefkey_enable_sound"
-            android:title="@string/preference_enable_sound"
-             />
+            android:title="@string/preference_enable_sound" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/preference_category_app">
         <SwitchPreference
-            android:key="@string/prefkey_run_on_boot"
             android:defaultValue="false"
-            android:title="@string/preference_run_on_boot"
+            android:key="@string/prefkey_run_on_boot"
             android:summary="@string/preference_run_on_boot_descr"
-            />
+            android:title="@string/preference_run_on_boot" />
+        <Preference
+            android:key="@string/prefkey_disable_battery_optimization"
+            android:title="@string/preference_disable_battery_optimization" />
     </PreferenceCategory>
 
 </PreferenceScreen>

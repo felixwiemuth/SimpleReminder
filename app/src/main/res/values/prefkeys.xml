@@ -23,4 +23,5 @@
     <string name="prefkey_priority">notification_priority</string>
     <string name="prefkey_enable_sound">notification_enable_sound</string>
     <string name="prefkey_run_on_boot">run_on_boot</string>
+    <string name="prefkey_disable_battery_optimization">disable_battery_optimization</string>
 </resources>
