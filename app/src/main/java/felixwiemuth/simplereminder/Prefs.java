@@ -42,49 +42,37 @@ public class Prefs {
     /**
      * Name of preferences that store the internal state of the app, like scheduled notifications.
      */
-    private static String PREFS_STATE = "state";
-
-
-    // User settings are in the default shared preferences
-//    /**
-//     * Name of preferences that store user settings.
-//     */
-//    private static String PREFS_SETTINGS = "settings";
+    private static final String PREFS_STATE = "state";
 
     /**
      * The version of the format reminders are saved at key {@link #PREF_STATE_CURRENT_REMINDERS}.
      */
-    private static String PREF_STATE_REMINDERS_FORMAT_VERSION = "remindersFormatVersion";
+    private static final String PREF_STATE_REMINDERS_FORMAT_VERSION = "remindersFormatVersion";
 
     /**
      * The next ID for a reminder.
      */
-    static String PREF_STATE_NEXTID = "nextid";
+    static final String PREF_STATE_NEXTID = "nextid";
 
     /**
      * GSON-serialized list of {@link felixwiemuth.simplereminder.data.Reminder}s.
      */
-    static String PREF_STATE_CURRENT_REMINDERS = "reminders";
+    static final String PREF_STATE_CURRENT_REMINDERS = "reminders";
 
     /**
      * Indicates whether the list of reminders {@link #PREF_STATE_CURRENT_REMINDERS} has been updated.
      */
-    private static String PREF_STATE_REMINDERS_UPDATED = "remindersUpdated";
+    private static final String PREF_STATE_REMINDERS_UPDATED = "remindersUpdated";
+    private static final String PREF_STATE_WELCOME_MESSAGE_SHOWN = "welcomeMessageShown";
 
-    private static String PREF_STATE_WELCOME_MESSAGE_SHOWN = "welcomeMessageShown";
-
-    private static String PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN = "battery_optimization_dont_show_again";
-    private static String PREF_STATE_RUN_ON_BOOT_DONT_SHOW_AGAIN = "run_on_boot_dont_show_again";
+    //    private static final String PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN = "battery_optimization_dont_show_again";
+    private static final String PREF_STATE_RUN_ON_BOOT_DONT_SHOW_AGAIN = "run_on_boot_dont_show_again";
 
     public static final int PERMISSION_REQUEST_CODE_BOOT = 1;
 
     static SharedPreferences getStatePrefs(Context context) {
         return context.getSharedPreferences(PREFS_STATE, MODE_PRIVATE);
     }
-
-//    public static SharedPreferences getSettings(Context context) {
-//        return context.getSharedPreferences(PREFS_SETTINGS, MODE_PRIVATE);
-//    }
 
     public static boolean isRemindersUpdated(Context context) {
         return getStatePrefs(context).getBoolean(PREF_STATE_REMINDERS_UPDATED, false);
@@ -163,6 +151,7 @@ public class Prefs {
 
     /**
      * Try to enable running on boot; if the required permission is not granted, ask the user on the given activity.
+     *
      * @param context
      * @param activity
      */
