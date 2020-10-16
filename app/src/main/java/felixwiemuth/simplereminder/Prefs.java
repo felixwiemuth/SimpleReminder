@@ -64,6 +64,7 @@ public class Prefs {
      */
     private static final String PREF_STATE_REMINDERS_UPDATED = "remindersUpdated";
     private static final String PREF_STATE_WELCOME_MESSAGE_SHOWN = "welcomeMessageShown";
+    private static final String PREF_STATE_ADD_REMINDER_DIALOG_USED = "AddReminderDialogUsed";
 
     //    private static final String PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN = "battery_optimization_dont_show_again";
     private static final String PREF_STATE_RUN_ON_BOOT_DONT_SHOW_AGAIN = "run_on_boot_dont_show_again";
@@ -110,6 +111,14 @@ public class Prefs {
         } else {
             return true;
         }
+    }
+
+    public static boolean isAddReminderDialogUsed(Context context) {
+        return getStatePrefs(context).getBoolean(PREF_STATE_ADD_REMINDER_DIALOG_USED, false);
+    }
+
+    public static void setAddReminderDialogUsed(Context context) {
+        getStatePrefs(context).edit().putBoolean(PREF_STATE_ADD_REMINDER_DIALOG_USED, true).apply();
     }
 
 //    public static boolean isBatteryOptimizationDontShowAgain(Context context) {

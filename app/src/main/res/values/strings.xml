@@ -19,6 +19,7 @@
     <string name="app_name" translatable="false">SimpleReminder</string>
     <string name="dialog_welcome_title">Welcome</string>
     <string name="welcome_message">Welcome to SimpleReminder! This is an early version which is not complete and might contain some problems - see \"About\" on how to report them.\n\nUse the launcher icon \"Add reminder\" and start adding reminders!\n\nIf you experience reminders not showing, take a look at the settings!\n\nSimpleReminder is free software (licensed under the GNU General Public License) and comes without any warranty.</string>
+    <string name="toast_info_add_reminder_dialog">Tip: There is a launcher icon to reach this dialog!</string>
     <string name="dialog_startup_later">Later</string>
     <string name="dialog_startup_dont_show_again">Don\'t show again</string>
     <!-- Use the following if want a startup dialog for battery optimization -->

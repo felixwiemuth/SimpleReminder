@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -88,7 +89,12 @@ public class RemindersListActivity extends AppCompatActivity {
         viewPager.setAdapter(mSectionsPagerAdapter);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> startActivityForResult(new Intent(this, AddReminderDialogActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0));
+        fab.setOnClickListener(view -> {
+            if (!Prefs.isAddReminderDialogUsed(RemindersListActivity.this)) {
+                Toast.makeText(RemindersListActivity.this, R.string.toast_info_add_reminder_dialog, Toast.LENGTH_LONG).show();
+            }
+            startActivityForResult(new Intent(this, AddReminderDialogActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
+        });
 
         // NOTE: Only enable the following if it turns out to be a very common problem.
         // Check whether battery optimization is disabled and show dialog to disable it otherwise.

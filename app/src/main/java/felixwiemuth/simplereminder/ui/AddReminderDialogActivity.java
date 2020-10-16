@@ -28,6 +28,8 @@ import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderManager;
 import felixwiemuth.simplereminder.data.Reminder;
@@ -111,6 +113,8 @@ public class AddReminderDialogActivity extends AppCompatActivity {
             setResult(RESULT_OK);
             finish(); //TODO change animation
         });
+
+        Prefs.setAddReminderDialogUsed(this);
     }
 
     @Override
