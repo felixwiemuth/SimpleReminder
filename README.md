@@ -40,11 +40,6 @@ SimpleReminder is currently under development, a first version will soon be rele
 - Support of different languages (with choice), including local date formats
 
 
-## Known problems
-The following problems or bugs are known and will be fixed soon:
-- After a reboot, previously scheduled reminders are not shown anymore (this is intended by Android). An option (requiring a permission to execute the app on device startup) will be added.
-
-
 ## Contributing
 If you have ideas on how to improve SimpleReminder, you are welcome to contribute. There are several ways you can contribute:
 - Share your ideas in an issue
@@ -60,7 +55,7 @@ Please report bugs on [Github](https://github.com/felixwiemuth/SimpleReminder/is
 
 ## License ##
 
-Copyright (C) 2019 Felix Wiemuth
+Copyright (C) 2019-2020 Felix Wiemuth
 
 
     This program is free software: you can redistribute it and/or modify
