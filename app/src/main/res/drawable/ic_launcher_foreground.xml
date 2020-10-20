@@ -1,0 +1,36 @@
+<!--
+  ~ Copyright (C) 2020 Felix Wiemuth
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+  <group android:scaleX="0.9967347"
+      android:scaleY="0.9967347"
+      android:translateX="0.17632653"
+      android:translateY="0.6746939">
+    <group android:scaleX="0.070172414"
+        android:scaleY="0.070172414"
+        android:translateX="34.632412"
+        android:translateY="22.843449">
+        <path android:fillColor="#E60070AD"
+            android:pathData="M175,521C175,521 175,718 175,718 175,718 175,766 175,766 174.82,775.48 170.41,776.98 162,777 162,777 59,777 59,777 54.7,777 36.81,777.45 34,776.4 31.85,775.59 30.09,774.02 29.02,771.98 27.81,769.66 28.01,766.56 28,764 28,764 28,313 28,313 28,313 28,157 28,157 28,157 28,127 28,127 28,123.17 27.4,117.24 29.6,114.06 32.57,109.76 36.37,110.01 41,110 41,110 211,110 211,110 211,110 252,110 252,110 252,110 264,110.91 264,110.91 264,110.91 296,113.87 296,113.87 340.53,120.05 379.53,130.94 414,161.28 443.69,187.42 458.05,226.63 462.72,265 462.72,265 464.09,284 464.09,284 464.09,284 465,296 465,296 465,296 465,318 465,318 465,318 464.09,330 464.09,330 462.59,351.88 458.68,373.01 449.22,393 437.59,417.56 418.15,437.82 395,451.8 387.17,456.53 371.91,463.6 363,465 363,465 376.54,479 376.54,479 392.84,498.8 411.27,538.05 423.25,562 423.25,562 491.75,699 491.75,699 491.75,699 507.26,730 507.26,730 507.26,730 521.65,758 521.65,758 524.06,764 524.21,773.69 517,776.4 515.1,777.11 512.06,777 510,777 510,777 377,777 377,777 374.92,777 371.93,777.11 370,776.4 363.17,773.87 359.84,763.19 356.75,757 356.75,757 326.75,694 326.75,694 326.75,694 298.22,634 298.22,634 298.22,634 280.31,597 280.31,597 267.54,569.2 252.43,538.45 223,525.31 211,519.95 188.44,521 175,521ZM175,394C175,394 215,394 215,394 215,394 238,393 238,393 253.28,392.93 275.1,388.19 288,379.91 298.79,372.99 304.4,362.91 308.33,351 315.27,329.93 315.54,303.2 308.98,282 305.56,270.97 300.69,259.73 291,252.79 277.71,243.26 254.24,238.19 238,237.96 238,237.96 227,237.96 227,237.96 227,237.96 215,237 215,237 215,237 175,237 175,237 175,237 175,394 175,394Z"
+            android:strokeColor="#325C7D" android:strokeWidth="20"/>
+    </group>
+  </group>
+</vector>
