@@ -1,0 +1,8 @@
+Something to remember crosses your mind and an alarm or a note is the best solution you know of? Then you haven't tried SimpleReminder yet!
+
+This app lets you set up a scheduled reminder in very few steps:
+1. Click "Add Reminder" on your home screen
+2. Enter a message and select a time
+3. Click OK
+
+A notification with your message will pop up at the time selected!
