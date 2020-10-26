@@ -50,7 +50,6 @@ public class AddReminderDialogActivity extends AppCompatActivity {
         final Button addButton = findViewById(R.id.addButton);
         final TimePicker timePicker = findViewById(R.id.timePicker);
 
-
         nameTextView.setImeOptions(EditorInfo.IME_ACTION_DONE);
         nameTextView.setImeActionLabel(getString(R.string.keyboard_action_add_reminder), EditorInfo.IME_ACTION_DONE);
         nameTextView.requestFocus();
@@ -61,7 +60,6 @@ public class AddReminderDialogActivity extends AppCompatActivity {
                 return true;
             }
             return false;
-
         });
 
         timePicker.setIs24HourView(true);
@@ -69,7 +67,6 @@ public class AddReminderDialogActivity extends AppCompatActivity {
         addButton.setOnClickListener(v -> {
             int hour;
             int minute;
-            boolean tomorrow = false;
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 hour = timePicker.getHour();
@@ -89,7 +86,6 @@ public class AddReminderDialogActivity extends AppCompatActivity {
             // If the resulting date is in the past, assume that the next day is meant
             if (time.compareTo(Calendar.getInstance()) <= 0) { // AlarmManager also seems to fire (directly) when date is in the past, so it is no problem when in the mean time (from this check to scheduling alarm), the date moves to the past
                 time.add(Calendar.DAY_OF_MONTH, 1);  // wraps over end of month
-                tomorrow = true;
             }
 
             Reminder.ReminderBuilder reminderBuilder = Reminder.builder()
