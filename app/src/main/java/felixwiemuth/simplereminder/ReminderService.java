@@ -101,7 +101,7 @@ public class ReminderService extends IntentService {
                         requestCode = id + 1;
                         break;
                     default:
-                        throw new ImplementationError("Unkown action.");
+                        throw new ImplementationError("Unknown action.");
                 }
                 return PendingIntent.getService(context, requestCode, build(context), 0);
             }
