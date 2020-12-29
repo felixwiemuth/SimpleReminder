@@ -22,11 +22,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import felixwiemuth.simplereminder.Prefs;
@@ -38,8 +40,18 @@ import java.util.Calendar;
 
 /**
  * Shows a dialog allowing to add a reminder. Finishes with {@link #RESULT_OK} if the reminder has been added.
+ * Can be started in "edit reminder" mode by providing extra {@link AddReminderDialogActivity#EXTRA_REMINDER_ID}. In that case, the text is set to that of the reminder of the given ID, and that reminder will be replaced rather than a new one added. In addition the dialog shows a different title.
  */
 public class AddReminderDialogActivity extends AppCompatActivity {
+    /**
+     * If the activity is started with an intent containing this int extra, the text will be set to that of the reminder with the given ID.
+     */
+    public static final String EXTRA_REMINDER_ID = "felixwiemuth.simplereminder.ui.AddReminderDialogActivity.extra.ID";
+
+    /**
+     * The ID of the reminder to be updated. "-1" means that a new reminder should be created.
+     */
+    private int reminderToUpdate = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +75,8 @@ public class AddReminderDialogActivity extends AppCompatActivity {
         });
 
         timePicker.setIs24HourView(true);
+
+        setupActivityWithPotentialReminder(getIntent());
 
         addButton.setOnClickListener(v -> {
             int hour;
@@ -91,7 +105,13 @@ public class AddReminderDialogActivity extends AppCompatActivity {
             Reminder.ReminderBuilder reminderBuilder = Reminder.builder()
                     .date(time.getTime())
                     .text(nameTextView.getText().toString());
-            ReminderManager.addReminder(AddReminderDialogActivity.this, reminderBuilder);
+            if (reminderToUpdate == -1) { // A new reminder should be created
+                ReminderManager.addReminder(AddReminderDialogActivity.this, reminderBuilder);
+            } else { // A reminder should be replaced
+                reminderBuilder.id(reminderToUpdate);
+                ReminderManager.updateReminder(AddReminderDialogActivity.this, reminderBuilder.build(), true);
+                reminderToUpdate = -1;
+            }
 
             // Create relative description of due date
             String relativeDueDate = DateUtils.getRelativeTimeSpanString(time.getTimeInMillis(), System.currentTimeMillis(), 0).toString();
@@ -113,9 +133,42 @@ public class AddReminderDialogActivity extends AppCompatActivity {
         Prefs.setAddReminderDialogUsed(this);
     }
 
+    /**
+     * Setup or reset the activity depending on whether a reminder should be edited or created (see {@link AddReminderDialogActivity#EXTRA_REMINDER_ID}).
+     * Sets {@link #reminderToUpdate}, content of the text view, as well as the activity's title.
+     *
+     * @param intent
+     */
+    private void setupActivityWithPotentialReminder(Intent intent) {
+        final int reminderId = intent.getIntExtra(EXTRA_REMINDER_ID, -1);
+        final AutoCompleteTextView nameTextView = findViewById(R.id.nameTextView);
+        if (reminderId != -1) {
+            try {
+                Reminder reminder = ReminderManager.getReminder(this, reminderId);
+                nameTextView.setText(reminder.getText());
+                // Move cursor to end of text
+                nameTextView.setSelection(nameTextView.length());
+                setTitle(R.string.edit_reminder_title);
+                reminderToUpdate = reminderId;
+            } catch (ReminderManager.ReminderNotFoundException e) {
+                Log.w("AddReminder", "Intent contains invalid reminder ID.");
+                reminderToUpdate = -1;
+            }
+        } else {
+            setTitle(R.string.add_reminder_title);
+            nameTextView.setText("");
+            reminderToUpdate = -1;
+        }
+    }
+
+    /**
+     * Process a new intent to this activity, updating its appereance and content depending on whether a reminder should be edited or created (see {@link AddReminderDialogActivity#EXTRA_REMINDER_ID}).
+     *
+     * @param intent
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        // Intent content is not used
+        setupActivityWithPotentialReminder(intent);
     }
 }

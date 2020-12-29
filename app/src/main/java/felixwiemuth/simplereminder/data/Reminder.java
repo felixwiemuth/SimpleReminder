@@ -39,6 +39,8 @@ public class Reminder implements Comparable<Reminder> {
 
     private static Gson gson;
 
+    private static final int OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT = 1000000;
+
     /**
      * Status of saved reminders.
      */
@@ -58,7 +60,7 @@ public class Reminder implements Comparable<Reminder> {
     }
 
     /**
-     * ID of the reminder, also used for notifications. Must be >= 0 and even (used by {@link felixwiemuth.simplereminder.ReminderService for correct scheduling}).
+     * ID of the reminder, also used for notifications. Must be in the interval [0,{@link #OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT}) and even (used by {@link felixwiemuth.simplereminder.ReminderService for correct scheduling}).
      */
     private int id;
     /**
@@ -108,5 +110,13 @@ public class Reminder implements Comparable<Reminder> {
                     .create();
         }
         return gson;
+    }
+
+    public int getRequestCodeAddReminderDialogActivityPendingIntent() {
+        return getRequestCodeAddReminderDialogActivityPendingIntent(id);
+    }
+
+    public static int getRequestCodeAddReminderDialogActivityPendingIntent(int reminderID) {
+        return OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT + reminderID;
     }
 }

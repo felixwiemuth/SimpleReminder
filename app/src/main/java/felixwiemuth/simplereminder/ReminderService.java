@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import felixwiemuth.simplereminder.data.Reminder;
+import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
 import felixwiemuth.simplereminder.ui.reminderslist.RemindersListActivity;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.EnumUtil;
@@ -184,22 +185,29 @@ public class ReminderService extends IntentService {
         ReminderManager.updateReminder(context, reminder, false);
     }
 
+    /**
+     * Send a notification with swipe and click actions related to the reminder.
+     * @param context
+     * @param id The reminder's ID
+     * @param text The text to be shown
+     */
     private static void sendNotification(Context context, int id, String text) {
         PendingIntent markDoneIntent = intentBuilder()
                 .id(id)
                 .action(Action.MARK_DONE)
                 .buildPendingIntent(context);
 
-        Intent intent = new Intent(context, RemindersListActivity.class);
+        Intent intent = new Intent(context, AddReminderDialogActivity.class);
+        intent.putExtra(AddReminderDialogActivity.EXTRA_REMINDER_ID, id);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent openRemindersListIntent = PendingIntent.getActivity(context, 0, intent, 0); //TODO will this request code interfere with ID=0 reminder? (should not, as different kinds of pending intent)
+        PendingIntent openAddReminderDialog = PendingIntent.getActivity(context, Reminder.getRequestCodeAddReminderDialogActivityPendingIntent(id), intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_REMINDER)
                 .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(text)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                .setContentIntent(openRemindersListIntent)
+                .setContentIntent(openAddReminderDialog)
                 .setDeleteIntent(markDoneIntent)
                 .setPriority(Integer.valueOf(Prefs.getStringPref(R.string.prefkey_priority, "0", context)));
 
@@ -229,18 +237,18 @@ public class ReminderService extends IntentService {
         // Schedule alarm
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), notifyIntent);
-            Log.d("ReminderManager", "Set alarm (\"exact and allow while idle\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+            Log.d("ReminderService", "Set alarm (\"exact and allow while idle\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), notifyIntent);
-            Log.d("ReminderManager", "Set alarm (\"exact\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+            Log.d("ReminderService", "Set alarm (\"exact\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), notifyIntent);
-            Log.d("ReminderManager", "Set alarm for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+            Log.d("ReminderService", "Set alarm for " + DateTimeUtil.formatDateTime(reminder.getDate()));
         }
     }
 
     /**
-     * Cancel a pending or already due reminder (remove the notification).
+     * Cancel a reminder, i.e., cancel if scheduled, remove notification if present.
      *
      * @param context
      * @param id

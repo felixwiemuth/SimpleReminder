@@ -31,6 +31,7 @@
     <string name="dialog_startup_run_on_boot_turn_off">Grant permission</string>
     <string name="add_reminder_title">Add reminder</string>
     <string name="add_reminder_name_hint">Reminder text (optional)</string>
+    <string name="edit_reminder_title">Edit reminder</string>
     <string name="button_add_reminder">Add</string>
     <string name="keyboard_action_add_reminder">Add</string>
     <string name="toast_reminder_due">Reminder due %s</string>
