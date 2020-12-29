@@ -20,7 +20,9 @@ package felixwiemuth.simplereminder;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.ui.reminderslist.RemindersListFragment;
 
@@ -208,7 +210,7 @@ public class ReminderManager {
     }
 
     /**
-     * Replaces the reminder with the ID of the given reminder with the given one.
+     * Replaces the reminder with the ID of the given reminder with the given reminder.
      *
      * @param context
      * @param reminder
@@ -274,11 +276,15 @@ public class ReminderManager {
         }));
     }
 
+    /**
+     * Cancel potential existing scheduling and notification for the given reminder and reschedule it if its status is {@link Reminder.Status#SCHEDULED} and its time is in the future.
+     *
+     * @param context
+     * @param reminder
+     */
     private static void rescheduleReminder(Context context, Reminder reminder) {
+        ReminderService.cancelReminder(context, reminder.getId());
         boolean isFuture = reminder.getDate().getTime() > System.currentTimeMillis();
-        if (reminder.getStatus() != Reminder.Status.SCHEDULED || !isFuture) {
-            ReminderService.cancelReminder(context, reminder.getId());
-        }
         if (reminder.getStatus() == Reminder.Status.SCHEDULED && isFuture) {
             ReminderService.scheduleReminder(context, reminder);
         }
@@ -287,6 +293,7 @@ public class ReminderManager {
     /**
      * Schedule all future reminders and show all due reminders.
      * If some of the reminders are already scheduled, the new registration should replace the previous.
+     *
      * @param context
      */
     public static void scheduleAllReminders(Context context) {
