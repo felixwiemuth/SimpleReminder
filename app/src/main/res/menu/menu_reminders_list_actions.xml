@@ -20,8 +20,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="felixwiemuth.simplereminder.ui.reminderslist.RemindersListActivity">
     <item
-        android:id="@+id/action_reuse"
-        android:title="@string/reminder_list_action_reuse"
+        android:id="@+id/action_reschedule"
+        android:title="@string/reminder_list_action_reschedule"
         android:icon="@android:drawable/ic_menu_rotate"
         app:showAsAction="ifRoom" />
     <item

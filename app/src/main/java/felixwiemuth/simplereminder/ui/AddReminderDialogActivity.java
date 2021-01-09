@@ -17,6 +17,7 @@
 
 package felixwiemuth.simplereminder.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,12 +32,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Calendar;
+
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderManager;
 import felixwiemuth.simplereminder.data.Reminder;
-
-import java.util.Calendar;
 
 /**
  * Shows a dialog allowing to add a reminder. Finishes with {@link #RESULT_OK} if the reminder has been added.
@@ -52,6 +53,12 @@ public class AddReminderDialogActivity extends AppCompatActivity {
      * The ID of the reminder to be updated. "-1" means that a new reminder should be created.
      */
     private int reminderToUpdate = -1;
+
+    public static Intent getIntentEditReminder(Context context, int reminderId) {
+        return new Intent(context, AddReminderDialogActivity.class)
+                .putExtra(EXTRA_REMINDER_ID, reminderId)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

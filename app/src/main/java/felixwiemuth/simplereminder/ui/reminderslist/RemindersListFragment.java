@@ -17,14 +17,25 @@
 
 package felixwiemuth.simplereminder.ui.reminderslist;
 
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
@@ -33,18 +44,26 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
+
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderManager;
 import felixwiemuth.simplereminder.data.Reminder;
+import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;
 import io.github.luizgrp.sectionedrecyclerviewadapter.CustomViewType;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
-
-import java.util.*;
 
 /**
  * A fragment displaying a list of reminders. May only be used in an {@link AppCompatActivity} with a toolbar. Displays reminders in sections:
@@ -102,7 +121,7 @@ public class RemindersListFragment extends Fragment {
      * The current action mode or null.
      */
     private ActionMode actionMode;
-    private MenuItem menuActionReuse;
+    private MenuItem menuActionReschedule;
     private MenuItem menuActionCopyText;
     private MenuItem menuActionMarkDone;
     private MenuItem menuActionEdit;
@@ -112,7 +131,7 @@ public class RemindersListFragment extends Fragment {
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
             inflater.inflate(R.menu.menu_reminders_list_actions, menu);
-            menuActionReuse = menu.findItem(R.id.action_reuse);
+            menuActionReschedule = menu.findItem(R.id.action_reschedule);
             menuActionCopyText = menu.findItem(R.id.action_copy_text);
             menuActionMarkDone = menu.findItem(R.id.action_mark_done);
             menuActionEdit = menu.findItem(R.id.action_edit);
@@ -130,15 +149,14 @@ public class RemindersListFragment extends Fragment {
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_edit:
-                    //TODO implement
-                    getOnlySelectedReminder();
+                    //TODO probably not needed for reminders list
                     Toast.makeText(getContext(), getString(R.string.reminder_list_action_placeholder), Toast.LENGTH_SHORT).show();
 //                    mode.finish();
                     break;
-                case R.id.action_reuse:
-                    //TODO implement
-                    Toast.makeText(getContext(), getString(R.string.reminder_list_action_placeholder), Toast.LENGTH_SHORT).show();
-//                    mode.finish();
+                case R.id.action_reschedule:
+                    Intent intent = AddReminderDialogActivity.getIntentEditReminder(getContext(), getOnlySelectedReminder().getId());
+                    startActivityForResult(intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
+                    mode.finish();
                     break;
                 case R.id.action_copy_text:
                     ClipboardManager clipboardManager = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
@@ -368,7 +386,7 @@ public class RemindersListFragment extends Fragment {
      */
     private void updateAvailableActions() {
         setMenuItemAvailability(
-                menuActionReuse,
+                menuActionReschedule,
                 selection.size() == 1);
         setMenuItemAvailability(
                 menuActionCopyText,
@@ -384,7 +402,7 @@ public class RemindersListFragment extends Fragment {
                 !selectionContainsDone);
         setMenuItemAvailability(
                 menuActionEdit,
-                selection.size() == 1 && reminders.get(selection.iterator().next()).getStatus() == Reminder.Status.SCHEDULED);
+                selection.size() == 1);
     }
 
     private void setMenuItemAvailability(MenuItem menuItem, boolean available) {

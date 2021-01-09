@@ -17,12 +17,17 @@
 
 package felixwiemuth.simplereminder;
 
-import android.app.*;
+import android.app.AlarmManager;
+import android.app.IntentService;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -32,7 +37,6 @@ import java.util.Date;
 
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
-import felixwiemuth.simplereminder.ui.reminderslist.RemindersListActivity;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.EnumUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;
@@ -209,17 +213,15 @@ public class ReminderService extends IntentService {
                 .action(Action.MARK_DONE)
                 .buildPendingIntent(context);
 
-        Intent intent = new Intent(context, AddReminderDialogActivity.class);
-        intent.putExtra(AddReminderDialogActivity.EXTRA_REMINDER_ID, id);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent openAddReminderDialog = PendingIntent.getActivity(context, Reminder.getRequestCodeAddReminderDialogActivityPendingIntent(id), intent, 0);
+        Intent editReminderIntent = AddReminderDialogActivity.getIntentEditReminder(context, id);
+        PendingIntent editReminderPendingIntent = PendingIntent.getActivity(context, Reminder.getRequestCodeAddReminderDialogActivityPendingIntent(id), editReminderIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_REMINDER)
                 .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(text)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                .setContentIntent(openAddReminderDialog)
+                .setContentIntent(editReminderPendingIntent)
                 .setDeleteIntent(markDoneIntent)
                 .setPriority(Integer.valueOf(Prefs.getStringPref(R.string.prefkey_priority, "0", context)));
 
