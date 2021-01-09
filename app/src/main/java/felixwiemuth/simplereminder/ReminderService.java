@@ -26,6 +26,10 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+
+import java.util.Arrays;
+import java.util.Date;
+
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
 import felixwiemuth.simplereminder.ui.reminderslist.RemindersListActivity;
@@ -42,6 +46,7 @@ import lombok.Builder;
 public class ReminderService extends IntentService {
     public static final String CHANNEL_REMINDER = "Reminder";
     public static final String EXTRA_INT_ID = "felixwiemuth.simplereminder.ReminderService.extra.ID";
+    public static final String ACTION_START = "felixwiemuth.simplereminder.ReminderService.action.START";
 
     private static Uri defaultSound;
 
@@ -80,6 +85,9 @@ public class ReminderService extends IntentService {
                 }
 
                 intent.putExtra(ReminderService.EXTRA_INT_ID, id);
+                // Note: Setting an action seems to prevent extras being removed from intents, see https://stackoverflow.com/questions/15343840/intent-extras-missing-when-activity-started.
+                // It happened that the service was called without extras after introducing editing of reminders.
+                intent.setAction(ACTION_START);
                 EnumUtil.serialize(action).to(intent);
 
                 return intent;
@@ -121,6 +129,7 @@ public class ReminderService extends IntentService {
      * @return
      */
     public static PendingIntent getCancelNotifyIntent(Context context, int id) {
+        // Note: This intent is only used to be passed to AlarmManager.cancel(...), so it shouldn't start the service.
         return PendingIntent.getService(context, id, new Intent(context, ReminderService.class), 0); // must use equal intent and same request code as when scheduled
     }
 
@@ -167,6 +176,9 @@ public class ReminderService extends IntentService {
         if (intent == null) {
             Log.w("ReminderService", "Service called with no intent.");
             return;
+        }
+        if (! intent.hasExtra(EXTRA_INT_ID)) {
+            throw new IllegalArgumentException("ReminderService called without reminder ID extra.");
         }
         int id = intent.getExtras().getInt(EXTRA_INT_ID, -1);
         Action action = EnumUtil.deserialize(Action.class).from(intent);
