@@ -39,11 +39,11 @@
         android:title="@string/reminder_list_action_mark_done"
         android:icon="@android:drawable/ic_notification_clear_all"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_edit"
-        android:title="@string/reminder_list_action_edit"
-        android:icon="@android:drawable/ic_menu_edit"
-        app:showAsAction="ifRoom" />
+<!--    <item-->
+<!--        android:id="@+id/action_edit"-->
+<!--        android:title="@string/reminder_list_action_edit"-->
+<!--        android:icon="@android:drawable/ic_menu_edit"-->
+<!--        app:showAsAction="ifRoom" />-->
     <item
         android:id="@+id/action_copy_text"
         android:title="@string/reminder_list_action_copy_text"

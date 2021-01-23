@@ -124,7 +124,7 @@ public class RemindersListFragment extends Fragment {
     private MenuItem menuActionReschedule;
     private MenuItem menuActionCopyText;
     private MenuItem menuActionMarkDone;
-    private MenuItem menuActionEdit;
+//    private MenuItem menuActionEdit;
 
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
@@ -134,7 +134,7 @@ public class RemindersListFragment extends Fragment {
             menuActionReschedule = menu.findItem(R.id.action_reschedule);
             menuActionCopyText = menu.findItem(R.id.action_copy_text);
             menuActionMarkDone = menu.findItem(R.id.action_mark_done);
-            menuActionEdit = menu.findItem(R.id.action_edit);
+//            menuActionEdit = menu.findItem(R.id.action_edit);
             return true;
         }
 
@@ -148,11 +148,11 @@ public class RemindersListFragment extends Fragment {
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.action_edit:
-                    //TODO probably not needed for reminders list
-                    Toast.makeText(getContext(), getString(R.string.reminder_list_action_placeholder), Toast.LENGTH_SHORT).show();
+                // NOTE: an "edit" action is probably not needed for reminders list
+//                case R.id.action_edit:
+//                    Toast.makeText(getContext(), getString(R.string.reminder_list_action_placeholder), Toast.LENGTH_SHORT).show();
 //                    mode.finish();
-                    break;
+//                    break;
                 case R.id.action_reschedule:
                     Intent intent = AddReminderDialogActivity.getIntentEditReminder(getContext(), getOnlySelectedReminder().getId());
                     startActivityForResult(intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
@@ -400,9 +400,9 @@ public class RemindersListFragment extends Fragment {
         setMenuItemAvailability(
                 menuActionMarkDone,
                 !selectionContainsDone);
-        setMenuItemAvailability(
-                menuActionEdit,
-                selection.size() == 1);
+//        setMenuItemAvailability(
+//                menuActionEdit,
+//                selection.size() == 1);
     }
 
     private void setMenuItemAvailability(MenuItem menuItem, boolean available) {
