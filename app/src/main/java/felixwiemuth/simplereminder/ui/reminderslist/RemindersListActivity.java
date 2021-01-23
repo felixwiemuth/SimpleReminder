@@ -42,10 +42,12 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import de.cketti.library.changelog.ChangeLog;
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
 import felixwiemuth.simplereminder.ui.SettingsActivity;
+import felixwiemuth.simplereminder.ui.actions.DisplayChangeLog;
 import felixwiemuth.simplereminder.ui.util.HtmlDialogFragment;
 import felixwiemuth.simplereminder.ui.util.UIUtils;
 import felixwiemuth.simplereminder.util.ImplementationError;
@@ -104,6 +106,12 @@ public class RemindersListActivity extends AppCompatActivity {
         // Check whether run on boot is enabled and whether should ask user to enable it.
         checkRunOnBoot();
 
+        // NOTE: Welcome below message covers change log, this is desired.
+        ChangeLog changeLog = new ChangeLog(this);
+        if (changeLog.isFirstRun()) {
+            changeLog.getLogDialog().show();
+        }
+
         // Show welcome dialog if version changed
         if (!Prefs.checkWelcomeMessageShown(this)) {
             UIUtils.showMessageDialog(R.string.dialog_welcome_title, getString(R.string.welcome_message), this);
@@ -144,7 +152,7 @@ public class RemindersListActivity extends AppCompatActivity {
             try {
                 PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
                 String title = getString(R.string.app_name) + " " + packageInfo.versionName;
-                HtmlDialogFragment.displayHtmlDialogFragment(getSupportFragmentManager(), title, R.raw.about); // TODO add action to display change log
+                HtmlDialogFragment.displayHtmlDialogFragment(getSupportFragmentManager(), title, R.raw.about, DisplayChangeLog.class);
             } catch (PackageManager.NameNotFoundException ex) {
                 throw new RuntimeException(ex);
             }
