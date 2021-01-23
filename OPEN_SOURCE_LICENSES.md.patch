@@ -1,6 +1,5 @@
-diff --git a/OPEN_SOURCE_LICENSES.md b/OPEN_SOURCE_LICENSES.md
-index 518d540..78d3a56 100644
---- a/OPEN_SOURCE_LICENSES.md
+diff --git a/LICENSE.md b/OPEN_SOURCE_LICENSES.md
+--- a/LICENSE.md
 +++ b/OPEN_SOURCE_LICENSES.md
 @@ -1,25 +1,7 @@
 -# License information #
@@ -37,4 +36,4 @@ index 518d540..78d3a56 100644
 -
  #### Included libraries ####
  
- | Name                                                                                   | Copyright                       | License                           |
+ | Name                                                                                                                            | Copyright                            | License                           |
