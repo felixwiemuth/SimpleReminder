@@ -1,3 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="0.9.5" versioncode="9" >
+        <change>Reminders can now be rescheduled by clicking on the notification or selecting a reminder in the list.</change>
+    </release>
+    <release version="0.9.4" versioncode="7">
+        <change>First F-Droid release!</change>
+    </release>
 </changelog>

@@ -1,0 +1,1 @@
+  * Reminders can now be rescheduled by clicking on the notification or selecting a reminder in the list.
