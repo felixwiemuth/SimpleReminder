@@ -21,6 +21,7 @@ SimpleReminder is currently under development, a first version will soon be rele
 - Easily add a reminder for a time within the next 24 hours with a custom message
 - When a reminder is due, a notification is shown (with customizable importance and optional sound)
 - Clear breakdown on due, upcoming and past reminders
+- Reschedule a due reminder by clicking on the notification and a scheduled or past reminder by selecting it in the list
 
 
 ## Planned features
@@ -32,7 +33,6 @@ SimpleReminder is currently under development, a first version will soon be rele
   - Choose time relatively (e.g. "in one hour")
   - Choose an arbitrary day
 - Autocomplete reminder text based on previous reminders / suggestions of templates
-- Easy editing and rescheduling of reminders via notification or reminders list
 - Sharing of reminder content
 - Add reminders by selecting text anywhere (context menu) or via sharing a text, photo, ...
 - Automatic deletion of old reminders after a customizable time
