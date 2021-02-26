@@ -29,7 +29,7 @@ import org.acra.annotation.AcraMailSender;
  * @author Felix Wiemuth
  */
 @AcraCore(buildConfigClass = BuildConfig.class)
-@AcraMailSender(mailTo = "felixwiemuth@hotmail.de", reportAsFile = false)
+@AcraMailSender(mailTo = "felixwiemuth@hotmail.de", reportAsFile = false) // The report being the content of the mail makes it more obvious to the user what data is sent.
 @AcraDialog(
         resTitle = R.string.acra_title,
         resText = R.string.acra_prompt,
