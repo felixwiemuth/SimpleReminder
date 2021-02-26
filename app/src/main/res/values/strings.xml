@@ -36,7 +36,7 @@
     <string name="keyboard_action_add_reminder">Add</string>
     <string name="toast_reminder_due">Reminder due %s</string>
     <string name="channel_name">Reminders</string>
-    <string name="channel_description">Shows user set reminders only</string>
+    <string name="channel_description">Shown when a reminder is due</string>
     <string name="notification_title">Reminder</string>
     <string name="title_activity_reminders_list">@string/app_name</string>
     <string name="tab_reminders">Current</string>
@@ -60,6 +60,7 @@
     <string name="preference_category_notifications">Notifications</string>
     <string name="preference_priority">Priority of notifications</string>
     <string name="preference_enable_sound">Enable sound of notifications</string>
+    <string name="preference_notification_channel_settings">Change notification settings</string>
     <string name="preference_category_app">General</string>
     <string name="preference_run_on_boot">Activate on device startup</string>
     <string name="preference_run_on_boot_descr">Reschedule existing reminders when the device is started (requires permission). If not enabled, previously scheduled reminders cannot be shown after a restart until the app is opened manually.</string>
