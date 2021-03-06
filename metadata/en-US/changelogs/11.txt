@@ -1,0 +1,1 @@
+* On Android 8+ replaced notification settings for sound and priority (which did not have any effect) with a link to the notification channel settings.

@@ -32,9 +32,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import java.util.Arrays;
-import java.util.Date;
-
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
@@ -45,12 +42,17 @@ import lombok.Builder;
 /**
  * Responsible for reminder scheduling and notifications. Handles scheduled reminders when they are due. May only be started with an intent created via the provided intent builder ({@link #intentBuilder()}).
  *
+ * Expects that the notification channel {@link #NOTIFICATION_CHANNEL_REMINDER} exists. Use {@link #createNotificationChannel()} to create it.
+ *
  * @author Felix Wiemuth
  */
 public class ReminderService extends IntentService {
-    public static final String CHANNEL_REMINDER = "Reminder";
-    public static final String EXTRA_INT_ID = "felixwiemuth.simplereminder.ReminderService.extra.ID";
-    public static final String ACTION_START = "felixwiemuth.simplereminder.ReminderService.action.START";
+    /**
+     * ID of the main notification channel "Reminder".
+     */
+    public static final String NOTIFICATION_CHANNEL_REMINDER = "Reminder";
+    private static final String EXTRA_INT_ID = "felixwiemuth.simplereminder.ReminderService.extra.ID";
+    private static final String ACTION_START = "felixwiemuth.simplereminder.ReminderService.action.START";
 
     private static Uri defaultSound;
 
@@ -170,12 +172,6 @@ public class ReminderService extends IntentService {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        createNotificationChannel();
-    }
-
-    @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         if (intent == null) {
             Log.w("ReminderService", "Service called with no intent.");
@@ -216,15 +212,17 @@ public class ReminderService extends IntentService {
         Intent editReminderIntent = AddReminderDialogActivity.getIntentEditReminder(context, id);
         PendingIntent editReminderPendingIntent = PendingIntent.getActivity(context, Reminder.getRequestCodeAddReminderDialogActivityPendingIntent(id), editReminderIntent, 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_REMINDER)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_REMINDER)
                 .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(text)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                 .setContentIntent(editReminderPendingIntent)
                 .setDeleteIntent(markDoneIntent)
+                // Applies for Android < 8
                 .setPriority(Integer.valueOf(Prefs.getStringPref(R.string.prefkey_priority, "0", context)));
 
+        // Applies for Android < 8
         if (Prefs.getBooleanPref(R.string.prefkey_enable_sound, false, context)) {
             builder.setSound(getDefaultSound()); // Set default notification sound
         }
@@ -277,14 +275,14 @@ public class ReminderService extends IntentService {
         alarmManager.cancel(getCancelNotifyIntent(context, id));
     }
 
-    private void createNotificationChannel() {
+    public static void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
+            CharSequence name = context.getString(R.string.channel_name);
+            String description = context.getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_REMINDER, name, importance);
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_REMINDER, name, importance);
             channel.setDescription(description);
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
     }

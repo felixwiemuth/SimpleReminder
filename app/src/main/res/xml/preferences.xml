@@ -28,7 +28,7 @@
     <!--android:summary="%s">-->
     <!--</ListPreference>-->
     <!--</PreferenceCategory>-->
-    <PreferenceCategory android:title="@string/preference_category_notifications">
+    <PreferenceCategory android:key="@string/prefkey_notifications" android:title="@string/preference_category_notifications">
 
         <!-- NOTE: @null hides buttons to simplify the UI. Users can touch outside the dialog to
              dismiss it. -->

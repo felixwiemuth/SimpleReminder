@@ -41,6 +41,7 @@ public class Main extends Application {
      */
     public static int REMINDERS_LIST_FORMAT_VERSION = 1;
 
+    // Note: This is run before any app component starts, i.e., also when starting the app via "Add reminder" or the service.
     @Override
     public void onCreate() {
         super.onCreate();
@@ -49,6 +50,8 @@ public class Main extends Application {
         }
         PreferenceManager.setDefaultValues(this, R.xml.preferences, true);
         Prefs.getStoredRemindersListFormatVersion(this); // Initialize if not set
+
+        ReminderService.createNotificationChannel(this);
 
         // Reschedule reminders on app startup if this was not already done at device startup.
         Prefs.checkRescheduleOnBoot(this);

@@ -19,6 +19,7 @@ package felixwiemuth.simplereminder.ui;
 
 
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,12 +31,13 @@ import android.provider.Settings;
 
 import androidx.annotation.RequiresApi;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceScreen;
 
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.BootReceiver;
+import felixwiemuth.simplereminder.ReminderService;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -47,6 +49,24 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             updateBatteryPrefDescription(batPref);
         } else {
             batPref.getParent().removePreference(batPref);
+        }
+
+        // Priority/Sound settings only work for Android < 8
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            PreferenceCategory notificationsPrefGroup = getPreferenceScreen().findPreference(getString(R.string.prefkey_notifications));
+            notificationsPrefGroup.removePreference(getPreferenceScreen().findPreference(getString(R.string.prefkey_priority)));
+            notificationsPrefGroup.removePreference(getPreferenceScreen().findPreference(getString(R.string.prefkey_enable_sound)));
+
+            Preference notificationChannelPreference = new Preference(getContext());
+            notificationChannelPreference.setTitle(R.string.preference_notification_channel_settings);
+            notificationChannelPreference.setOnPreferenceClickListener(preference -> {
+                Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, getContext().getPackageName());
+                intent.putExtra(Settings.EXTRA_CHANNEL_ID, ReminderService.NOTIFICATION_CHANNEL_REMINDER);
+                startActivity(intent);
+                return true;
+            });
+            notificationsPrefGroup.addPreference(notificationChannelPreference);
         }
     }
 
