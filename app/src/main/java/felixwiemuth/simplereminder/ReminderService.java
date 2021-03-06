@@ -128,15 +128,18 @@ public class ReminderService extends IntentService {
     }
 
     /**
-     * Get a pending intent to be used to cancel a pending {@link Action#NOTIFY} intent created with {@link #intentBuilder()}.
+     * Get a pending intent to be used to cancel an alarm with a pending {@link Action#NOTIFY} intent created with {@link #intentBuilder()}.
      *
      * @param context
      * @param id      the ID of the reminder to be cancelled
      * @return
      */
-    public static PendingIntent getCancelNotifyIntent(Context context, int id) {
+    public static PendingIntent getCancelAlarmNotifyIntent(Context context, int id) {
         // Note: This intent is only used to be passed to AlarmManager.cancel(...), so it shouldn't start the service.
-        return PendingIntent.getService(context, id, new Intent(context, ReminderService.class), 0); // must use equal intent and same request code as when scheduled
+        // It must be equal to the intent used when scheduling the alarm.
+        Intent intent = new Intent(context, ReminderService.class);
+        intent.setAction(ACTION_START);
+        return PendingIntent.getService(context, id, intent, 0); // Request code must be the same as when scheduled.
     }
 
     public ReminderService() {
@@ -272,7 +275,7 @@ public class ReminderService extends IntentService {
 
         // Cancel possibly scheduled alarm
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        alarmManager.cancel(getCancelNotifyIntent(context, id));
+        alarmManager.cancel(getCancelAlarmNotifyIntent(context, id));
     }
 
     public static void createNotificationChannel(Context context) {

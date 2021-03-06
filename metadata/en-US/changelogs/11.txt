@@ -1,1 +1,2 @@
 * On Android 8+ replaced notification settings for sound and priority (which did not have any effect) with a link to the notification channel settings.
+* Fixed: When scheduled reminders were marked as done or were deleted, they would still be shown at the due time (deleted reminders were attempted to be shown which lead to a crash).
