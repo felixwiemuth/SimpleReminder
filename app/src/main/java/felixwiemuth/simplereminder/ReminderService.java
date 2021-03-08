@@ -93,6 +93,8 @@ public class ReminderService extends IntentService {
                 intent.putExtra(ReminderService.EXTRA_INT_ID, id);
                 // Note: Setting an action seems to prevent extras being removed from intents, see https://stackoverflow.com/questions/15343840/intent-extras-missing-when-activity-started.
                 // It happened that the service was called without extras after introducing editing of reminders.
+                // This might, however, also have happened due to accidental reuse of intents when rescheduling a reminder
+                // (the intent used to cancel the original alarm could have been considered equal and reuesed for the new alarm).
                 intent.setAction(ACTION_START);
                 EnumUtil.serialize(action).to(intent);
 
@@ -101,6 +103,7 @@ public class ReminderService extends IntentService {
 
             /**
              * Create a pending intent that will start the service. Sets correct request code.
+             * Uses flag {@link PendingIntent#FLAG_CANCEL_CURRENT} to make sure no old intent is reused.
              *
              * @param context
              * @return
@@ -118,7 +121,7 @@ public class ReminderService extends IntentService {
                     default:
                         throw new ImplementationError("Unknown action.");
                 }
-                return PendingIntent.getService(context, requestCode, build(context), 0);
+                return PendingIntent.getService(context, requestCode, build(context), PendingIntent.FLAG_CANCEL_CURRENT);
             }
         }
     }
@@ -136,9 +139,10 @@ public class ReminderService extends IntentService {
      */
     public static PendingIntent getCancelAlarmNotifyIntent(Context context, int id) {
         // Note: This intent is only used to be passed to AlarmManager.cancel(...), so it shouldn't start the service.
-        // It must be equal to the intent used when scheduling the alarm.
+        // It must be equal to the intent used when scheduling the alarm (extras are not compared)
         Intent intent = new Intent(context, ReminderService.class);
         intent.setAction(ACTION_START);
+        // Note that it shouldn't matter whether this reuses an intent that matches; it is enough that it matches to cancel the alarm.
         return PendingIntent.getService(context, id, intent, 0); // Request code must be the same as when scheduled.
     }
 
