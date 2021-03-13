@@ -18,15 +18,10 @@
 package felixwiemuth.simplereminder.ui;
 
 
-import android.annotation.SuppressLint;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.provider.Settings;
 
 import androidx.annotation.RequiresApi;
@@ -34,9 +29,9 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 
+import felixwiemuth.simplereminder.BootReceiver;
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
-import felixwiemuth.simplereminder.BootReceiver;
 import felixwiemuth.simplereminder.ReminderService;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -107,8 +102,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
      */
     @RequiresApi(23)
     private void updateBatteryPrefDescription(Preference batPref) {
-        PowerManager pm = (PowerManager) getContext().getSystemService(Context.POWER_SERVICE);
-        if (pm.isIgnoringBatteryOptimizations(getContext().getPackageName())) {
+        if (Prefs.isIgnoringBatteryOptimization(getContext())) {
             batPref.setSummary(R.string.preference_disable_battery_optimization_summary_yes);
             batPref.setOnPreferenceClickListener(preference -> {
                 Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
@@ -119,9 +113,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         } else {
             batPref.setSummary(R.string.preference_disable_battery_optimization_summary_no);
             batPref.setOnPreferenceClickListener(preference -> {
-                @SuppressLint("BatteryLife") Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                intent.setData(Uri.parse("package:" + getContext().getPackageName()));
-                startActivity(intent);
+                startActivity(Prefs.getIntentDisableBatteryOptimization(getContext()));
                 updateBatteryPrefDescription(batPref);
                 return true;
             });

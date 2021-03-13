@@ -22,10 +22,9 @@
     <string name="toast_info_add_reminder_dialog">Tip: There is a launcher icon to reach this dialog!</string>
     <string name="dialog_startup_later">Later</string>
     <string name="dialog_startup_dont_show_again">Don\'t show again</string>
-    <!-- Use the following if want a startup dialog for battery optimization -->
-<!--    <string name="dialog_startup_disable_battery_optimization_title">Battery Optimization</string>
-    <string name="dialog_startup_disable_battery_optimization_message">Battery optimization my cause reminders not to be shown. To prevent this, turn off battery optimization. SimpleReminder still only becomes active when a scheduled reminder is due.</string>
-    <string name="dialog_startup_disable_battery_optimization_turn_off">Turn off for SimpleReminder</string>-->
+    <string name="dialog_startup_disable_battery_optimization_title">Battery Optimization</string>
+    <string name="dialog_startup_disable_battery_optimization_message">You must disable battery optimization so that reminders can be shown reliably.\n\nSimpleReminder still only becomes active when a scheduled reminder is due.</string>
+    <string name="dialog_startup_disable_battery_optimization_turn_off">Turn off for SimpleReminder</string>
     <string name="dialog_startup_run_on_boot_title">@string/preference_run_on_boot</string>
     <string name="dialog_startup_run_on_boot_message">To keep showing reminders after a restart of the device, please allow the app to run on startup.</string>
     <string name="dialog_startup_run_on_boot_turn_off">Grant permission</string>

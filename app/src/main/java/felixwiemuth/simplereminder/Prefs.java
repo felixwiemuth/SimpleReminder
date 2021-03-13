@@ -18,12 +18,19 @@
 package felixwiemuth.simplereminder;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -66,7 +73,7 @@ public class Prefs {
     private static final String PREF_STATE_WELCOME_MESSAGE_SHOWN = "welcomeMessageShown";
     private static final String PREF_STATE_ADD_REMINDER_DIALOG_USED = "AddReminderDialogUsed";
 
-    //    private static final String PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN = "battery_optimization_dont_show_again";
+    private static final String PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN = "battery_optimization_dont_show_again";
     private static final String PREF_STATE_RUN_ON_BOOT_DONT_SHOW_AGAIN = "run_on_boot_dont_show_again";
 
     public static final int PERMISSION_REQUEST_CODE_BOOT = 1;
@@ -121,13 +128,13 @@ public class Prefs {
         getStatePrefs(context).edit().putBoolean(PREF_STATE_ADD_REMINDER_DIALOG_USED, true).apply();
     }
 
-//    public static boolean isBatteryOptimizationDontShowAgain(Context context) {
-//        return getStatePrefs(context).getBoolean(PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN, false);
-//    }
-//
-//    public static void setBatteryOptimizationDontShowAgain(Context context) {
-//        getStatePrefs(context).edit().putBoolean(PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN, true).apply();
-//    }
+    public static boolean isBatteryOptimizationDontShowAgain(Context context) {
+        return getStatePrefs(context).getBoolean(PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN, false);
+    }
+
+    public static void setBatteryOptimizationDontShowAgain(Context context) {
+        getStatePrefs(context).edit().putBoolean(PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN, true).apply();
+    }
 
     public static boolean isRunOnBootDontShowAgain(Context context) {
         return getStatePrefs(context).getBoolean(PREF_STATE_RUN_ON_BOOT_DONT_SHOW_AGAIN, false);
@@ -176,6 +183,24 @@ public class Prefs {
         } else {
             Toast.makeText(context, R.string.toast_permission_not_granted, Toast.LENGTH_LONG).show();
         }
+    }
+
+    /**
+     * Check the system settings on whether battery optimization is disabled for this app.
+     * @param context
+     * @return
+     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public static boolean isIgnoringBatteryOptimization(Context context) {
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        return pm.isIgnoringBatteryOptimizations(context.getPackageName());
+    }
+
+    @RequiresApi(23)
+    public static Intent getIntentDisableBatteryOptimization(Context context) {
+        @SuppressLint("BatteryLife") Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+        intent.setData(Uri.parse("package:" + context.getPackageName()));
+        return intent;
     }
 
     /**
