@@ -104,17 +104,17 @@ public class RemindersListActivity extends AppCompatActivity {
     private void showStartupDialogs() {
         // NOTE: the user will see the dialogs in reversed order as they are opened.
 
-        // Check whether battery optimization is disabled and show dialog to disable it otherwise.
-        checkBatteryOptimization();
-
-        // Check whether run on boot is enabled and whether should ask user to enable it.
-        checkRunOnBoot();
-
         // Changelog
         ChangeLog changeLog = new ChangeLog(this);
         if (changeLog.isFirstRun()) {
             changeLog.getLogDialog().show();
         }
+
+        // Check whether battery optimization is disabled and show dialog to disable it otherwise.
+        checkBatteryOptimization();
+
+        // Check whether run on boot is enabled and whether should ask user to enable it.
+        checkRunOnBoot();
 
         // Show welcome dialog if version changed
         if (!Prefs.checkWelcomeMessageShown(this)) {
