@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="0.9.6" versioncode="11" >
+        <change>On Android 8+ replaced notification settings for sound and priority (which did not have any effect) with a link to the notification channel settings.</change>
+        <change>Fixed: When scheduled reminders were marked as done or were deleted, they would still be shown at the due time (deleted reminders were attempted to be shown which lead to a crash).</change>
+        <change>Now ask to disable battery optimization on launch as this is essential to the working of SimpleReminder.</change>
+    </release>
     <release version="0.9.5" versioncode="9" >
         <change>Reminders can now be rescheduled by clicking on the notification or selecting a reminder in the list.</change>
     </release>
