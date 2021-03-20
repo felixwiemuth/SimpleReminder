@@ -173,7 +173,7 @@ public class RemindersListActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.dialog_startup_run_on_boot_title)
                 .setMessage(R.string.dialog_startup_run_on_boot_message)
-                .setPositiveButton(R.string.dialog_startup_run_on_boot_turn_off, (d, i) -> {
+                .setPositiveButton(R.string.dialog_startup_run_on_boot_enable, (d, i) -> {
                     Prefs.enableRunOnBoot(this, this);
                 })
                 .setNeutralButton(R.string.dialog_startup_later, null)

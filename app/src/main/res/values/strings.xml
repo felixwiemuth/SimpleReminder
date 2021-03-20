@@ -27,7 +27,7 @@
     <string name="dialog_startup_disable_battery_optimization_turn_off">Turn off for SimpleReminder</string>
     <string name="dialog_startup_run_on_boot_title">@string/preference_run_on_boot</string>
     <string name="dialog_startup_run_on_boot_message">To keep showing reminders after a restart of the device, please allow the app to run on startup.</string>
-    <string name="dialog_startup_run_on_boot_turn_off">Grant permission</string>
+    <string name="dialog_startup_run_on_boot_enable">Enable</string>
     <string name="add_reminder_title">Add reminder</string>
     <string name="add_reminder_name_hint">Reminder text (optional)</string>
     <string name="edit_reminder_title">Edit reminder</string>
