@@ -30,4 +30,5 @@
     <color name="bg_date_notified">@color/yellow</color>
     <color name="bg_date_done">@color/grey</color>
     <color name="bg_selected">@color/lightblue_transparent</color>
+    <color name="text_alert">@android:color/holo_red_dark</color>
 </resources>

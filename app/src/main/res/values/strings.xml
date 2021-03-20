@@ -65,7 +65,7 @@
     <string name="preference_run_on_boot_descr">Reschedule existing reminders when the device is started (requires permission). If not enabled, previously scheduled reminders cannot be shown after a restart until the app is opened manually.</string>
     <string name="preference_disable_battery_optimization">Battery optimization</string>
     <string name="preference_disable_battery_optimization_summary_yes">OK. Battery optimization is disabled, reminders will be shown on time. Click to open settings.</string>
-    <string name="preference_disable_battery_optimization_summary_no">NOTE: Battery optimization is enabled - reminders might not be shown if the device was idle for too long. Click to disable.</string>
+    <string name="preference_disable_battery_optimization_summary_no">NOTE: Battery optimization is enabled - reminders might not be shown after the device was idle for too long. Click to disable.</string>
     <string name="toast_permission_not_granted">Permission not granted.</string>
     <string name="priority_min">Min</string>
     <string name="priority_low">Low</string>

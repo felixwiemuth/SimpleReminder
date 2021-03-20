@@ -23,6 +23,9 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 
 import androidx.annotation.RequiresApi;
 import androidx.preference.Preference;
@@ -111,7 +114,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return true;
             });
         } else {
-            batPref.setSummary(R.string.preference_disable_battery_optimization_summary_no);
+            int color = getResources().getColor(R.color.text_alert, null);
+            SpannableString spannableString = new SpannableString(getString(R.string.preference_disable_battery_optimization_summary_no));
+            spannableString.setSpan(new ForegroundColorSpan(color), 0, spannableString.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+            // NOTE: As the text should change with "setSummary" here, the markup should apply. Should the text be equal, would need a workaround.
+            batPref.setSummary(spannableString);
+
             batPref.setOnPreferenceClickListener(preference -> {
                 startActivity(Prefs.getIntentDisableBatteryOptimization(getContext()));
                 updateBatteryPrefDescription(batPref);
