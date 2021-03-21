@@ -18,7 +18,14 @@
 package felixwiemuth.simplereminder.ui.util;
 
 import android.content.Context;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
+
+import felixwiemuth.simplereminder.R;
 
 /**
  * @author Felix Wiemuth
@@ -29,5 +36,16 @@ public class UIUtils {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss()).setTitle(resTitle).setMessage(message);
         builder.show();
+    }
+
+    public static SpannableString makeAlertText(CharSequence source, Context context) {
+        int color = context.getResources().getColor(R.color.text_alert); // Deprecated, but same as getColor(R.color.text_alert, null) on newer APIs
+        SpannableString spannableString = new SpannableString(source);
+        spannableString.setSpan(new ForegroundColorSpan(color), 0, spannableString.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        return spannableString;
+    }
+
+    public static SpannableString makeAlertText(@StringRes int resId, Context context) {
+        return makeAlertText(context.getString(resId), context);
     }
 }

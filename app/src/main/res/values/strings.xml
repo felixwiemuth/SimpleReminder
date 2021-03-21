@@ -62,7 +62,8 @@
     <string name="preference_notification_channel_settings">Change notification settings</string>
     <string name="preference_category_app">General</string>
     <string name="preference_run_on_boot">Activate on device startup</string>
-    <string name="preference_run_on_boot_descr">Reschedule existing reminders when the device is started (requires permission). If not enabled, previously scheduled reminders cannot be shown after a restart until the app is opened manually.</string>
+    <string name="preference_run_on_boot_summary_off">After a restart of the device, reminders will not be shown until opening the app.</string>
+    <string name="preference_run_on_boot_summary_on">Continue showing reminders after a restart of the device.</string>
     <string name="preference_disable_battery_optimization">Battery optimization</string>
     <string name="preference_disable_battery_optimization_summary_yes">OK. Battery optimization is disabled, reminders will be shown on time. Click to open settings.</string>
     <string name="preference_disable_battery_optimization_summary_no">NOTE: Battery optimization is enabled - reminders might not be shown after the device was idle for too long. Click to disable.</string>

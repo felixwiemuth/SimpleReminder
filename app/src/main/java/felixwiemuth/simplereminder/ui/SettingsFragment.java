@@ -23,25 +23,29 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 
 import androidx.annotation.RequiresApi;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreference;
 
 import felixwiemuth.simplereminder.BootReceiver;
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderService;
+import felixwiemuth.simplereminder.ui.util.UIUtils;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
+
+        SwitchPreference runOnBootPref = getPreferenceScreen().findPreference(getString(R.string.prefkey_run_on_boot));
+        runOnBootPref.setSummaryOff(UIUtils.makeAlertText(R.string.preference_run_on_boot_summary_off, getContext()));
+        runOnBootPref.setSummaryOn(R.string.preference_run_on_boot_summary_on);
+
         Preference batPref = getPreferenceScreen().findPreference(getString(R.string.prefkey_disable_battery_optimization));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             updateBatteryPrefDescription(batPref);
@@ -114,11 +118,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return true;
             });
         } else {
-            int color = getResources().getColor(R.color.text_alert, null);
-            SpannableString spannableString = new SpannableString(getString(R.string.preference_disable_battery_optimization_summary_no));
-            spannableString.setSpan(new ForegroundColorSpan(color), 0, spannableString.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
             // NOTE: As the text should change with "setSummary" here, the markup should apply. Should the text be equal, would need a workaround.
-            batPref.setSummary(spannableString);
+            batPref.setSummary(UIUtils.makeAlertText(R.string.preference_disable_battery_optimization_summary_no, getContext()));
 
             batPref.setOnPreferenceClickListener(preference -> {
                 startActivity(Prefs.getIntentDisableBatteryOptimization(getContext()));
