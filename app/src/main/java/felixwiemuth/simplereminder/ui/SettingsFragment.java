@@ -28,7 +28,7 @@ import androidx.annotation.RequiresApi;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreference;
+import androidx.preference.SwitchPreferenceCompat;
 
 import felixwiemuth.simplereminder.BootReceiver;
 import felixwiemuth.simplereminder.Prefs;
@@ -42,7 +42,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
-        SwitchPreference runOnBootPref = getPreferenceScreen().findPreference(getString(R.string.prefkey_run_on_boot));
+        SwitchPreferenceCompat runOnBootPref = getPreferenceScreen().findPreference(getString(R.string.prefkey_run_on_boot));
         runOnBootPref.setSummaryOff(UIUtils.makeAlertText(R.string.preference_run_on_boot_summary_off, getContext()));
         runOnBootPref.setSummaryOn(R.string.preference_run_on_boot_summary_on);
 
