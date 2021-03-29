@@ -52,7 +52,7 @@ dependencies {
     implementation "ch.acra:acra-mail:$acraVersion"
     implementation "ch.acra:acra-dialog:$acraVersion"
     implementation 'de.cketti.library.changelog:ckchangelog:1.2.2'
-    implementation project(':sectionedrecyclerviewadapter')
+    implementation 'com.github.felixwiemuth:sectionedrecyclerviewadapter:50b56a40df'
     compileOnly 'org.projectlombok:lombok:1.18.4'
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
     testImplementation 'junit:junit:4.12'
