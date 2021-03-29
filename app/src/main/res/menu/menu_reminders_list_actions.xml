@@ -22,36 +22,36 @@
     <item
         android:id="@+id/action_reschedule"
         android:title="@string/reminder_list_action_reschedule"
-        android:icon="@android:drawable/ic_menu_rotate"
+        android:icon="@drawable/ic_restore"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_delete"
         android:title="@string/reminder_list_action_delete"
-        android:icon="@android:drawable/ic_menu_delete"
+        android:icon="@drawable/ic_delete"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_add_template"
         android:title="@string/reminder_list_action_add_template"
-        android:icon="@android:drawable/ic_menu_save"
+        android:icon="@drawable/ic_save"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_mark_done"
         android:title="@string/reminder_list_action_mark_done"
-        android:icon="@android:drawable/ic_notification_clear_all"
+        android:icon="@drawable/ic_check_circle_outline"
         app:showAsAction="ifRoom" />
 <!--    <item-->
 <!--        android:id="@+id/action_edit"-->
 <!--        android:title="@string/reminder_list_action_edit"-->
-<!--        android:icon="@android:drawable/ic_menu_edit"-->
+<!--        android:icon="@drawable/ic_edit"-->
 <!--        app:showAsAction="ifRoom" />-->
     <item
         android:id="@+id/action_copy_text"
         android:title="@string/reminder_list_action_copy_text"
-        android:icon="@android:drawable/ic_menu_agenda"
+        android:icon="@drawable/ic_content_copy"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_select_all"
         android:title="@string/reminder_list_action_select_all"
-        android:icon="@android:drawable/ic_dialog_dialer"
+        android:icon="@drawable/ic_select_all"
         app:showAsAction="ifRoom" />
 </menu>

@@ -220,7 +220,7 @@ public class ReminderService extends IntentService {
         PendingIntent editReminderPendingIntent = PendingIntent.getActivity(context, Reminder.getRequestCodeAddReminderDialogActivityPendingIntent(id), editReminderIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_REMINDER)
-                .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+                .setSmallIcon(R.drawable.ic_alarm)
                 .setContentTitle(context.getString(R.string.notification_title))
                 .setContentText(text)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
