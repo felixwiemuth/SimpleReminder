@@ -19,11 +19,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "felixwiemuth.simplereminder"
@@ -31,7 +27,6 @@ android {
         targetSdkVersion 27
         versionCode 11
         versionName "0.9.6"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -39,23 +34,31 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        encoding "UTF-8"
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    packagingOptions {
+        exclude 'META-INF/*'
+    }
 }
 
 dependencies {
-    def acraVersion = '5.3.0'
-    implementation 'com.google.code.gson:gson:2.8.5'
+// AndroidX
     implementation 'androidx.appcompat:appcompat:1.3.0-beta01'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'com.google.android.material:material:1.4.0-alpha01'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.fragment:fragment:1.3.2'
     implementation 'androidx.preference:preference:1.1.1'
+    implementation 'com.google.android.material:material:1.4.0-alpha01'
+
+// Third-party
+    def acraVersion = '5.3.0'
     implementation "ch.acra:acra-mail:$acraVersion"
     implementation "ch.acra:acra-dialog:$acraVersion"
+    implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'de.cketti.library.changelog:ckchangelog:1.2.2'
     implementation 'com.github.felixwiemuth:sectionedrecyclerviewadapter:50b56a40df'
     compileOnly 'org.projectlombok:lombok:1.18.4'
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
