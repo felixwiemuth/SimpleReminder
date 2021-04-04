@@ -42,7 +42,7 @@ import lombok.Builder;
 /**
  * Responsible for reminder scheduling and notifications. Handles scheduled reminders when they are due. May only be started with an intent created via the provided intent builder ({@link #intentBuilder()}).
  *
- * Expects that the notification channel {@link #NOTIFICATION_CHANNEL_REMINDER} exists. Use {@link #createNotificationChannel()} to create it.
+ * Expects that the notification channel {@link #NOTIFICATION_CHANNEL_REMINDER} exists. Use {@link #createNotificationChannel(Context)} to create it.
  *
  * @author Felix Wiemuth
  */
