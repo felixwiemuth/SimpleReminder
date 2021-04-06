@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
     <release version="0.9.7" versioncode="12" >
+        <change>Use clock widget instead of spinner for choosing time (only applies to Android 5.0+).</change>
         <change>Fixed app not starting on Android 5.1 and below.</change>
     </release>
     <release version="0.9.6" versioncode="11" >
