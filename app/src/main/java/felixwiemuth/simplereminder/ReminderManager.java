@@ -49,7 +49,7 @@ public class ReminderManager {
     }
 
     /**
-     * Lock guarding the state preferences ({@link Prefs#PREFS_STATE}). This reference being null is equivalent to the lock not being aquired.
+     * Lock guarding the state preferences. This reference being null is equivalent to the lock not being acquired.
      */
     private static ReentrantLock prefStateLock;
 
@@ -75,7 +75,7 @@ public class ReminderManager {
     }
 
     /**
-     * Edit the state preferences ({@link Prefs#PREFS_STATE}) exclusively and commit after the operation has successfully completed. This ensures that different threads editing these preferences do not overwrite their changes. Also sends a {@link RemindersListFragment#BROADCAST_REMINDERS_UPDATED} broadcast to inform about a change. Only change reminders via this method.
+     * Edit the state preferences exclusively and commit after the operation has successfully completed. This ensures that different threads editing these preferences do not overwrite their changes. Also sends a {@link RemindersListFragment#BROADCAST_REMINDERS_UPDATED} broadcast to inform about a change. Only change reminders via this method.
      *
      * @param context
      * @param operation
