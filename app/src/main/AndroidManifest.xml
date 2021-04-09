@@ -32,7 +32,7 @@
             android:name=".ui.AddReminderDialogActivity"
             android:label="@string/add_reminder_title"
             android:launchMode="singleInstance"
-            android:theme="@style/Theme.AppCompat.Dialog"
+            android:theme="@style/AppTheme.DialogActivity"
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -93,7 +93,7 @@ public class RemindersListFragment extends Fragment {
         TIME_ONLY_IF_TODAY
     }
 
-    public static final String BROADCAST_REMINDERS_UPDATED = "felixwiemuth.simplereminder.BROADCAST_REMINDERS_UPDATED";
+    public static final String BROADCAST_REMINDERS_UPDATED = "felixwiemuth.simplereminder.ui.reminderslist.BROADCAST_REMINDERS_UPDATED";
     private BroadcastReceiver broadcastReceiver;
 
     private CustomViewType reminderCardTimeOnlyViewType = new CustomViewType(TimeOnlyItemViewHolder.class, R.layout.reminder_card);

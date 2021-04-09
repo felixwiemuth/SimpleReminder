@@ -17,15 +17,16 @@
 
 package felixwiemuth.simplereminder.ui.reminderslist;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -111,7 +112,9 @@ public class RemindersListActivity extends AppCompatActivity {
         }
 
         // Check whether battery optimization is disabled and show dialog to disable it otherwise.
-        checkBatteryOptimization();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkBatteryOptimization();
+        }
 
         // Check whether run on boot is enabled and whether should ask user to enable it.
         checkRunOnBoot();
@@ -183,7 +186,7 @@ public class RemindersListActivity extends AppCompatActivity {
                 .show();
     }
 
-    @TargetApi(23)
+    @RequiresApi(api = Build.VERSION_CODES.M)
     private void checkBatteryOptimization() {
         if (Prefs.isBatteryOptimizationDontShowAgain(this) || Prefs.isIgnoringBatteryOptimization(this)) {
             return;

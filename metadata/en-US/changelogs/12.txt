@@ -1,0 +1,2 @@
+* Use clock widget instead of spinner for choosing time (only applies to Android 5.0+).
+* Fixed app not starting on Android 5.1 and below.

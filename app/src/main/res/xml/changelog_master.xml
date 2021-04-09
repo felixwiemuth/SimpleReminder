@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="0.9.7" versioncode="12" >
+        <change>Use clock widget instead of spinner for choosing time (only applies to Android 5.0+).</change>
+        <change>Fixed app not starting on Android 5.1 and below.</change>
+    </release>
     <release version="0.9.6" versioncode="11" >
         <change>On Android 8+ replaced notification settings for sound and priority (which did not have any effect) with a link to the notification channel settings.</change>
         <change>Fixed: When scheduled reminders were marked as done or were deleted, they would still be shown at the due time (deleted reminders were attempted to be shown which lead to a crash).</change>

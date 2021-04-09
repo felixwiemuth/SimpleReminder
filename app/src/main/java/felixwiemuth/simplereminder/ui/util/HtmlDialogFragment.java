@@ -94,10 +94,10 @@ public class HtmlDialogFragment extends DialogFragment {
 
     private Map<String, Action> actions = new HashMap<>();
 
-    private static final String FRAGMENT_TAG = "nz.net.speakman.androidlicensespage.HtmlDialogFragment";
-    private static final String ARG_TITLE = "felixwiemuth.lincal.ARG_TITLE";
-    private static final String ARG_RES_HTML_FILE = "felixwiemuth.lincal.ARG_RES_HTML_FILE";
-    private static final String ARG_ACTIONS = "felixwiemuth.lincal.ARG_ACTIONS";
+    private static final String FRAGMENT_TAG = "felixwiemuth.simplereminder.HtmlDialogFragment";
+    private static final String ARG_TITLE = "felixwiemuth.simplereminder.HtmlDialogFragment.ARG_TITLE";
+    private static final String ARG_RES_HTML_FILE = "felixwiemuth.simplereminder.HtmlDialogFragment.ARG_RES_HTML_FILE";
+    private static final String ARG_ACTIONS = "felixwiemuth.simplereminder.HtmlDialogFragment.ARG_ACTIONS";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
