@@ -27,8 +27,8 @@ android {
 
     defaultConfig {
         // Release branch specific variables
-        applicationId "felixwiemuth.simplereminder.dev"
-        def versionNameSuffix = '-dev'
+        applicationId "felixwiemuth.simplereminder"
+        def versionNameSuffix = ''
 
         // Version variables
         versionCode 12
