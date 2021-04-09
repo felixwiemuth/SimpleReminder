@@ -26,11 +26,17 @@ android {
     }
 
     defaultConfig {
-        applicationId "felixwiemuth.simplereminder"
+        // Release branch specific variables
+        applicationId "felixwiemuth.simplereminder.dev"
+        def versionNameSuffix = '-dev'
+
+        // Version variables
+        versionCode 12
+        versionName "0.9.7" + versionNameSuffix
+
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 11
-        versionName "0.9.6"
+        
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
