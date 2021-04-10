@@ -31,8 +31,8 @@ android {
         def versionNameSuffix = '-dev'
 
         // Version variables
-        versionCode 12
-        versionName "0.9.7" + versionNameSuffix
+        versionCode 13
+        versionName "0.9.8" + versionNameSuffix
 
         minSdkVersion 16
         targetSdkVersion 27
