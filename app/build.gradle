@@ -36,7 +36,7 @@ android {
 
         minSdkVersion 16
         targetSdkVersion 27
-        
+        vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
