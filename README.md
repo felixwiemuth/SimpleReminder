@@ -19,6 +19,7 @@ SimpleReminder is currently under development, a first version will soon be rele
 
 ## Features
 - Easily add a reminder for a time within the next 24 hours with a custom message
+  - Use the launcher icon or the Quick Settings tile
 - When a reminder is due, a notification is shown (with customizable importance and optional sound)
 - Clear breakdown on due, upcoming and past reminders
 - Reschedule a due reminder by clicking on the notification and a scheduled or past reminder by selecting it in the list
