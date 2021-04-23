@@ -2,6 +2,7 @@
 <changelog>
     <release version="0.9.8" versioncode="13" >
         <change>Quick Settings tile</change>
+        <change>Smaller UI and navigation improvements</change>
     </release>
     <release version="0.9.7" versioncode="12" >
         <change>Use clock widget instead of spinner for choosing time (only applies to Android 5.0+).</change>
