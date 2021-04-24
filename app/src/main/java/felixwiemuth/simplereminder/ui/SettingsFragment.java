@@ -68,6 +68,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 startActivity(intent);
                 return true;
             });
+            notificationChannelPreference.setIconSpaceReserved(false);
             notificationsPrefGroup.addPreference(notificationChannelPreference);
         }
     }
