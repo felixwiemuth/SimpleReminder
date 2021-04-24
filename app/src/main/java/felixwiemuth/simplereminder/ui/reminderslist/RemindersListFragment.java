@@ -57,7 +57,7 @@ import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderManager;
 import felixwiemuth.simplereminder.data.Reminder;
-import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
+import felixwiemuth.simplereminder.ui.EditReminderDialogActivity;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;
 import io.github.luizgrp.sectionedrecyclerviewadapter.CustomViewType;
@@ -154,7 +154,7 @@ public class RemindersListFragment extends Fragment {
 //                    mode.finish();
 //                    break;
                 case R.id.action_reschedule:
-                    Intent intent = AddReminderDialogActivity.getIntentEditReminder(getContext(), getOnlySelectedReminder().getId());
+                    Intent intent = EditReminderDialogActivity.getIntentEditReminder(getContext(), getOnlySelectedReminder().getId());
                     startActivityForResult(intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
                     mode.finish();
                     break;

@@ -22,9 +22,16 @@
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.EditReminderDialogActivity"
+            android:label="@string/edit_reminder_title"
+            android:launchMode="singleInstance"
+            android:theme="@style/AppTheme.DialogActivity"
+            android:windowSoftInputMode="stateVisible">
         </activity>
 
         <service

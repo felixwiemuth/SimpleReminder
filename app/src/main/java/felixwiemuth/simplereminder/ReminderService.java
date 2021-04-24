@@ -33,7 +33,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import felixwiemuth.simplereminder.data.Reminder;
-import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
+import felixwiemuth.simplereminder.ui.EditReminderDialogActivity;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.EnumUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;
@@ -216,7 +216,7 @@ public class ReminderService extends IntentService {
                 .action(Action.MARK_DONE)
                 .buildPendingIntent(context);
 
-        Intent editReminderIntent = AddReminderDialogActivity.getIntentEditReminder(context, id);
+        Intent editReminderIntent = EditReminderDialogActivity.getIntentEditReminder(context, id);
         PendingIntent editReminderPendingIntent = PendingIntent.getActivity(context, Reminder.getRequestCodeAddReminderDialogActivityPendingIntent(id), editReminderIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_REMINDER)
