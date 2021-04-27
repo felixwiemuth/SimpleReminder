@@ -4,6 +4,11 @@ This file lists people who made contributions to the project. The exact contribu
 ## Development and maintenance
 The app is currently developed and maintained by [Felix Wiemuth](https://github.com/felixwiemuth/).
 
+### Source code contributions
+The following people have made source code contributions:
+
+- [TacoTheDank](https://github.com/TacoTheDank): maintenance (upgrade and improve code) ([commits](https://github.com/felixwiemuth/SimpleReminder/commits?author=TacoTheDank), [pull requests](https://github.com/felixwiemuth/SimpleReminder/pulls?q=is%3Apr+author%3ATacoTheDank+))
+
 ## Ideas
 The following people contributed ideas and inspiration:
 - Nick Faulwetter

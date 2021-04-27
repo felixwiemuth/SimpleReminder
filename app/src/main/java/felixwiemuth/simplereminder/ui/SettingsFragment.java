@@ -28,7 +28,7 @@ import androidx.annotation.RequiresApi;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreference;
+import androidx.preference.SwitchPreferenceCompat;
 
 import felixwiemuth.simplereminder.BootReceiver;
 import felixwiemuth.simplereminder.Prefs;
@@ -42,11 +42,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
-        SwitchPreference runOnBootPref = getPreferenceScreen().findPreference(getString(R.string.prefkey_run_on_boot));
+        SwitchPreferenceCompat runOnBootPref = findPreference(getString(R.string.prefkey_run_on_boot));
         runOnBootPref.setSummaryOff(UIUtils.makeAlertText(R.string.preference_run_on_boot_summary_off, getContext()));
         runOnBootPref.setSummaryOn(R.string.preference_run_on_boot_summary_on);
 
-        Preference batPref = getPreferenceScreen().findPreference(getString(R.string.prefkey_disable_battery_optimization));
+        Preference batPref = findPreference(getString(R.string.prefkey_disable_battery_optimization));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             updateBatteryPrefDescription(batPref);
         } else {
@@ -55,9 +55,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
         // Priority/Sound settings only work for Android < 8
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            PreferenceCategory notificationsPrefGroup = getPreferenceScreen().findPreference(getString(R.string.prefkey_notifications));
-            notificationsPrefGroup.removePreference(getPreferenceScreen().findPreference(getString(R.string.prefkey_priority)));
-            notificationsPrefGroup.removePreference(getPreferenceScreen().findPreference(getString(R.string.prefkey_enable_sound)));
+            PreferenceCategory notificationsPrefGroup = findPreference(getString(R.string.prefkey_notifications));
+            notificationsPrefGroup.removePreference(findPreference(getString(R.string.prefkey_priority)));
+            notificationsPrefGroup.removePreference(findPreference(getString(R.string.prefkey_enable_sound)));
 
             Preference notificationChannelPreference = new Preference(getContext());
             notificationChannelPreference.setTitle(R.string.preference_notification_channel_settings);
@@ -68,6 +68,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 startActivity(intent);
                 return true;
             });
+            notificationChannelPreference.setIconSpaceReserved(false);
             notificationsPrefGroup.addPreference(notificationChannelPreference);
         }
     }
@@ -76,7 +77,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     public void onResume() {
         super.onResume();
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        Preference batPref = getPreferenceScreen().findPreference(getString(R.string.prefkey_disable_battery_optimization));
+        Preference batPref = findPreference(getString(R.string.prefkey_disable_battery_optimization));
         if (batPref != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // the second condition should already follow from the first
             updateBatteryPrefDescription(batPref);
         }
