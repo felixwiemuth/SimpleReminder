@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderManager;
@@ -82,10 +83,10 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
             reminderToUpdate = reminderId;
         } catch (ReminderManager.ReminderNotFoundException e) {
             Log.w("AddReminder", "Intent contains invalid reminder ID.");
+            Toast.makeText(this, R.string.error_msg_reminder_not_found, Toast.LENGTH_LONG).show();
             completeActivity();
         }
     }
-
 
     @Override
     protected void onDone() {

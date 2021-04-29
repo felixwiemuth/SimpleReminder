@@ -75,6 +75,7 @@
     <string name="priority_default">Middle</string>
     <string name="priority_high">High</string>
     <string name="priority_max">Max</string>
+    <string name="error_msg_reminder_not_found">Error: Reminder not found</string>
     <string name="acra_title">Crash report</string>
     <!--<string name="acra_email">Enter your email for further enquiries</string>-->
     <string name="acra_prompt">Sorry, SimpleReminder has crashed. Please send this report to the developer.</string>
