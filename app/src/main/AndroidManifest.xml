@@ -15,9 +15,28 @@
         android:theme="@style/AppTheme">
 
         <activity
+            android:name=".ui.reminderslist.RemindersListActivity"
+            android:label="@string/title_activity_reminders_list"
+            android:taskAffinity="felixwiemuth.simplereminder.main"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:taskAffinity="felixwiemuth.simplereminder.main" />
+
+        <activity
             android:name=".ui.AddReminderDialogActivity"
             android:label="@string/add_reminder_title"
-            android:launchMode="singleInstance"
+            android:taskAffinity="felixwiemuth.simplereminder.addreminder"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.DialogActivity"
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
@@ -29,10 +48,10 @@
         <activity
             android:name=".ui.EditReminderDialogActivity"
             android:label="@string/edit_reminder_title"
-            android:launchMode="singleInstance"
+            android:taskAffinity="felixwiemuth.simplereminder.editreminder"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.DialogActivity"
-            android:windowSoftInputMode="stateVisible">
-        </activity>
+            android:windowSoftInputMode="stateVisible" />
 
         <service
             android:name=".ReminderService"
@@ -57,20 +76,6 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".ui.reminderslist.RemindersListActivity"
-            android:label="@string/title_activity_reminders_list"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".ui.SettingsActivity" />
     </application>
 
 </manifest>

@@ -42,8 +42,7 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
 
     public static Intent getIntentEditReminder(Context context, int reminderId) {
         return new Intent(context, EditReminderDialogActivity.class)
-                .putExtra(EXTRA_REMINDER_ID, reminderId)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                .putExtra(EXTRA_REMINDER_ID, reminderId);
     }
 
     @Override

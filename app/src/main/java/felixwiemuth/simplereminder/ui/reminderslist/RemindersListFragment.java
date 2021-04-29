@@ -155,7 +155,7 @@ public class RemindersListFragment extends Fragment {
 //                    break;
                 case R.id.action_reschedule:
                     Intent intent = EditReminderDialogActivity.getIntentEditReminder(getContext(), getOnlySelectedReminder().getId());
-                    startActivityForResult(intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
+                    startActivityForResult(intent, 0);
                     mode.finish();
                     break;
                 case R.id.action_copy_text:

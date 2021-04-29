@@ -32,7 +32,6 @@ public class QuickTileService extends TileService {
     public void onClick() {
         super.onClick();
         Intent intent = new Intent(this, AddReminderDialogActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivityAndCollapse(intent);
     }
 }
