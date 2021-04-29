@@ -20,15 +20,18 @@ package felixwiemuth.simplereminder.ui;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
+import felixwiemuth.simplereminder.R;
+
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
+                .replace(R.id.settings_container, new SettingsFragment())
                 .commit();
     }
 }
