@@ -226,6 +226,7 @@ public class ReminderService extends IntentService {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                 .setContentIntent(editReminderPendingIntent)
                 .setDeleteIntent(markDoneIntent)
+                .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 // Applies for Android < 8
                 .setPriority(Integer.valueOf(Prefs.getStringPref(R.string.prefkey_priority, "0", context)));
 
