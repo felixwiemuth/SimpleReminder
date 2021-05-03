@@ -56,7 +56,7 @@ Please report bugs on [Github](https://github.com/felixwiemuth/SimpleReminder/is
 
 ## License ##
 
-Copyright (C) 2019-2021 Felix Wiemuth
+Copyright (C) 2018-2021 Felix Wiemuth and [contributors](CONTRIBUTORS.md)
 
 
     This program is free software: you can redistribute it and/or modify
