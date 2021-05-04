@@ -18,7 +18,7 @@
 
 <changelog>
     <release version="0.9.8" versioncode="13" >
-        <change>Quick Settings tile</change>
+        <change>Quick Settings tile to add reminder (on Android 7.0+)</change>
         <change>Smaller UI and navigation improvements</change>
         <change>Reminders will now be shown in Do Not Disturb mode when the "Reminders" category is enabled as an exception in the Do Not Disturb settings.</change>
     </release>
