@@ -6,7 +6,7 @@ Do you know the feeling when something crosses your mind you certainly want to r
 
 This app lets you set up a reminder in very few steps:
 
-1. Click "Add Reminder" on your home screen
+1. Click "Add Reminder" on your home screen or use the Quick Settings Tile
 2. Select a time, enter a message
 3. Click OK
 
