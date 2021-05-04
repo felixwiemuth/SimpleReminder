@@ -1,5 +1,8 @@
 # Simple Reminder
-*Available soon on F-Droid!*
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+      alt="Get it on F-Droid"
+      height="75">](https://f-droid.org/packages/felixwiemuth.simplereminder/)
+
 
 ## About
 Do you know the feeling when something crosses your mind you certainly want to remember to do later? An alarm is the best solution you know of? Then you haven't come across SimpleReminder yet!
@@ -14,7 +17,7 @@ The reminder is saved and will pop up at the time set.
 
 
 ## Project status
-SimpleReminder is currently under development, a first version will soon be released on F-Droid.
+SimpleReminder is currently under development, and new features are added continuously.
 
 
 ## Features
@@ -39,6 +42,8 @@ SimpleReminder is currently under development, a first version will soon be rele
 - Automatic deletion of old reminders after a customizable time
   - Option to delete reminders directly on dismiss
 - Support of different languages (with choice), including local date formats
+
+And much more!
 
 
 ## Contributing
