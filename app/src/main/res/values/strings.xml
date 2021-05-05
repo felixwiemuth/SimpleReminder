@@ -18,7 +18,8 @@
 <resources>
     <string name="app_name" translatable="false">SimpleReminder</string>
     <string name="dialog_welcome_title">Welcome</string>
-    <string name="welcome_message">Welcome to SimpleReminder! This is an early version - if you find any problems, please report them (see \"About\").\n\nSimpleReminder is free software (licensed under the GNU General Public License) and comes without any warranty.</string>
+    <string name="welcome_message">Welcome to SimpleReminder! This is an early version and your feedback is needed (see \"About\").\n\nSimpleReminder is free software (licensed under the GNU General Public License) and comes without any warranty.</string>
+    <string name="welcome_message_update">Welcome to an updated version of SimpleReminder! The app is continually being developed and your feedback is needed - see \"About\" for more information.</string>
     <string name="toast_info_add_reminder_dialog">Tip: There is a launcher icon to reach this dialog!</string>
     <string name="dialog_startup_later">Later</string>
     <string name="dialog_startup_dont_show_again">Don\'t show again</string>
