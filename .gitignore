@@ -2,8 +2,13 @@
 .gradle
 /local.properties
 /.idea/caches/
+/.idea/compiler.xml
+/.idea/gradle.xml
+/.idea/jarRepositories.xml
 /.idea/libraries
+/.idea/misc.xml
 /.idea/modules.xml
+/.idea/runConfigurations.xml
 /.idea/workspace.xml
 .DS_Store
 /build
