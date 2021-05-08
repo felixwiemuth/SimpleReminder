@@ -25,18 +25,46 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    def gitDescribe = { ->
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--always', '--dirty', '--match', '"not a tag"'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    }
+
     defaultConfig {
         // Release branch specific variables
         applicationId "felixwiemuth.simplereminder.dev"
-        def versionNameSuffix = '-dev'
+        def releaseChannel = 'dev'
+        def versionCodeReleaseChannel = 1
 
         // Version variables
-        versionCode 13
-        versionName "0.9.8" + versionNameSuffix
+        def versionCodeMajor = 0
+        def versionCodeMinor = 9
+        def versionCodePoint = 8
+
+        // Sub version for release channel (only used on some release channels)
+        def versionCodeSub = 0
+
+        versionCode = new Integer(
+                10**0 * versionCodeSub // 2 digits
+              + 10**2 * versionCodeReleaseChannel // 1 digit
+              + 10**3 * versionCodePoint // 2 digits
+              + 10**5 * versionCodeMinor // 3 digits
+              + 10**8 * versionCodeMajor // 2 digits
+        //      10^10 is the reserve digit which can only be 0 or 1 with full range below
+        //      Max value allowed by Google Play: 2100000000
+        )
+
+        def gitDescription = "${gitDescribe()}"
+
+        versionName = versionCodeMajor + "." + versionCodeMinor + "." + versionCodePoint + "-" + releaseChannel + "-" + gitDescription
 
         minSdkVersion 16
         targetSdkVersion 27
-        
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
