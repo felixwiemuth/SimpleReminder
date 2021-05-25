@@ -23,14 +23,14 @@ import android.content.SharedPreferences;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import felixwiemuth.simplereminder.data.Reminder;
-import felixwiemuth.simplereminder.ui.reminderslist.RemindersListFragment;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
+
+import felixwiemuth.simplereminder.data.Reminder;
+import felixwiemuth.simplereminder.ui.reminderslist.RemindersListFragment;
 
 import static felixwiemuth.simplereminder.Prefs.PREF_STATE_CURRENT_REMINDERS;
 import static felixwiemuth.simplereminder.Prefs.PREF_STATE_NEXTID;
@@ -215,7 +215,8 @@ public class ReminderManager {
     }
 
     /**
-     * Replaces the reminder with the ID of the given reminder with the given reminder.
+     * Replaces the reminder which has the ID of the given reminder with the given reminder.
+     * If no reminder with that ID exists, the reminder will be created.
      *
      * @param context
      * @param reminder
