@@ -32,14 +32,15 @@ SimpleReminder is currently under development, and new features are added contin
 See the [issues](https://github.com/felixwiemuth/SimpleReminder/labels/Planned%20feature) for more detailed descriptions of some planned features.
 You are welcome to comment and make suggestions − early feedback can help improve a feature before changes become more difficult!
 
-- Add **media** to reminders: take a photo, record a sound, ... - it will be shown in the notification!
+- **Nagging reminders**: repeat notifications until dismissed ([#2](https://github.com/felixwiemuth/SimpleReminder/issues/2))
 - Create **templates** to quickly add frequent reminders
 - Access templates with specific **launcher icons**
-- Individual notification settings (including sound, vibration, LED) for each reminder (multiple notification channels on Android 8)
-- Advanced possibilities to choose reminder time
+- Individual notification settings (including sound, vibration, LED) for each reminder (multiple notification channels on Android 8+)
+- Advanced possibilities to choose reminder time ([discussion]())
   - Choose time relatively (e.g. "in one hour")
-  - Choose an arbitrary day
+  - Choose an arbitrary day ([#10](https://github.com/felixwiemuth/SimpleReminder/issues/10))
 - Autocomplete reminder text based on previous reminders / suggestions of templates
+- Add **media** to reminders: take a photo, record a sound, ... − it will be shown in the notification!
 - Sharing of reminder content
 - Add reminders by selecting text anywhere (context menu) or via sharing a text, photo, ...
 - Automatic deletion of old reminders after a customizable time
@@ -47,7 +48,6 @@ You are welcome to comment and make suggestions − early feedback can help impr
 - Support of different languages (with choice), including local date formats
 
 And much more!
-
 
 
 ## Feedback
