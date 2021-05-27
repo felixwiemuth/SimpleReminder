@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help improve SimpleReminder
+about: Report a problem with SimpleReminder. Please check existing issues first!
 title: ''
 labels: Bug report
 assignees: ''
