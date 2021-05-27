@@ -17,7 +17,7 @@ The reminder is saved and will pop up at the time set.
 
 
 ## Project status
-SimpleReminder is currently under development, and new features are added continuously.
+SimpleReminder is currently under development, and new features are added continuously. Your [feedback](#feedback) is welcome!
 
 
 ## Features
@@ -29,6 +29,9 @@ SimpleReminder is currently under development, and new features are added contin
 
 
 ## Planned features
+See the [issues](https://github.com/felixwiemuth/SimpleReminder/labels/Planned%20feature) for more detailed descriptions of some planned features.
+You are welcome to comment and make suggestions − early feedback can help improve a feature before changes become more difficult!
+
 - Add **media** to reminders: take a photo, record a sound, ... - it will be shown in the notification!
 - Create **templates** to quickly add frequent reminders
 - Access templates with specific **launcher icons**
@@ -46,17 +49,26 @@ SimpleReminder is currently under development, and new features are added contin
 And much more!
 
 
+
+## Feedback
+
+If you discover a **problem**, please [create a bug report](https://github.com/felixwiemuth/SimpleReminder/issues/new?assignees=&labels=Bug+report&template=bug_report.md&title=).
+Search [existing issues](https://github.com/felixwiemuth/SimpleReminder/issues?q=is%3Aissue) first!
+
+If you have **suggestions**, want to ask a **question** or just have **general feedback**, visit the [discussions](https://github.com/felixwiemuth/SimpleReminder/discussions). Looking forward to hear from you!
+
+If you have a **concrete suggestion**, you can also file a [feature request](https://github.com/felixwiemuth/SimpleReminder/issues/new?assignees=&labels=Feature+request&template=feature_request.md&title=) directly.
+
+In any case, first check the list of planned features above, the discussions and [existing feature requests and planned features](https://github.com/felixwiemuth/SimpleReminder/issues?q=is%3Aissue) for related topics.
+
 ## Contributing
 If you have ideas on how to improve SimpleReminder, you are welcome to contribute. There are several ways you can contribute:
-- Share your ideas in an issue
+- Share your ideas (see "Feedback")
+- Help with graphics design (more information follows)
+- Implement features or maintain code (see [Contributing](CONTRIBUTING.md) for more information)
 - Translate SimpleReminder (please wait until the app has reached a more complete state)
-- Implement features: please see [Contributing](CONTRIBUTING.md) for more information
 
 For a list of contributors, see [CONTRIBUTORS.md](CONTRIBUTORS.md).
-
-
-## Bug reports and feature requests
-Please report bugs on [Github](https://github.com/felixwiemuth/SimpleReminder/issues). Feature requests may also be filed as an issue.
 
 
 ## License ##
