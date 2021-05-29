@@ -39,7 +39,7 @@ You are welcome to comment and make suggestions − early feedback can help impr
 - Advanced possibilities to choose reminder time ([discussion]())
   - Choose time relatively (e.g. "in one hour")
   - Choose an arbitrary day ([#10](https://github.com/felixwiemuth/SimpleReminder/issues/10))
-- Autocomplete reminder text based on previous reminders / suggestions of templates
+- Auto complete reminder text based on previous reminders / suggestions of templates
 - Add **media** to reminders: take a photo, record a sound, ... − it will be shown in the notification!
 - Sharing of reminder content
 - Add reminders by selecting text anywhere (context menu) or via sharing a text, photo, ...
@@ -91,3 +91,6 @@ Copyright (C) 2018-2021 Felix Wiemuth and [contributors](CONTRIBUTORS.md)
 
 This program includes third party software which is licensed under their own terms.
 See [LICENSE.md](LICENSE.md) for details regarding licenses.
+
+<!--  LocalWords:  customizable SimpleReminder Wiemuth
+ -->

@@ -18,14 +18,14 @@ Note that the attributions for third-party work in the following are only comple
 
 Included modified third-party work is hereby redistributed under GPL. On first modification under GPL, a file's original copyright header may have been replaced by this project's copyright header, indicating that the derived work is distributed under GPL. The exact modifications, including license information, are tracked by the version control system (Git).
 
-The following lists possibly modified thiry-party work incorporated into this project, with the commit of incorporation.
+The following lists possibly modified third-party work incorporated into this project, with the commit of incorporation.
 
 | Original work                                                          | Copyright                                                                   | License                                                     | Commit  |
 |------------------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------|---------|
 | [Android Licenses Page](https://github.com/adamsp/AndroidLicensesPage) | 2013 Adam Speakman                                                          | [Apache 2.0](LICENSES/APACHE-2.0)                           | e4de56f |
 | [EnumUtil](https://stackoverflow.com/a/9753178/905686)                 | [pablisco (Stackoverflow)](https://stackoverflow.com/users/458365/pablisco) | [CC BY-SA](https://creativecommons.org/licenses/by-sa/3.0/) | b65e031 |
 
-### Included umodified work ###
+### Included unmodified work ###
 
 The following lists included unmodified third-party software.
 
