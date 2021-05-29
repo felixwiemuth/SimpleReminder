@@ -17,11 +17,11 @@
   -->
 
 <changelog>
-    <release version="0.9.8" versioncode="13" >
+    <release version="0.9.8" versioncode="908100" >
         <change>Quick Settings tile to add reminder (on Android 7.0+)</change>
-        <change>Launcher shortcuts to add reminder / view reminders list on either launcher icon (on Android 7.1+)</change>
-        <change>Smaller UI and navigation improvements</change>
-        <change>Reminders will now be shown in Do Not Disturb mode when the "Reminders" category is enabled as an exception in the Do Not Disturb settings.</change>
+        <change>Launcher shortcuts to add reminder / view reminders list on the respective other launcher icon (on Android 7.1+)</change>
+        <change>Some UI and navigation improvements</change>
+        <change>Reminders will now be shown in Do Not Disturb mode when in the settings the "Reminders" category has been allowed for interruption.</change>
     </release>
     <release version="0.9.7" versioncode="12" >
         <change>Use clock widget instead of spinner for choosing time (only applies to Android 5.0+).</change>
