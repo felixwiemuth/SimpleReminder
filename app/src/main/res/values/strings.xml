@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (C) 2018 Felix Wiemuth
+  ~ Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 <resources>
     <string name="app_name" translatable="false">SimpleReminder</string>
     <string name="dialog_welcome_title">Welcome</string>
-    <string name="welcome_message">Welcome to SimpleReminder! This is an early version - if you find any problems, please report them (see \"About\").\n\nSimpleReminder is free software (licensed under the GNU General Public License) and comes without any warranty.</string>
+    <string name="welcome_message">Welcome to SimpleReminder! This is an early version and your feedback is needed (see \"About\").\n\nSimpleReminder is free software (licensed under the GNU General Public License) and comes without any warranty.</string>
+    <string name="welcome_message_update">Welcome to an updated version of SimpleReminder! The app is continually being developed and your feedback is needed - see \"About\" for more information.</string>
     <string name="toast_info_add_reminder_dialog">Tip: There is a launcher icon to reach this dialog!</string>
     <string name="dialog_startup_later">Later</string>
     <string name="dialog_startup_dont_show_again">Don\'t show again</string>
@@ -28,7 +29,11 @@
     <string name="dialog_startup_run_on_boot_title">@string/preference_run_on_boot</string>
     <string name="dialog_startup_run_on_boot_message">To keep showing reminders after a restart of the device, please allow the app to run on startup.</string>
     <string name="dialog_startup_run_on_boot_enable">Enable</string>
-    <string name="add_reminder_title">Add reminder</string>
+    <string name="add_reminder">Add reminder</string>
+    <string name="quick_tile_add_reminder_label">@string/add_reminder</string>
+    <string name="shortcut_add_reminder">@string/add_reminder</string>
+    <string name="shortcut_reminders_list">Show reminders</string>
+    <string name="add_reminder_title">@string/add_reminder</string>
     <string name="add_reminder_name_hint">Reminder text (optional)</string>
     <string name="edit_reminder_title">Edit reminder</string>
     <string name="button_add_reminder">Add</string>
@@ -73,6 +78,7 @@
     <string name="priority_default">Middle</string>
     <string name="priority_high">High</string>
     <string name="priority_max">Max</string>
+    <string name="error_msg_reminder_not_found">Error: Reminder not found</string>
     <string name="acra_title">Crash report</string>
     <!--<string name="acra_email">Enter your email for further enquiries</string>-->
     <string name="acra_prompt">Sorry, SimpleReminder has crashed. Please send this report to the developer.</string>

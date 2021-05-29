@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <changelog>
+    <release version="0.9.8" versioncode="908100" >
+        <change>Quick Settings tile to add reminder (on Android 7.0+)</change>
+        <change>Launcher shortcuts to add reminder / view reminders list on the respective other launcher icon (on Android 7.1+)</change>
+        <change>Some UI and navigation improvements</change>
+        <change>Reminders will now be shown in Do Not Disturb mode when in the settings the "Reminders" category has been allowed for interruption.</change>
+    </release>
     <release version="0.9.7" versioncode="12" >
         <change>Use clock widget instead of spinner for choosing time (only applies to Android 5.0+).</change>
         <change>Fixed app not starting on Android 5.1 and below.</change>

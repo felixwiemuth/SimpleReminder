@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Felix Wiemuth
+ * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 package felixwiemuth.simplereminder.ui.reminderslist;
 
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -41,6 +39,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import de.cketti.library.changelog.ChangeLog;
+import felixwiemuth.simplereminder.BuildConfig;
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
@@ -93,7 +92,7 @@ public class RemindersListActivity extends AppCompatActivity {
             if (!Prefs.isAddReminderDialogUsed(RemindersListActivity.this)) {
                 Toast.makeText(RemindersListActivity.this, R.string.toast_info_add_reminder_dialog, Toast.LENGTH_LONG).show();
             }
-            startActivityForResult(new Intent(this, AddReminderDialogActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
+            startActivityForResult(new Intent(this, AddReminderDialogActivity.class), 0);
         });
 
         showStartupDialogs();
@@ -105,9 +104,12 @@ public class RemindersListActivity extends AppCompatActivity {
     private void showStartupDialogs() {
         // NOTE: the user will see the dialogs in reversed order as they are opened.
 
-        // Changelog
+        boolean showGeneralWelcomeMessage = !Prefs.checkAndUpdateWelcomeMessageShown(this);
+
+        // Welcome message for new version (if not first launch of app) and Changelog
         ChangeLog changeLog = new ChangeLog(this);
-        if (changeLog.isFirstRun()) {
+        boolean isFirstRunOfVersion = changeLog.isFirstRun();
+        if (isFirstRunOfVersion) {
             changeLog.getLogDialog().show();
         }
 
@@ -119,9 +121,11 @@ public class RemindersListActivity extends AppCompatActivity {
         // Check whether run on boot is enabled and whether should ask user to enable it.
         checkRunOnBoot();
 
-        // Show welcome dialog if version changed
-        if (!Prefs.checkWelcomeMessageShown(this)) {
+        // Show general welcome dialog on first launch of app and update welcome dialog on first launch with new version
+        if (showGeneralWelcomeMessage) {
             UIUtils.showMessageDialog(R.string.dialog_welcome_title, getString(R.string.welcome_message), this);
+        } else if (isFirstRunOfVersion) {
+            UIUtils.showMessageDialog(R.string.dialog_welcome_title, getString(R.string.welcome_message_update), this);
         }
 
     }
@@ -157,13 +161,8 @@ public class RemindersListActivity extends AppCompatActivity {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         } else if (id == R.id.action_about) {
-            try {
-                PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-                String title = getString(R.string.app_name) + " " + packageInfo.versionName;
-                HtmlDialogFragment.displayHtmlDialogFragment(getSupportFragmentManager(), title, R.raw.about, DisplayChangeLog.class);
-            } catch (PackageManager.NameNotFoundException ex) {
-                throw new RuntimeException(ex);
-            }
+            String title = getString(R.string.app_name) + " " + BuildConfig.VERSION_NAME;
+            HtmlDialogFragment.displayHtmlDialogFragment(getSupportFragmentManager(), title, R.raw.about, DisplayChangeLog.class);
         }
         return super.onOptionsItemSelected(item);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Felix Wiemuth
+ * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,21 +99,15 @@ public class Prefs {
     }
 
     /**
-     * Checks whether the welcome message for the current version has already been shown and updates the shown status to the current version.
+     * Checks whether the welcome message has been shown and if not, saves the version at which it now is shown.
      *
      * @param context
      * @return
      */
-    public static boolean checkWelcomeMessageShown(Context context) {
+    public static boolean checkAndUpdateWelcomeMessageShown(Context context) {
         int lastShown = getStatePrefs(context).getInt(PREF_STATE_WELCOME_MESSAGE_SHOWN, -1);
-        int currentVersion;
-        try {
-            currentVersion = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            throw new RuntimeException("Cannot show welcome message", e);
-        }
-        if (lastShown != currentVersion) {
-            getStatePrefs(context).edit().putInt(PREF_STATE_WELCOME_MESSAGE_SHOWN, currentVersion).apply();
+        if (lastShown == -1) {
+            getStatePrefs(context).edit().putInt(PREF_STATE_WELCOME_MESSAGE_SHOWN, BuildConfig.VERSION_CODE).apply();
             return false;
         } else {
             return true;

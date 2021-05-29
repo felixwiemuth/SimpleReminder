@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Felix Wiemuth
+ * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import felixwiemuth.simplereminder.data.Reminder;
-import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
+import felixwiemuth.simplereminder.ui.EditReminderDialogActivity;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.EnumUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;
@@ -216,7 +216,7 @@ public class ReminderService extends IntentService {
                 .action(Action.MARK_DONE)
                 .buildPendingIntent(context);
 
-        Intent editReminderIntent = AddReminderDialogActivity.getIntentEditReminder(context, id);
+        Intent editReminderIntent = EditReminderDialogActivity.getIntentEditReminder(context, id);
         PendingIntent editReminderPendingIntent = PendingIntent.getActivity(context, Reminder.getRequestCodeAddReminderDialogActivityPendingIntent(id), editReminderIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_REMINDER)
@@ -226,6 +226,7 @@ public class ReminderService extends IntentService {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                 .setContentIntent(editReminderPendingIntent)
                 .setDeleteIntent(markDoneIntent)
+                .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 // Applies for Android < 8
                 .setPriority(Integer.valueOf(Prefs.getStringPref(R.string.prefkey_priority, "0", context)));
 

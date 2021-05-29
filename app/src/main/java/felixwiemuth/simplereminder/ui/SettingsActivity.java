@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Felix Wiemuth
+ * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,18 @@ package felixwiemuth.simplereminder.ui;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
+import felixwiemuth.simplereminder.R;
+
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
+                .replace(R.id.settings_container, new SettingsFragment())
                 .commit();
     }
 }

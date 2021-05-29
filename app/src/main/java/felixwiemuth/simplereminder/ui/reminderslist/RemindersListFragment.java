@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Felix Wiemuth
+ * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderManager;
 import felixwiemuth.simplereminder.data.Reminder;
-import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
+import felixwiemuth.simplereminder.ui.EditReminderDialogActivity;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 import felixwiemuth.simplereminder.util.ImplementationError;
 import io.github.luizgrp.sectionedrecyclerviewadapter.CustomViewType;
@@ -154,8 +154,8 @@ public class RemindersListFragment extends Fragment {
 //                    mode.finish();
 //                    break;
                 case R.id.action_reschedule:
-                    Intent intent = AddReminderDialogActivity.getIntentEditReminder(getContext(), getOnlySelectedReminder().getId());
-                    startActivityForResult(intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP), 0);
+                    Intent intent = EditReminderDialogActivity.getIntentEditReminder(getContext(), getOnlySelectedReminder().getId());
+                    startActivityForResult(intent, 0);
                     mode.finish();
                     break;
                 case R.id.action_copy_text:

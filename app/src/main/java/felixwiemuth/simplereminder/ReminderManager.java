@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Felix Wiemuth
+ * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@ import android.content.SharedPreferences;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import felixwiemuth.simplereminder.data.Reminder;
-import felixwiemuth.simplereminder.ui.reminderslist.RemindersListFragment;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
+
+import felixwiemuth.simplereminder.data.Reminder;
+import felixwiemuth.simplereminder.ui.reminderslist.RemindersListFragment;
 
 import static felixwiemuth.simplereminder.Prefs.PREF_STATE_CURRENT_REMINDERS;
 import static felixwiemuth.simplereminder.Prefs.PREF_STATE_NEXTID;
@@ -66,8 +66,8 @@ public class ReminderManager {
         }
     }
 
-    interface StatePrefEditOperation {
-        void edit(SharedPreferences prefs, SharedPreferences.Editor editor);
+    interface StatePrefEditOperation<T> {
+        T edit(SharedPreferences prefs, SharedPreferences.Editor editor);
     }
 
     interface RemindersEditOperation {
@@ -77,18 +77,18 @@ public class ReminderManager {
     /**
      * Edit the state preferences exclusively and commit after the operation has successfully completed. This ensures that different threads editing these preferences do not overwrite their changes. Also sends a {@link RemindersListFragment#BROADCAST_REMINDERS_UPDATED} broadcast to inform about a change. Only change reminders via this method.
      *
-     * @param context
-     * @param operation
+     * @param operation The operation to perform; the result of this operation is returned by this method
      */
     @SuppressLint("ApplySharedPref")
-    private static void performExclusivelyOnStatePrefsAndCommit(Context context, StatePrefEditOperation operation) {
+    private static <T> T performExclusivelyOnStatePrefsAndCommit(Context context, StatePrefEditOperation<T> operation) {
         lock();
         try {
             SharedPreferences prefs = Prefs.getStatePrefs(context);
             SharedPreferences.Editor editor = prefs.edit();
-            operation.edit(prefs, editor);
+            T result = operation.edit(prefs, editor);
             editor.commit();
             notifyRemindersChangedBroadcast(context);
+            return result;
         } finally {
             unlock();
         }
@@ -97,6 +97,7 @@ public class ReminderManager {
     private static void updateRemindersList(Context context, RemindersEditOperation operation) {
         performExclusivelyOnStatePrefsAndCommit(context, ((prefs, editor) -> {
             updateRemindersListInEditor(editor, operation.update(getReminders(context)));
+            return null;
         }));
     }
 
@@ -109,9 +110,10 @@ public class ReminderManager {
      *
      * @param context
      * @param reminderBuilder
+     * @return the resulting reminder
      */
-    public static void addReminder(Context context, Reminder.ReminderBuilder reminderBuilder) {
-        performExclusivelyOnStatePrefsAndCommit(context,
+    public static Reminder addReminder(Context context, Reminder.ReminderBuilder reminderBuilder) {
+        return performExclusivelyOnStatePrefsAndCommit(context,
                 (prefs, editor) -> {
                     // Get next reminder ID
                     final int nextId = prefs.getInt(PREF_STATE_NEXTID, 0);
@@ -122,6 +124,7 @@ public class ReminderManager {
                     addReminderToReminders(prefs, editor, reminder);
 
                     ReminderService.scheduleReminder(context, reminder);
+                    return reminder;
                 });
     }
 
@@ -130,12 +133,14 @@ public class ReminderManager {
      *
      * @param context
      * @param reminder
+     * @return the argument reminder
      */
-    private static void addReminder(Context context, Reminder reminder) {
-        performExclusivelyOnStatePrefsAndCommit(context,
+    private static Reminder addReminder(Context context, Reminder reminder) {
+        return performExclusivelyOnStatePrefsAndCommit(context,
                 (prefs, editor) -> {
                     addReminderToReminders(prefs, editor, reminder);
                     ReminderService.scheduleReminder(context, reminder);
+                    return reminder;
                 });
     }
 
@@ -210,7 +215,8 @@ public class ReminderManager {
     }
 
     /**
-     * Replaces the reminder with the ID of the given reminder with the given reminder.
+     * Replaces the reminder which has the ID of the given reminder with the given reminder.
+     * If no reminder with that ID exists, the reminder will be created.
      *
      * @param context
      * @param reminder

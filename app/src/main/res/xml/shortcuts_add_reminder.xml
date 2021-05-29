@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
   ~
   ~ This program is free software: you can redistribute it and/or modify
@@ -16,6 +15,15 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
-    <color name="ic_launcher_background">#DFF3FD</color>
-</resources>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutId="reminderslist"
+        android:shortcutShortLabel="@string/shortcut_reminders_list">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="felixwiemuth.simplereminder.ui.reminderslist.RemindersListActivity"
+            android:targetPackage="felixwiemuth.simplereminder" /> <!-- NOTE: Must be set to application ID -->
+    </shortcut>
+
+</shortcuts>

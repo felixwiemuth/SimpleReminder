@@ -15,5 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-include ':app', ':sectionedrecyclerviewadapter'
-project(':sectionedrecyclerviewadapter').projectDir = new File('app/lib/SectionedRecyclerViewAdapter/library')
+package felixwiemuth.simplereminder;
+
+import android.content.Intent;
+import android.os.Build;
+import android.service.quicksettings.TileService;
+
+import androidx.annotation.RequiresApi;
+
+import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
+
+@RequiresApi(api = Build.VERSION_CODES.N)
+public class QuickTileService extends TileService {
+
+    @Override
+    public void onClick() {
+        super.onClick();
+        Intent intent = new Intent(this, AddReminderDialogActivity.class);
+        startActivityAndCollapse(intent);
+    }
+}
