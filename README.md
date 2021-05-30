@@ -36,7 +36,7 @@ You are welcome to comment and make suggestions − early feedback can help impr
 - Create **templates** to quickly add frequent reminders
 - Access templates with specific **launcher icons**
 - Individual notification settings (including sound, vibration, LED) for each reminder (multiple notification channels on Android 8+)
-- Advanced possibilities to choose reminder time ([discussion]())
+- Advanced possibilities to choose reminder time ([discussion](https://github.com/felixwiemuth/SimpleReminder/discussions/16))
   - Choose time relatively (e.g. "in one hour")
   - Choose an arbitrary day ([#10](https://github.com/felixwiemuth/SimpleReminder/issues/10))
 - Auto complete reminder text based on previous reminders / suggestions of templates
