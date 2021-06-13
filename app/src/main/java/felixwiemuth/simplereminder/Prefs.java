@@ -197,6 +197,10 @@ public class Prefs {
         return intent;
     }
 
+    public static int getNaggingRepeatInterval(Context context) {
+        return Integer.parseInt(getStringPref(R.string.prefkey_nagging_repeat_interval, "1", context));
+    }
+
     /**
      * Get a string from settings preferences using a key from a string resource.
      *

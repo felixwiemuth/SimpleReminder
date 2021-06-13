@@ -23,8 +23,11 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.InputType;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
@@ -52,6 +55,24 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         } else {
             batPref.getParent().removePreference(batPref);
         }
+
+        EditTextPreference naggingRepeatIntervalPref = findPreference(getString(R.string.prefkey_nagging_repeat_interval));
+        naggingRepeatIntervalPref.setOnBindEditTextListener(editText -> editText.setInputType(InputType.TYPE_CLASS_NUMBER));
+        naggingRepeatIntervalPref.setSummaryProvider(preference ->
+                getString(R.string.preference_nagging_repeat_interval_summary, Prefs.getNaggingRepeatInterval(getContext())));
+        // Validation
+        naggingRepeatIntervalPref.setOnPreferenceChangeListener((preference, newValue) -> {
+            try {
+                int i = Integer.parseInt(String.valueOf(newValue));
+                if (i > 0) {
+                    return true;
+                }
+            } catch (NumberFormatException ex) {
+                // Incorrect format, handled below
+            }
+            Toast.makeText(getContext(), R.string.preference_nagging_repeat_interval_format_error, Toast.LENGTH_LONG).show();
+            return false;
+        });
 
         // Priority/Sound settings only work for Android < 8
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

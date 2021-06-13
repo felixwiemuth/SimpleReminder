@@ -64,6 +64,9 @@
     <string name="preference_category_notifications">Notifications</string>
     <string name="preference_priority">Priority of notifications</string>
     <string name="preference_enable_sound">Enable sound of notifications</string>
+    <string name="preference_nagging_repeat_interval">Default repeat interval for nagging reminders</string>
+    <string name="preference_nagging_repeat_interval_summary">%d minute(s)</string>
+    <string name="preference_nagging_repeat_interval_format_error">The repeat interval must be a positive number of minutes</string>
     <string name="preference_notification_channel_settings">Change notification settings</string>
     <string name="preference_category_app">General</string>
     <string name="preference_run_on_boot">Activate on device startup</string>
