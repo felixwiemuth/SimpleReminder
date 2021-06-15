@@ -18,11 +18,13 @@
 package felixwiemuth.simplereminder.data;
 
 import androidx.annotation.NonNull;
-import com.google.gson.*;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.lang.reflect.Type;
 import java.util.Calendar;
@@ -30,13 +32,15 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @author Felix Wiemuth
  */
 @Getter
 public class Reminder implements Comparable<Reminder> {
-    // NOTE: when changing this class, check sorting criterea in RemindersListFragment.SortedListCallback
-
     private static Gson gson;
 
     private static final int OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT = 1000000;
@@ -62,7 +66,7 @@ public class Reminder implements Comparable<Reminder> {
     /**
      * ID of the reminder, also used for notifications. Must be in the interval [0,{@link #OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT}) and even (used by {@link felixwiemuth.simplereminder.ReminderService for correct scheduling}).
      */
-    private int id;
+    private final int id;
     /**
      * Reminder's due date.
      */
