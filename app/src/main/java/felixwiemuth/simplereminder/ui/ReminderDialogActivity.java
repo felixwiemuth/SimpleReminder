@@ -104,16 +104,21 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
      */
     abstract protected void onDone();
 
-    protected void makeToast(Calendar date) {
+    protected void makeToast(Reminder reminder) {
         // Create relative description of due date
-        String relativeDueDate = DateUtils.getRelativeTimeSpanString(date.getTimeInMillis(), System.currentTimeMillis(), 0).toString();
+        String relativeDueDate = DateUtils.getRelativeTimeSpanString(reminder.getCalendar().getTimeInMillis(), System.currentTimeMillis(), 0).toString();
         // Convert first letter to lower case to use it in a sentence
         if (relativeDueDate.length() > 0) {
             relativeDueDate = relativeDueDate.substring(0, 1).toLowerCase() + relativeDueDate.substring(1);
         }
 
         // Create toast
-        String toastText = getString(R.string.toast_reminder_due, relativeDueDate);
+        String toastText;
+        if (reminder.isNagging()) {
+            toastText = getString(R.string.add_reminder_toast_due_nagging, relativeDueDate);
+        } else {
+            toastText = getString(R.string.add_reminder_toast_due, relativeDueDate);
+        }
         int duration = Toast.LENGTH_LONG;
         Toast toast = Toast.makeText(this, toastText, duration);
         toast.show();

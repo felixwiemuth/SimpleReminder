@@ -71,16 +71,23 @@ public class Reminder implements Comparable<Reminder> {
      * Reminder's due date.
      */
     private @Setter Date date;
+    /**
+     * The interval in minutes this reminder should be repeated until dismissed.
+     * This field is optional. A value <= 0 (or omitting in JSON) means that nagging is disabled.
+     * @since v0.9.9
+     */
+    private final int naggingRepeatInterval;
     private @Setter String text;
     private @Setter Status status;
 
     @Builder //(builderClassName = "Builder")
-    public Reminder(int id, @NonNull Date date, @NonNull String text) {
+    public Reminder(int id, @NonNull Date date, int naggingRepeatInterval, @NonNull String text) {
         if (id < 0) {
             throw new IllegalArgumentException("Id must be >= 0.");
         }
         this.id = id;
         this.date = date;
+        this.naggingRepeatInterval = naggingRepeatInterval;
         this.text = text;
         this.status = Status.SCHEDULED;
     }
@@ -122,5 +129,9 @@ public class Reminder implements Comparable<Reminder> {
 
     public static int getRequestCodeAddReminderDialogActivityPendingIntent(int reminderID) {
         return OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT + reminderID;
+    }
+
+    public boolean isNagging() {
+        return naggingRepeatInterval > 0;
     }
 }

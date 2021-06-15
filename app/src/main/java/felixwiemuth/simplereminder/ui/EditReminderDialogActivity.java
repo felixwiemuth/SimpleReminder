@@ -94,7 +94,7 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
         reminderBuilder.id(reminderToUpdate);
         Reminder reminder = reminderBuilder.build();
         ReminderManager.updateReminder(this, reminder, true);
-        makeToast(reminder.getCalendar());
+        makeToast(reminder);
         completeActivity();
     }
 }
