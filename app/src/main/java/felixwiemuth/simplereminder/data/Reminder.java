@@ -134,4 +134,8 @@ public class Reminder implements Comparable<Reminder> {
     public boolean isNagging() {
         return naggingRepeatInterval > 0;
     }
+
+    public long getNaggingRepeatIntervalInMillis() {
+        return 60*1000*naggingRepeatInterval;
+    }
 }
