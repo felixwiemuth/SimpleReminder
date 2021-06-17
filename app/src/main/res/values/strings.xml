@@ -35,11 +35,14 @@
     <string name="shortcut_reminders_list">Show reminders</string>
     <string name="add_reminder_title">@string/add_reminder</string>
     <string name="add_reminder_name_hint">Reminder text (optional)</string>
+    <string name="add_reminder_nagging_tooltip">Nagging</string>
     <string name="edit_reminder_title">Edit reminder</string>
     <string name="button_add_reminder">Add</string>
     <string name="keyboard_action_add_reminder">Add</string>
+    <string name="add_reminder_toast_nagging_enabled">Nagging set to %d minutes</string>
     <string name="add_reminder_toast_due">Reminder due %s</string>
     <string name="add_reminder_toast_due_nagging">Nagging reminder due %s</string>
+    <string name="dialog_choose_repeat_interval_title">Set repeat interval</string>
     <string name="channel_name">Reminders</string>
     <string name="channel_description">Shown when a reminder is due</string>
     <string name="notification_title">Reminder</string>

@@ -21,16 +21,22 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.format.DateUtils;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import java.util.Calendar;
 
+import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.data.Reminder;
 
@@ -39,8 +45,11 @@ import felixwiemuth.simplereminder.data.Reminder;
  */
 public abstract class ReminderDialogActivity extends AppCompatActivity {
     protected AutoCompleteTextView nameTextView;
+    protected SwitchCompat naggingSwitch;
     private Button addButton;
     private TimePicker timePicker;
+
+    protected int naggingRepeatInterval;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +58,16 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
 
         nameTextView = findViewById(R.id.nameTextView);
         addButton = findViewById(R.id.addButton);
+        naggingSwitch = findViewById(R.id.naggingSwitch);
+        naggingSwitch.setOnLongClickListener(view -> {
+            showChooseNaggingRepeatIntervalDialog();
+            return true;
+        });
+        naggingSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
+            if (checked) {
+                showToastNaggingRepeatInterval();
+            }
+        });
         timePicker = findViewById(R.id.timePicker);
 
         nameTextView.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -66,10 +85,39 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         timePicker.setIs24HourView(true);
 
         addButton.setOnClickListener(v -> onDone());
+
+        naggingRepeatInterval = Prefs.getNaggingRepeatInterval(this);
+    }
+
+    private void showChooseNaggingRepeatIntervalDialog() {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_number_picker, null);
+        NumberPicker naggingRepeatIntervalNumberPicker = dialogView.findViewById(R.id.numberPicker);
+        naggingRepeatIntervalNumberPicker.setMinValue(1);
+        naggingRepeatIntervalNumberPicker.setMaxValue(Integer.MAX_VALUE);
+        naggingRepeatIntervalNumberPicker.setWrapSelectorWheel(false);
+        naggingRepeatIntervalNumberPicker.setValue(naggingRepeatInterval);
+        new AlertDialog.Builder(this, R.style.dialog_narrow)
+                .setView(dialogView)
+                .setTitle(R.string.dialog_choose_repeat_interval_title)
+                .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
+                    naggingRepeatInterval = naggingRepeatIntervalNumberPicker.getValue();
+                    if (naggingSwitch.isChecked()) {
+                        // Show the toast also when nagging was already enabled
+                        showToastNaggingRepeatInterval();
+                    }
+                    naggingSwitch.setChecked(true);
+                })
+                .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> {})
+                .show();
+    }
+
+    private void showToastNaggingRepeatInterval() {
+        Toast.makeText(ReminderDialogActivity.this, getString(R.string.add_reminder_toast_nagging_enabled, naggingRepeatInterval), Toast.LENGTH_SHORT).show();
     }
 
 
-    protected Reminder.ReminderBuilder buildReminderWithTimeAndText() {
+    protected Reminder.ReminderBuilder buildReminderWithTimeTextNagging() {
         int hour;
         int minute;
 
@@ -93,10 +141,15 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
             time.add(Calendar.DAY_OF_MONTH, 1);  // wraps over end of month
         }
 
-        return Reminder.builder()
+        Reminder.ReminderBuilder reminderBuilder = Reminder.builder()
                 .date(time.getTime())
                 .text(nameTextView.getText().toString());
 
+        if (naggingSwitch.isChecked()) {
+            reminderBuilder.naggingRepeatInterval(naggingRepeatInterval);
+        }
+
+        return reminderBuilder;
     }
 
     /**
