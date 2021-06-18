@@ -21,21 +21,20 @@ import android.content.Context;
 
 import java.util.List;
 
-import de.cketti.library.changelog.ChangeLog;
+import felixwiemuth.simplereminder.Main;
 import felixwiemuth.simplereminder.ui.util.HtmlDialogFragment;
 
 /**
- * Displays the change log.
+ * Displays the general welcome message.
  */
-public class DisplayChangeLog implements HtmlDialogFragment.Action {
+public class DisplayWelcomeMessage implements HtmlDialogFragment.Action {
     @Override
     public String getName() {
-        return "display_changelog";
+        return "display_welcome_message";
     }
 
     @Override
     public void run(List<String> args, Context context) {
-        ChangeLog changeLog = new ChangeLog(context);
-        changeLog.getFullLogDialog().show();
+        Main.showWelcomeMessage(context);
     }
 }

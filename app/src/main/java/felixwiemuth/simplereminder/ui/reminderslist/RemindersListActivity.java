@@ -40,13 +40,15 @@ import com.google.android.material.tabs.TabLayout;
 
 import de.cketti.library.changelog.ChangeLog;
 import felixwiemuth.simplereminder.BuildConfig;
+import felixwiemuth.simplereminder.Main;
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
 import felixwiemuth.simplereminder.ui.SettingsActivity;
 import felixwiemuth.simplereminder.ui.actions.DisplayChangeLog;
+import felixwiemuth.simplereminder.ui.actions.DisplayWelcomeMessage;
+import felixwiemuth.simplereminder.ui.actions.DisplayWelcomeMessageUpdate;
 import felixwiemuth.simplereminder.ui.util.HtmlDialogFragment;
-import felixwiemuth.simplereminder.ui.util.UIUtils;
 import felixwiemuth.simplereminder.util.ImplementationError;
 
 public class RemindersListActivity extends AppCompatActivity {
@@ -123,11 +125,10 @@ public class RemindersListActivity extends AppCompatActivity {
 
         // Show general welcome dialog on first launch of app and update welcome dialog on first launch with new version
         if (showGeneralWelcomeMessage) {
-            UIUtils.showMessageDialog(R.string.dialog_welcome_title, getString(R.string.welcome_message), this);
+            Main.showWelcomeMessage(this);
         } else if (isFirstRunOfVersion) {
-            UIUtils.showMessageDialog(R.string.dialog_welcome_title, getString(R.string.welcome_message_update), this);
+            Main.showWelcomeMessageUpdate(this);
         }
-
     }
 
     @Override
@@ -162,7 +163,11 @@ public class RemindersListActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_about) {
             String title = getString(R.string.app_name) + " " + BuildConfig.VERSION_NAME;
-            HtmlDialogFragment.displayHtmlDialogFragment(getSupportFragmentManager(), title, R.raw.about, DisplayChangeLog.class);
+            HtmlDialogFragment.displayHtmlDialogFragment(getSupportFragmentManager(), title, R.raw.about,
+                    DisplayChangeLog.class,
+                    DisplayWelcomeMessage.class,
+                    DisplayWelcomeMessageUpdate.class
+            );
         }
         return super.onOptionsItemSelected(item);
     }

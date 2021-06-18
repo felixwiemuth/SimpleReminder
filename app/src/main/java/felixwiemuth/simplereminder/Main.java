@@ -19,15 +19,16 @@ package felixwiemuth.simplereminder;
 
 import android.app.Application;
 import android.content.Context;
+
 import androidx.preference.PreferenceManager;
+
 import org.acra.ACRA;
 import org.acra.annotation.AcraCore;
 import org.acra.annotation.AcraDialog;
 import org.acra.annotation.AcraMailSender;
 
-/**
- * @author Felix Wiemuth
- */
+import felixwiemuth.simplereminder.ui.util.UIUtils;
+
 @AcraCore(buildConfigClass = BuildConfig.class)
 @AcraMailSender(mailTo = "felixwiemuth@hotmail.de", reportAsFile = false) // The report being the content of the mail makes it more obvious to the user what data is sent.
 @AcraDialog(
@@ -61,5 +62,13 @@ public class Main extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         ACRA.init(this);
+    }
+
+    public static void showWelcomeMessage(Context context) {
+        UIUtils.showMessageDialog(R.string.dialog_welcome_title, context.getString(R.string.welcome_message), context);
+    }
+
+    public static void showWelcomeMessageUpdate(Context context) {
+        UIUtils.showMessageDialog(R.string.dialog_welcome_title, context.getString(R.string.welcome_message_update), context);
     }
 }
