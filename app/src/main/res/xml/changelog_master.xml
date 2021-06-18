@@ -17,6 +17,9 @@
   -->
 
 <changelog>
+    <release version="0.9.9" versioncode="909100" >
+        <change>Nagging reminders</change>
+    </release>
     <release version="0.9.8" versioncode="908100" >
         <change>Quick Settings tile to add reminder (on Android 7.0+)</change>
         <change>Launcher shortcuts to add reminder / view reminders list on the respective other launcher icon (on Android 7.1+)</change>
