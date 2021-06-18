@@ -89,6 +89,16 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         naggingRepeatInterval = Prefs.getNaggingRepeatInterval(this);
     }
 
+    protected void setSelectedDateTime(Calendar calendar) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            timePicker.setHour(calendar.get(Calendar.HOUR_OF_DAY));
+            timePicker.setMinute(calendar.get(Calendar.MINUTE));
+        } else {
+            timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
+            timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
+        }
+    }
+
     private void showChooseNaggingRepeatIntervalDialog() {
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_number_picker, null);

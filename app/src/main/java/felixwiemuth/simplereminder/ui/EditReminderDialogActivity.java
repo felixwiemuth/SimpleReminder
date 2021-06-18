@@ -80,6 +80,10 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
             nameTextView.setText(reminder.getText());
             // Move cursor to end of text
             nameTextView.setSelection(nameTextView.length());
+            // For scheduled reminders, set the selected time to the due date, otherwise leave it at the current time
+            if (reminder.getStatus() == Reminder.Status.SCHEDULED) {
+                setSelectedDateTime(reminder.getCalendar());
+            }
             naggingSwitch.setChecked(reminder.isNagging());
             if (reminder.isNagging()) {
                 naggingRepeatInterval = reminder.getNaggingRepeatInterval();
