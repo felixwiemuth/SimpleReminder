@@ -77,8 +77,8 @@
     <string name="preference_run_on_boot_summary_off">After a restart of the device, reminders will not be shown until opening the app.</string>
     <string name="preference_run_on_boot_summary_on">Continue showing reminders after a restart of the device.</string>
     <string name="preference_disable_battery_optimization">Battery optimization</string>
-    <string name="preference_disable_battery_optimization_summary_yes">OK. Battery optimization is disabled, reminders will be shown on time. Click to open settings.</string>
-    <string name="preference_disable_battery_optimization_summary_no">NOTE: Battery optimization is enabled - reminders might not be shown after the device was idle for too long. Click to disable.</string>
+    <string name="preference_disable_battery_optimization_summary_yes">OK. Battery optimization is disabled for SimpleReminder, reminders will be shown on time. Click to open settings.</string>
+    <string name="preference_disable_battery_optimization_summary_no">NOTE: Battery optimization is enabled - reminders might not be shown after the device was idle for too long. Click to disable for SimpleReminder.</string>
     <string name="toast_permission_not_granted">Permission not granted.</string>
     <string name="priority_min">Min</string>
     <string name="priority_low">Low</string>
