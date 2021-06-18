@@ -59,14 +59,14 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         nameTextView = findViewById(R.id.nameTextView);
         addButton = findViewById(R.id.addButton);
         naggingSwitch = findViewById(R.id.naggingSwitch);
+        naggingSwitch.setOnClickListener(v -> {
+            if (naggingSwitch.isChecked()) {
+                showToastNaggingRepeatInterval();
+            }
+        });
         naggingSwitch.setOnLongClickListener(view -> {
             showChooseNaggingRepeatIntervalDialog();
             return true;
-        });
-        naggingSwitch.setOnCheckedChangeListener((compoundButton, checked) -> {
-            if (checked) {
-                showToastNaggingRepeatInterval();
-            }
         });
         timePicker = findViewById(R.id.timePicker);
 
