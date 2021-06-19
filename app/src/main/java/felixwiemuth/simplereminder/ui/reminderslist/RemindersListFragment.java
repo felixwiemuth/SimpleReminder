@@ -538,7 +538,10 @@ public class RemindersListFragment extends Fragment {
             });
 
             holder.itemView.setOnClickListener(view -> {
-                if (actionMode != null) {
+                if (actionMode == null) {
+                    Intent intent = EditReminderDialogActivity.getIntentEditReminder(getContext(), reminder.getId());
+                    startActivityForResult(intent, 0);
+                } else {
                     if (selection.contains(reminder.getId())) {
                         selection.remove(reminder.getId());
                         holder.setUnselected();

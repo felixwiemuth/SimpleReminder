@@ -20,6 +20,7 @@
     <release version="0.9.9" versioncode="909100" >
         <change>Nagging reminders</change>
         <change>When editing a scheduled reminder, the selected time is now set to the due date (and not to the current time as for due or done reminders).</change>
+        <change>Reminders can now also be edited with a single click in the reminders list.</change>
         <change>Help page</change>
     </release>
     <release version="0.9.8" versioncode="908100" >
