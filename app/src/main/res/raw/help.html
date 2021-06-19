@@ -1,0 +1,60 @@
+<!--
+  ~ Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style> body { font-family: sans-serif; } pre { background-color: #eeeeee; padding: 1em; white-space: pre-wrap; } </style>
+</head>
+<body>
+    <h3>Adding a reminder</h3>
+    <p>Reminders are added via the "Add reminder" dialog, which can be reached in the following ways:</p>
+    <ul>
+        <li>Click on the <b>launcher icon</b> "Add reminder"</li>
+        <li>Long-click on the launcher icon "SimpleReminder" and select "Add reminder"</li>
+        <li>Use the <b>Quick Settings tile</b> (has to be first added by editing the menu)</li>
+        <li>Click the "+" button in the reminders list</li>
+    </ul>
+    <p>Then select a time using the clock widget and enter a message.
+    To add the reminder, either click the "Add" button on the keyboard (usually a button on the bottom right, with a symbol or titled "Add") or click "Add" at the bottom of the dialog.</p>
+    <p>After adding a reminder, the remaining time until its due date is shown (rounded down to minutes/hours).</p>
+
+    <h3>Nagging reminders</h3>
+    <p>The switch next to the reminder text makes the reminder "nagging": when due, the notification will be renewed every x minutes (by default as configured in the settings), producing the same alert (sound, vibration, ...) as when first shown. This continues until the notification is dismissed.</p>
+
+    <p>The repeat interval for the current reminder can be adjusted by long-clicking the switch.</p>
+
+    <p>Note that changing the default repeat interval in the settings does not affect already scheduled reminders.</p>
+
+    <p>Currently there is no indication in the reminders list or the notification whether a reminder is nagging, this will be added later.</p>
+
+    <h3>Editing a reminder</h3>
+    To edit a reminder, either click on the notification or the entry in the reminders list.
+
+    <h3>Reminders list</h3>
+    <p>The reminders list can be reached via the launcher icon "SimpleReminder" or via long-clicking on the "Add reminder" launcher icon and selecting "Reminders list".</p>
+    <p>The reminders list shows all current and past reminders and allows to edit or reschedule them. In addition reminders can be marked as done or deleted. Long-click on a reminder to select it (and potentially further reminders) and see the available actions (a long click on an action symbol shows its name).</p>
+    <p>The list consists of three sections:</p>
+      <ul>
+        <li><b>Due reminders (yellow):</b> Reminders due according to the set time; a notification has been shown and the reminder has not yet been marked as done yet (e.g. by dismissing the notification)</li>
+        <li><b>Scheduled reminders (green):</b> Reminders with due date in the future, a notification will be shown when the due time is reached; this section is further divided by day of the due date for the next 7 days</li>
+        <li><b>Done reminders (grey):</b> Reminders for which the notification has been dismissed or which have been marked done manually</li>
+      </ul>
+
+</body>
+</html>
+
+

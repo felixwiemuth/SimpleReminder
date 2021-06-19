@@ -22,11 +22,16 @@
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/menu_entry_settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_help"
+        android:orderInCategory="100"
+        android:title="@string/menu_entry_help"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_about"
         android:orderInCategory="100"
-        android:title="@string/action_about"
+        android:title="@string/menu_entry_about"
         app:showAsAction="never" />
 </menu>

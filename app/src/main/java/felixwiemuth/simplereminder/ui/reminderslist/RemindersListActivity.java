@@ -161,6 +161,8 @@ public class RemindersListActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
+        } else if (id == R.id.action_help) {
+            HtmlDialogFragment.displayHtmlDialogFragment(getSupportFragmentManager(), R.string.menu_entry_help, R.raw.help);
         } else if (id == R.id.action_about) {
             String title = getString(R.string.app_name) + " " + BuildConfig.VERSION_NAME;
             HtmlDialogFragment.displayHtmlDialogFragment(getSupportFragmentManager(), title, R.raw.about,
