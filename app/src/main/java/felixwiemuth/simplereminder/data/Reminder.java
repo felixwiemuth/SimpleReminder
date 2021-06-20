@@ -73,8 +73,8 @@ public class Reminder implements Comparable<Reminder> {
     private @Setter Date date;
     /**
      * The interval in minutes this reminder should be repeated until dismissed.
-     * This field is optional. A value <= 0 (or omitting in JSON) means that nagging is disabled.
-     * @since v0.9.9
+     * This field is optional. A value <= 0 (or omitting in JSON) means that nagging is disabled, which is the default.
+     * @since 0.9.9
      */
     private final int naggingRepeatInterval;
     private @Setter String text;
