@@ -205,7 +205,7 @@ public class Prefs {
      * Get a string from settings preferences using a key from a string resource.
      *
      * @param key      {@link} the resource id of the key
-     * @param defValue the default value to be used it the preference is not set
+     * @param defValue the default value to be used if the preference is not set
      * @param context
      * @return
      */
@@ -217,7 +217,7 @@ public class Prefs {
      * Get a boolean from default preferences using a key from a string resource.
      *
      * @param key      {@link} the resource id of the key
-     * @param defValue the default value to be used it the preference is not set
+     * @param defValue the default value to be used if the preference is not set
      * @param context
      * @return
      */
@@ -229,7 +229,7 @@ public class Prefs {
      * Get an int from default preferences using a key from a string resource.
      *
      * @param key      {@link} the resource id of the key
-     * @param defValue the default value to be used it the preference is not set
+     * @param defValue the default value to be used if the preference is not set
      * @param context
      * @return
      */
