@@ -213,7 +213,23 @@ public class ReminderService extends IntentService {
         int id = intent.getExtras().getInt(EXTRA_INT_ID, -1);
         long nextNagTime = intent.getExtras().getLong(EXTRA_LONG_NEXT_NAG_TIME, Long.MIN_VALUE);
         Action action = EnumUtil.deserialize(Action.class).from(intent);
-        Reminder reminder = ReminderManager.getReminder(this, id);
+        /* Try to get the reminder with the given ID. Note that race conditions with reminder updates
+           are possible which usually would lead to the intent (alarm) being cancelled but the
+           service has already been invoked. In case of reminder deletion, it does not exist
+           anymore and we ignore this intent (it is not relevant anymore). In case of rescheduling
+           or marking done via the reminders list, the reminder can still be queried and the intent
+           will be processed. This can for example lead to a reminder just having been rescheduled
+           being shown immediately, which is undesired but only happens when the user reschedules
+           close enough to when the reminder becomes due. There is also a good chance that the user
+           will notice it (if not e.g. in Do Not Disturb mode). In addition, the notification will
+           be shown again on the next due time if not dismissed until then.
+         */
+        Reminder reminder;
+        try {
+            reminder = ReminderManager.getReminder(this, id);
+        } catch (ReminderManager.ReminderNotFoundException ex) {
+            return;
+        }
         action.run(this, reminder, nextNagTime);
     }
 
