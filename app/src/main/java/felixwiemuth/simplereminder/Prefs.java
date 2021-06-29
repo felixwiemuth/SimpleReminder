@@ -197,11 +197,15 @@ public class Prefs {
         return intent;
     }
 
+    public static int getNaggingRepeatInterval(Context context) {
+        return Integer.parseInt(getStringPref(R.string.prefkey_nagging_repeat_interval, "1", context));
+    }
+
     /**
      * Get a string from settings preferences using a key from a string resource.
      *
      * @param key      {@link} the resource id of the key
-     * @param defValue the default value to be used it the preference is not set
+     * @param defValue the default value to be used if the preference is not set
      * @param context
      * @return
      */
@@ -213,11 +217,23 @@ public class Prefs {
      * Get a boolean from default preferences using a key from a string resource.
      *
      * @param key      {@link} the resource id of the key
-     * @param defValue the default value to be used it the preference is not set
+     * @param defValue the default value to be used if the preference is not set
      * @param context
      * @return
      */
     public static boolean getBooleanPref(@StringRes int key, boolean defValue, Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(context.getString(key), defValue);
+    }
+
+    /**
+     * Get an int from default preferences using a key from a string resource.
+     *
+     * @param key      {@link} the resource id of the key
+     * @param defValue the default value to be used if the preference is not set
+     * @param context
+     * @return
+     */
+    public static int getIntPref(@StringRes int key, int defValue, Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getInt(context.getString(key), defValue);
     }
 }

@@ -17,6 +17,12 @@
   -->
 
 <changelog>
+    <release version="0.9.9" versioncode="909100" >
+        <change>New: Nagging reminders</change>
+        <change>When editing a scheduled reminder, the selected time is now set to the due date (and not to the current time as for due or done reminders).</change>
+        <change>Reminders can now also be edited with a single click in the reminders list.</change>
+        <change>Added help page</change>
+    </release>
     <release version="0.9.8" versioncode="908100" >
         <change>Quick Settings tile to add reminder (on Android 7.0+)</change>
         <change>Launcher shortcuts to add reminder / view reminders list on the respective other launcher icon (on Android 7.1+)</change>

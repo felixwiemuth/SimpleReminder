@@ -1,0 +1,4 @@
+* New: Nagging reminders
+* When editing a scheduled reminder, the selected time is now set to the due date (and not to the current time as for due or done reminders).
+* Reminders can now also be edited with a single click in the reminders list.
+* Added help page

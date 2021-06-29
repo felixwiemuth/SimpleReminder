@@ -18,11 +18,13 @@
 package felixwiemuth.simplereminder.data;
 
 import androidx.annotation.NonNull;
-import com.google.gson.*;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.lang.reflect.Type;
 import java.util.Calendar;
@@ -30,13 +32,15 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @author Felix Wiemuth
  */
 @Getter
 public class Reminder implements Comparable<Reminder> {
-    // NOTE: when changing this class, check sorting criterea in RemindersListFragment.SortedListCallback
-
     private static Gson gson;
 
     private static final int OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT = 1000000;
@@ -62,21 +66,28 @@ public class Reminder implements Comparable<Reminder> {
     /**
      * ID of the reminder, also used for notifications. Must be in the interval [0,{@link #OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT}) and even (used by {@link felixwiemuth.simplereminder.ReminderService for correct scheduling}).
      */
-    private int id;
+    private final int id;
     /**
      * Reminder's due date.
      */
     private @Setter Date date;
+    /**
+     * The interval in minutes this reminder should be repeated until dismissed.
+     * This field is optional. A value <= 0 (or omitting in JSON) means that nagging is disabled, which is the default.
+     * @since 0.9.9
+     */
+    private final int naggingRepeatInterval;
     private @Setter String text;
     private @Setter Status status;
 
     @Builder //(builderClassName = "Builder")
-    public Reminder(int id, @NonNull Date date, @NonNull String text) {
+    public Reminder(int id, @NonNull Date date, int naggingRepeatInterval, @NonNull String text) {
         if (id < 0) {
             throw new IllegalArgumentException("Id must be >= 0.");
         }
         this.id = id;
         this.date = date;
+        this.naggingRepeatInterval = naggingRepeatInterval;
         this.text = text;
         this.status = Status.SCHEDULED;
     }
@@ -118,5 +129,13 @@ public class Reminder implements Comparable<Reminder> {
 
     public static int getRequestCodeAddReminderDialogActivityPendingIntent(int reminderID) {
         return OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT + reminderID;
+    }
+
+    public boolean isNagging() {
+        return naggingRepeatInterval > 0;
+    }
+
+    public long getNaggingRepeatIntervalInMillis() {
+        return 60*1000*naggingRepeatInterval;
     }
 }

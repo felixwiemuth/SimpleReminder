@@ -43,7 +43,7 @@ android {
         // Version variables
         def versionCodeMajor = 0
         def versionCodeMinor = 9
-        def versionCodePoint = 8
+        def versionCodePoint = 9
 
         // Sub version for release channel (only used on some release channels)
         def versionCodeSub = 0
@@ -65,6 +65,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 27
 
+        archivesBaseName = "SimpleReminder_" + versionName
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -78,9 +80,9 @@ android {
 dependencies {
     def acraVersion = '5.3.0'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'androidx.appcompat:appcompat:1.3.0-rc01'
+    implementation 'androidx.appcompat:appcompat:1.4.0-alpha02'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'com.google.android.material:material:1.4.0-alpha02'
+    implementation 'com.google.android.material:material:1.4.0-rc01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.preference:preference:1.1.1'
     implementation "ch.acra:acra-mail:$acraVersion"

@@ -32,6 +32,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import java.util.Date;
+
 import felixwiemuth.simplereminder.data.Reminder;
 import felixwiemuth.simplereminder.ui.EditReminderDialogActivity;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
@@ -41,7 +43,7 @@ import lombok.Builder;
 
 /**
  * Responsible for reminder scheduling and notifications. Handles scheduled reminders when they are due. May only be started with an intent created via the provided intent builder ({@link #intentBuilder()}).
- *
+ * <p>
  * Expects that the notification channel {@link #NOTIFICATION_CHANNEL_REMINDER} exists. Use {@link #createNotificationChannel(Context)} to create it.
  *
  * @author Felix Wiemuth
@@ -52,6 +54,7 @@ public class ReminderService extends IntentService {
      */
     public static final String NOTIFICATION_CHANNEL_REMINDER = "Reminder";
     private static final String EXTRA_INT_ID = "felixwiemuth.simplereminder.ReminderService.extra.ID";
+    private static final String EXTRA_LONG_NEXT_NAG_TIME = "felixwiemuth.simplereminder.ReminderService.extra.NEXT_NAG_TIME";
     private static final String ACTION_START = "felixwiemuth.simplereminder.ReminderService.action.START";
 
     private static Uri defaultSound;
@@ -63,6 +66,11 @@ public class ReminderService extends IntentService {
     public static class Arguments {
         @Builder.Default
         private int id = -1;
+        /**
+         * In case of {@link Action#NAG}, when to next repeat the notification.
+         */
+        @Builder.Default
+        private final long nextNagTime = Long.MIN_VALUE;
         private Action action;
 
         public static class ArgumentsBuilder {
@@ -91,6 +99,9 @@ public class ReminderService extends IntentService {
                 }
 
                 intent.putExtra(ReminderService.EXTRA_INT_ID, id);
+                if (nextNagTime != Long.MIN_VALUE) {
+                    intent.putExtra(ReminderService.EXTRA_LONG_NEXT_NAG_TIME, nextNagTime);
+                }
                 // Note: Setting an action seems to prevent extras being removed from intents, see https://stackoverflow.com/questions/15343840/intent-extras-missing-when-activity-started.
                 // It happened that the service was called without extras after introducing editing of reminders.
                 // This might, however, also have happened due to accidental reuse of intents when rescheduling a reminder
@@ -113,6 +124,7 @@ public class ReminderService extends IntentService {
                 int requestCode;
                 switch (action) {
                     case NOTIFY:
+                    case NAG:
                         requestCode = id;
                         break;
                     case MARK_DONE:
@@ -151,17 +163,28 @@ public class ReminderService extends IntentService {
     }
 
     interface ReminderAction {
-        void run(Context context, Reminder reminder);
+        void run(Context context, Reminder reminder, long nextNagTime);
     }
 
     enum Action {
         NOTIFY(
-                (context, reminder) -> {
+                (context, reminder, nextNagTime) -> {
                     showReminder(context, reminder);
                 }
         ),
+        /**
+         * Repeat the notification and schedule the next repetition for nagging reminders.
+         */
+        NAG(
+                (context, reminder, nextNagTime) -> {
+                    nag(context, reminder, nextNagTime);
+                }
+        ),
         MARK_DONE(
-                (context, reminder) -> {
+                (context, reminder, nextNagTime) -> {
+                    // Cancel possible further alarms (nagging reminders)
+                    cancelReminder(context, reminder.getId());
+
                     reminder.setStatus(Reminder.Status.DONE);
                     ReminderManager.updateReminder(context, reminder, false);
                 }
@@ -173,8 +196,8 @@ public class ReminderService extends IntentService {
             this.reminderAction = reminderAction;
         }
 
-        void run(Context context, Reminder reminder) {
-            reminderAction.run(context, reminder);
+        void run(Context context, Reminder reminder, long nextNagTime) {
+            reminderAction.run(context, reminder, nextNagTime);
         }
     }
 
@@ -184,46 +207,87 @@ public class ReminderService extends IntentService {
             Log.w("ReminderService", "Service called with no intent.");
             return;
         }
-        if (! intent.hasExtra(EXTRA_INT_ID)) {
+        if (!intent.hasExtra(EXTRA_INT_ID)) {
             throw new IllegalArgumentException("ReminderService called without reminder ID extra.");
         }
         int id = intent.getExtras().getInt(EXTRA_INT_ID, -1);
+        long nextNagTime = intent.getExtras().getLong(EXTRA_LONG_NEXT_NAG_TIME, Long.MIN_VALUE);
         Action action = EnumUtil.deserialize(Action.class).from(intent);
-        Reminder reminder = ReminderManager.getReminder(this, id);
-        action.run(this, reminder);
+        /* Try to get the reminder with the given ID. Note that race conditions with reminder updates
+           are possible which usually would lead to the intent (alarm) being cancelled but the
+           service has already been invoked. In case of reminder deletion, it does not exist
+           anymore and we ignore this intent (it is not relevant anymore). In case of rescheduling
+           or marking done via the reminders list, the reminder can still be queried and the intent
+           will be processed. This can for example lead to a reminder just having been rescheduled
+           being shown immediately, which is undesired but only happens when the user reschedules
+           close enough to when the reminder becomes due. There is also a good chance that the user
+           will notice it (if not e.g. in Do Not Disturb mode). In addition, the notification will
+           be shown again on the next due time if not dismissed until then.
+         */
+        Reminder reminder;
+        try {
+            reminder = ReminderManager.getReminder(this, id);
+        } catch (ReminderManager.ReminderNotFoundException ex) {
+            return;
+        }
+        action.run(this, reminder, nextNagTime);
     }
 
     /**
      * Show the reminder as appropriate and update its status. Should be used on due reminders.
+     *
      * @param context
      * @param reminder
      */
     public static void showReminder(Context context, Reminder reminder) {
-        sendNotification(context, reminder.getId(), reminder.getText());
+        sendNotification(context, reminder);
         reminder.setStatus(Reminder.Status.NOTIFIED);
         ReminderManager.updateReminder(context, reminder, false);
+        if (reminder.isNagging()) {
+            scheduleNextNag(context, reminder, reminder.getDate().getTime() + reminder.getNaggingRepeatIntervalInMillis());
+        }
+    }
+
+    public static void nag(Context context, Reminder reminder, long nextNagTime) {
+        // Send the same notification again (replaces the previous)
+        sendNotification(context, reminder);
+
+        // Schedule next repetition
+        scheduleNextNag(context, reminder, nextNagTime);
+    }
+
+    private static void scheduleNextNag(Context context, Reminder reminder, long nextNagTime) {
+        // Add exactly 60s to the timestamp
+        long nextNextNagTime = nextNagTime + reminder.getNaggingRepeatIntervalInMillis();
+
+        PendingIntent nagIntent = intentBuilder()
+                .id(reminder.getId())
+                .action(Action.NAG)
+                .nextNagTime(nextNextNagTime)
+                .buildPendingIntent(context);
+        scheduleExact(context, new Date(nextNagTime), nagIntent);
     }
 
     /**
      * Send a notification with swipe and click actions related to the reminder.
+     *
      * @param context
-     * @param id The reminder's ID
-     * @param text The text to be shown
+     * @param reminder
      */
-    private static void sendNotification(Context context, int id, String text) {
+    private static void sendNotification(Context context, Reminder reminder) {
         PendingIntent markDoneIntent = intentBuilder()
-                .id(id)
+                .id(reminder.getId())
                 .action(Action.MARK_DONE)
                 .buildPendingIntent(context);
 
-        Intent editReminderIntent = EditReminderDialogActivity.getIntentEditReminder(context, id);
-        PendingIntent editReminderPendingIntent = PendingIntent.getActivity(context, Reminder.getRequestCodeAddReminderDialogActivityPendingIntent(id), editReminderIntent, 0);
+        Intent editReminderIntent = EditReminderDialogActivity.getIntentEditReminder(context, reminder.getId());
+        PendingIntent editReminderPendingIntent = PendingIntent.getActivity(context, Reminder.getRequestCodeAddReminderDialogActivityPendingIntent(reminder.getId()), editReminderIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_REMINDER)
                 .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
                 .setContentTitle(context.getString(R.string.notification_title))
-                .setContentText(text)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
+                .setContentText(reminder.getText())
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(reminder.getText()))
                 .setContentIntent(editReminderPendingIntent)
                 .setDeleteIntent(markDoneIntent)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
@@ -236,7 +300,7 @@ public class ReminderService extends IntentService {
         }
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(id, builder.build());
+        notificationManager.notify(reminder.getId(), builder.build());
     }
 
 
@@ -247,24 +311,27 @@ public class ReminderService extends IntentService {
      * @param reminder
      */
     public static void scheduleReminder(Context context, Reminder reminder) {
-        // Prepare pending intent
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         PendingIntent notifyIntent = intentBuilder()
                 .id(reminder.getId())
                 .action(Action.NOTIFY)
                 .buildPendingIntent(context);
 
-        // Schedule alarm
+        scheduleExact(context, reminder.getDate(), notifyIntent);
+    }
+
+    private static void scheduleExact(Context context, Date date, PendingIntent pendingIntent) {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), notifyIntent);
-            Log.d("ReminderService", "Set alarm (\"exact and allow while idle\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, date.getTime(), pendingIntent);
+            Log.d("ReminderService", "Set alarm (\"exact and allow while idle\") for " + DateTimeUtil.formatDateTime(date));
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), notifyIntent);
-            Log.d("ReminderService", "Set alarm (\"exact\") for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, date.getTime(), pendingIntent);
+            Log.d("ReminderService", "Set alarm (\"exact\") for " + DateTimeUtil.formatDateTime(date));
         } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.getDate().getTime(), notifyIntent);
-            Log.d("ReminderService", "Set alarm for " + DateTimeUtil.formatDateTime(reminder.getDate()));
+            alarmManager.set(AlarmManager.RTC_WAKEUP, date.getTime(), pendingIntent);
+            Log.d("ReminderService", "Set alarm for " + DateTimeUtil.formatDateTime(date));
         }
+
     }
 
     /**

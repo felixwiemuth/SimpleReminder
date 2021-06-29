@@ -41,4 +41,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="dialog_narrow" parent="AppTheme.DialogActivity">
+        <item name="windowMinWidthMajor">240dp</item>
+        <item name="windowMinWidthMinor">240dp</item>
+    </style>
+
 </resources>

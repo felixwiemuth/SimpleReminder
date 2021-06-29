@@ -36,8 +36,8 @@ public class AddReminderDialogActivity extends ReminderDialogActivity {
 
     @Override
     protected void onDone() {
-        Reminder reminder = ReminderManager.addReminder(this, buildReminderWithTimeAndText());
-        makeToast(reminder.getCalendar());
+        Reminder reminder = ReminderManager.addReminder(this, buildReminderWithTimeTextNagging());
+        makeToast(reminder);
         completeActivity();
         Prefs.setAddReminderDialogUsed(this);
     }

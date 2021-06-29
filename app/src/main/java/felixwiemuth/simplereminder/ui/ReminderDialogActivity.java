@@ -21,16 +21,22 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.format.DateUtils;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import java.util.Calendar;
 
+import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.data.Reminder;
 
@@ -39,8 +45,11 @@ import felixwiemuth.simplereminder.data.Reminder;
  */
 public abstract class ReminderDialogActivity extends AppCompatActivity {
     protected AutoCompleteTextView nameTextView;
+    protected SwitchCompat naggingSwitch;
     private Button addButton;
     private TimePicker timePicker;
+
+    protected int naggingRepeatInterval;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +58,16 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
 
         nameTextView = findViewById(R.id.nameTextView);
         addButton = findViewById(R.id.addButton);
+        naggingSwitch = findViewById(R.id.naggingSwitch);
+        naggingSwitch.setOnClickListener(v -> {
+            if (naggingSwitch.isChecked()) {
+                showToastNaggingRepeatInterval();
+            }
+        });
+        naggingSwitch.setOnLongClickListener(view -> {
+            showChooseNaggingRepeatIntervalDialog();
+            return true;
+        });
         timePicker = findViewById(R.id.timePicker);
 
         nameTextView.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -66,10 +85,49 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         timePicker.setIs24HourView(true);
 
         addButton.setOnClickListener(v -> onDone());
+
+        naggingRepeatInterval = Prefs.getNaggingRepeatInterval(this);
+    }
+
+    protected void setSelectedDateTime(Calendar calendar) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            timePicker.setHour(calendar.get(Calendar.HOUR_OF_DAY));
+            timePicker.setMinute(calendar.get(Calendar.MINUTE));
+        } else {
+            timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
+            timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
+        }
+    }
+
+    private void showChooseNaggingRepeatIntervalDialog() {
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_number_picker, null);
+        NumberPicker naggingRepeatIntervalNumberPicker = dialogView.findViewById(R.id.numberPicker);
+        naggingRepeatIntervalNumberPicker.setMinValue(1);
+        naggingRepeatIntervalNumberPicker.setMaxValue(Integer.MAX_VALUE);
+        naggingRepeatIntervalNumberPicker.setWrapSelectorWheel(false);
+        naggingRepeatIntervalNumberPicker.setValue(naggingRepeatInterval);
+        new AlertDialog.Builder(this, R.style.dialog_narrow)
+                .setView(dialogView)
+                .setTitle(R.string.dialog_choose_repeat_interval_title)
+                .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
+                    naggingRepeatInterval = naggingRepeatIntervalNumberPicker.getValue();
+                    if (naggingSwitch.isChecked()) {
+                        // Show the toast also when nagging was already enabled
+                        showToastNaggingRepeatInterval();
+                    }
+                    naggingSwitch.setChecked(true);
+                })
+                .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> {})
+                .show();
+    }
+
+    private void showToastNaggingRepeatInterval() {
+        Toast.makeText(ReminderDialogActivity.this, getString(R.string.add_reminder_toast_nagging_enabled, naggingRepeatInterval), Toast.LENGTH_SHORT).show();
     }
 
 
-    protected Reminder.ReminderBuilder buildReminderWithTimeAndText() {
+    protected Reminder.ReminderBuilder buildReminderWithTimeTextNagging() {
         int hour;
         int minute;
 
@@ -93,10 +151,15 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
             time.add(Calendar.DAY_OF_MONTH, 1);  // wraps over end of month
         }
 
-        return Reminder.builder()
+        Reminder.ReminderBuilder reminderBuilder = Reminder.builder()
                 .date(time.getTime())
                 .text(nameTextView.getText().toString());
 
+        if (naggingSwitch.isChecked()) {
+            reminderBuilder.naggingRepeatInterval(naggingRepeatInterval);
+        }
+
+        return reminderBuilder;
     }
 
     /**
@@ -104,16 +167,21 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
      */
     abstract protected void onDone();
 
-    protected void makeToast(Calendar date) {
+    protected void makeToast(Reminder reminder) {
         // Create relative description of due date
-        String relativeDueDate = DateUtils.getRelativeTimeSpanString(date.getTimeInMillis(), System.currentTimeMillis(), 0).toString();
+        String relativeDueDate = DateUtils.getRelativeTimeSpanString(reminder.getCalendar().getTimeInMillis(), System.currentTimeMillis(), 0).toString();
         // Convert first letter to lower case to use it in a sentence
         if (relativeDueDate.length() > 0) {
             relativeDueDate = relativeDueDate.substring(0, 1).toLowerCase() + relativeDueDate.substring(1);
         }
 
         // Create toast
-        String toastText = getString(R.string.toast_reminder_due, relativeDueDate);
+        String toastText;
+        if (reminder.isNagging()) {
+            toastText = getString(R.string.add_reminder_toast_due_nagging, relativeDueDate);
+        } else {
+            toastText = getString(R.string.add_reminder_toast_due, relativeDueDate);
+        }
         int duration = Toast.LENGTH_LONG;
         Toast toast = Toast.makeText(this, toastText, duration);
         toast.show();

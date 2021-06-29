@@ -25,18 +25,18 @@ SimpleReminder is currently under development, and new features are added contin
   - Use the launcher icon or the Quick Settings tile
 - When a reminder is due, a notification is shown (with customizable importance and optional sound)
 - Clear breakdown on due, upcoming and past reminders
-- Reschedule a due reminder by clicking on the notification and a scheduled or past reminder by selecting it in the list
+- **Reschedule** or **edit** a reminder by clicking on the notification or its entry in the list
+- **Nagging reminders**: repeat notifications in a given interval until dismissed
 
 
 ## Planned features
 See the [issues](https://github.com/felixwiemuth/SimpleReminder/labels/Planned%20feature) for more detailed descriptions of some planned features.
 You are welcome to comment and make suggestions − early feedback can help improve a feature before changes become more difficult!
 
-- **Nagging reminders**: repeat notifications until dismissed ([#2](https://github.com/felixwiemuth/SimpleReminder/issues/2))
 - Create **templates** to quickly add frequent reminders
 - Access templates with specific **launcher icons**
 - Individual notification settings (including sound, vibration, LED) for each reminder (multiple notification channels on Android 8+)
-- Advanced possibilities to choose reminder time ([discussion]())
+- Advanced possibilities to choose reminder time ([discussion](https://github.com/felixwiemuth/SimpleReminder/discussions/16))
   - Choose time relatively (e.g. "in one hour")
   - Choose an arbitrary day ([#10](https://github.com/felixwiemuth/SimpleReminder/issues/10))
 - Auto complete reminder text based on previous reminders / suggestions of templates

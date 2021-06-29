@@ -80,6 +80,14 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
             nameTextView.setText(reminder.getText());
             // Move cursor to end of text
             nameTextView.setSelection(nameTextView.length());
+            // For scheduled reminders, set the selected time to the due date, otherwise leave it at the current time
+            if (reminder.getStatus() == Reminder.Status.SCHEDULED) {
+                setSelectedDateTime(reminder.getCalendar());
+            }
+            naggingSwitch.setChecked(reminder.isNagging());
+            if (reminder.isNagging()) {
+                naggingRepeatInterval = reminder.getNaggingRepeatInterval();
+            }
             reminderToUpdate = reminderId;
         } catch (ReminderManager.ReminderNotFoundException e) {
             Log.w("AddReminder", "Intent contains invalid reminder ID.");
@@ -90,11 +98,11 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
 
     @Override
     protected void onDone() {
-        Reminder.ReminderBuilder reminderBuilder = buildReminderWithTimeAndText();
+        Reminder.ReminderBuilder reminderBuilder = buildReminderWithTimeTextNagging();
         reminderBuilder.id(reminderToUpdate);
         Reminder reminder = reminderBuilder.build();
         ReminderManager.updateReminder(this, reminder, true);
-        makeToast(reminder.getCalendar());
+        makeToast(reminder);
         completeActivity();
     }
 }
