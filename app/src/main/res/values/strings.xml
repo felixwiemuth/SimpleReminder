@@ -39,7 +39,7 @@
     <string name="edit_reminder_title">Edit reminder</string>
     <string name="button_add_reminder">Add</string>
     <string name="keyboard_action_add_reminder">Add</string>
-    <string name="add_reminder_toast_nagging_enabled">Nagging set to %d minutes</string>
+    <string name="add_reminder_toast_nagging_enabled">Nagging set to %d minute(s)</string>
     <string name="add_reminder_toast_due">Reminder due %s</string>
     <string name="add_reminder_toast_due_nagging">Nagging reminder due %s</string>
     <string name="dialog_choose_repeat_interval_title">Set repeat interval</string>
