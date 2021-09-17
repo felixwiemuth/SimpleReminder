@@ -23,10 +23,12 @@ import android.text.format.DateUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
- * @author Felix Wiemuth
+ * Utilities for formatting and calculation with date and time.
+ * Note that we cannot use java.time because it requires API 26.
  */
 public class DateTimeUtil {
     private static DateFormat dfDateTime;
@@ -105,5 +107,39 @@ public class DateTimeUtil {
      */
     public static boolean isToday(Date d) {
         return isSameDay(d, new Date());
+    }
+
+    /**
+     * Get a copy of the given date where hour, minute, second and millisecond are set to 0.
+     * @param date
+     * @return
+     */
+    public static Calendar getDateAtMidnight(Calendar date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date.getTime());
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal;
+    }
+
+    /**
+     * Given two dates, calculates how often the day (number) is incremented from the first to the second.
+     * Based on https://stackoverflow.com/a/6406294.
+     */
+    public static long dayChangesBetween(Calendar start, Calendar end) {
+        if (isSameDay(start.getTime(), end.getTime())) {
+            return 0;
+        }
+
+        Calendar d = getDateAtMidnight(start);
+        Calendar e = getDateAtMidnight(end);
+        long dayChanges = 0;
+        while (d.before(e)) {
+            d.add(Calendar.DAY_OF_MONTH, 1);
+            dayChanges++;
+        }
+        return dayChanges;
     }
 }

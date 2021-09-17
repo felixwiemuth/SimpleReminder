@@ -17,16 +17,21 @@
 
 package felixwiemuth.simplereminder.ui;
 
+import android.app.DatePickerDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.format.DateUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -39,6 +44,7 @@ import java.util.Calendar;
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.data.Reminder;
+import felixwiemuth.simplereminder.util.DateTimeUtil;
 
 /**
  * Base class for the reminder dialog activity which is used to add and edit reminders.
@@ -47,9 +53,26 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     protected AutoCompleteTextView nameTextView;
     protected SwitchCompat naggingSwitch;
     private Button addButton;
+    private Button dateMinusButton;
+    private Button datePlusButton;
+    private TextView dateDisplay;
     private TimePicker timePicker;
 
+    private DateSelectionMode dateSelectionMode;
+    private Calendar selectedDate;
+
     protected int naggingRepeatInterval;
+
+    private enum DateSelectionMode {
+        /**
+         * The date is derived from the chosen time, so that this time lies within the next 24 hours.
+         */
+        NEXT24,
+        /**
+         * The date is selected manually.
+         */
+        MANUAL
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +81,33 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
 
         nameTextView = findViewById(R.id.nameTextView);
         addButton = findViewById(R.id.addButton);
+        dateMinusButton = findViewById(R.id.dateMinusButton);
+        dateMinusButton.setOnClickListener(v -> decrementDateAction());
+        datePlusButton = findViewById(R.id.datePlusButton);
+        datePlusButton.setOnClickListener(v -> incrementDateAction());
+
+        dateDisplay = findViewById(R.id.dateDisplay);
+        dateDisplay.setOnClickListener(v -> new DatePickerDialog(
+                        ReminderDialogActivity.this,
+                        (view, year, month, dayOfMonth) -> {
+                            Calendar newSelectedDate = Calendar.getInstance();
+                            newSelectedDate.set(Calendar.YEAR, year);
+                            newSelectedDate.set(Calendar.MONTH, month);
+                            newSelectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                            newSelectedDate.set(Calendar.HOUR_OF_DAY, selectedDate.get(Calendar.HOUR_OF_DAY));
+                            newSelectedDate.set(Calendar.MINUTE, selectedDate.get(Calendar.MINUTE));
+                            // Validate new selected date
+                            if (newSelectedDate.before(Calendar.getInstance())) {
+                                Toast.makeText(this, R.string.add_reminder_toast_invalid_date, Toast.LENGTH_LONG).show();
+                            } else {
+                                setSelectedDateTimeAndSelectionMode(newSelectedDate);
+                            }
+                        },
+                        selectedDate.get(Calendar.YEAR),
+                        selectedDate.get(Calendar.MONTH),
+                        selectedDate.get(Calendar.DAY_OF_MONTH)
+        ).show());
+
         naggingSwitch = findViewById(R.id.naggingSwitch);
         naggingSwitch.setOnClickListener(v -> {
             if (naggingSwitch.isChecked()) {
@@ -82,14 +132,63 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
             return false;
         });
 
+        selectedDate = Calendar.getInstance(); // Initialize calendar variable
+        setSelectedDateTimeAndSelectionMode(Calendar.getInstance());
+
         timePicker.setIs24HourView(true);
+        timePicker.setOnTimeChangedListener((view, hourOfDay, minute) -> {
+            if (dateSelectionMode == DateSelectionMode.NEXT24) {
+                selectedDate = getTimeWithinNext24Hours(hourOfDay, minute);
+            } else {
+                selectedDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                selectedDate.set(Calendar.MINUTE, minute);
+            }
+            renderSelectedDate();
+        });
 
         addButton.setOnClickListener(v -> onDone());
 
         naggingRepeatInterval = Prefs.getNaggingRepeatInterval(this);
+
+        renderSelectedDate();
     }
 
-    protected void setSelectedDateTime(Calendar calendar) {
+    /**
+     * Given an hour and minute, returns a date representing the next occurrence of this time within the next 24 hours. The seconds are set to 0, milliseconds become the value within the current second.
+     */
+    private Calendar getTimeWithinNext24Hours(int hourOfDay, int minute) {
+        Calendar date = Calendar.getInstance();
+        date.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        date.set(Calendar.MINUTE, minute);
+        date.set(Calendar.SECOND, 0);
+        // If the resulting date is in the past, the next day is meant
+        if (date.before(Calendar.getInstance())) {
+            date.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return date;
+    }
+
+    /**
+     * Set the selected and displayed date/time to that of the given calendar (seconds are set to 0).
+     * Also sets the {@link #dateSelectionMode} based on whether the selected time lies within the next 24 hours.
+     * @param calendar
+     */
+    protected void setSelectedDateTimeAndSelectionMode(Calendar calendar) {
+        selectedDate.setTime(calendar.getTime());
+        selectedDate.set(Calendar.SECOND, 0); // We leave milliseconds as-is, as a little randomness in time is probably good
+
+        // Determine date selection mode based on the given date.
+        // Check whether the selected time is within the next 24 hours (i.e., decrementing it by one day would move it to the past).
+        decrementDate();
+        if (selectedDate.before(Calendar.getInstance())) {
+            dateSelectionMode = DateSelectionMode.NEXT24;
+        } else {
+            dateSelectionMode = DateSelectionMode.MANUAL;
+        }
+        incrementDate();
+        renderSelectedDate();
+
+        // Set the clock widget to the time of the selected date.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             timePicker.setHour(calendar.get(Calendar.HOUR_OF_DAY));
             timePicker.setMinute(calendar.get(Calendar.MINUTE));
@@ -97,6 +196,87 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
             timePicker.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
             timePicker.setCurrentMinute(calendar.get(Calendar.MINUTE));
         }
+    }
+
+    /**
+     * Get the number of day changes between the current date and the selected date.
+     * If this number is greater than {@link Integer#MAX_VALUE}, the return value is undefined.
+     * @return
+     */
+    private int getDiffSelectedDate() {
+        return (int) DateTimeUtil.dayChangesBetween(Calendar.getInstance(), selectedDate);
+    }
+
+    /**
+     * If in NEXT24 mode, switches to MANUAL mode and adds a day if not
+     * already at +1; in MANUAL mode just adds a day.
+     */
+    private void incrementDateAction() {
+        if (dateSelectionMode == DateSelectionMode.NEXT24) {
+            dateSelectionMode = DateSelectionMode.MANUAL;
+            if (getDiffSelectedDate() == 0) {
+                incrementDate();
+            }
+        } else {
+            incrementDate();
+        }
+        renderSelectedDate();
+    }
+
+    /**
+     * In MANUAL mode, decrement the date if it is not within the next 24 hours. If the resulting date is
+     * within the next 24 hours, switch to NEXT24 mode.
+     * In NEXT24 mode this does not apply and is ignored.
+     */
+    private void decrementDateAction() {
+        if (dateSelectionMode == DateSelectionMode.NEXT24) {
+            return;
+        }
+        decrementDate();
+        // Check whether we already were within the next 24 hours (or more precisely, whether decrementing moved the date to the past).
+        // In that case, by definition of NEXT24 mode, the next day is meant, so we have to increment the date again.
+        if (selectedDate.before(Calendar.getInstance())) {
+            incrementDate();
+            dateSelectionMode = DateSelectionMode.NEXT24;
+        } else {
+            // Otherwise check whether decrementing moved the date to within the next 24 hours (by checking whether further decrementing it by one day moves it to the past).
+            decrementDate();
+            if (selectedDate.before(Calendar.getInstance())) {
+                dateSelectionMode = DateSelectionMode.NEXT24;
+            }
+            incrementDate();
+        }
+        renderSelectedDate();
+    }
+
+    private void incrementDate() {
+        selectedDate.add(Calendar.DAY_OF_MONTH, 1);
+    }
+
+    private void decrementDate() {
+        selectedDate.add(Calendar.DAY_OF_MONTH, -1);
+    }
+
+    /**
+     * Display day and month of {@link #selectedDate} in {@link #dateDisplay} and the number of calendar days
+     * this date lies ahead. If {@link #dateSelectionMode} is {@link DateSelectionMode#MANUAL}, show
+     * everything in orange, otherwise show the "+1" (for "one day ahead" if applicable) in accent color.
+     */
+    private void renderSelectedDate() {
+        int diff = getDiffSelectedDate();
+        String sDiff = "";
+        if (diff != 0) {
+            sDiff += " (+" + getDiffSelectedDate() + ")";
+        }
+        SpannableString spBase = new SpannableString(DateTimeUtil.formatDate(this, selectedDate.getTime()));
+        SpannableString spDiff = new SpannableString(sDiff);
+        if (dateSelectionMode == DateSelectionMode.MANUAL) {
+            spBase.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.orange)), 0, spBase.length(), 0);
+            spDiff.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.orange)), 0, spDiff.length(), 0);
+        } else {
+            spDiff.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.colorAccent)), 0, spDiff.length(), 0);
+        }
+        dateDisplay.setText(new SpannableStringBuilder().append(spBase).append(spDiff));
     }
 
     private void showChooseNaggingRepeatIntervalDialog() {
@@ -126,33 +306,9 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         Toast.makeText(ReminderDialogActivity.this, getString(R.string.add_reminder_toast_nagging_enabled, naggingRepeatInterval), Toast.LENGTH_SHORT).show();
     }
 
-
     protected Reminder.ReminderBuilder buildReminderWithTimeTextNagging() {
-        int hour;
-        int minute;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            hour = timePicker.getHour();
-            minute = timePicker.getMinute();
-        } else {
-            hour = timePicker.getCurrentHour();
-            minute = timePicker.getCurrentMinute();
-        }
-
-        // We use the current day when clicking "Add" as reference
-        Calendar time = Calendar.getInstance();
-        time.set(Calendar.HOUR_OF_DAY, hour);
-        time.set(Calendar.MINUTE, minute);
-        time.set(Calendar.SECOND, 0);
-        // We leave milliseconds as-is, as a little randomness in time is probably good
-
-        // If the resulting date is in the past, assume that the next day is meant
-        if (time.compareTo(Calendar.getInstance()) <= 0) { // AlarmManager also seems to fire (directly) when date is in the past, so it is no problem when in the mean time (from this check to scheduling alarm), the date moves to the past
-            time.add(Calendar.DAY_OF_MONTH, 1);  // wraps over end of month
-        }
-
         Reminder.ReminderBuilder reminderBuilder = Reminder.builder()
-                .date(time.getTime())
+                .date(selectedDate.getTime())
                 .text(nameTextView.getText().toString());
 
         if (naggingSwitch.isChecked()) {

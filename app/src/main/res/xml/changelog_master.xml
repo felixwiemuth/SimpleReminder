@@ -17,6 +17,9 @@
   -->
 
 <changelog>
+    <release version="0.9.10" versioncode="910100" >
+        <change>The date for a reminder can now be chosen with +/- buttons or with a calendar widget.</change>
+    </release>
     <release version="0.9.9" versioncode="909100" >
         <change>New: Nagging reminders</change>
         <change>When editing a scheduled reminder, the selected time is now set to the due date (and not to the current time as for due or done reminders).</change>
