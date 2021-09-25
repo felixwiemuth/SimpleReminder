@@ -292,11 +292,9 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
                 .setTitle(R.string.dialog_choose_repeat_interval_title)
                 .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
                     naggingRepeatInterval = naggingRepeatIntervalNumberPicker.getValue();
-                    if (naggingSwitch.isChecked()) {
-                        // Show the toast also when nagging was already enabled
-                        showToastNaggingRepeatInterval();
-                    }
-                    naggingSwitch.setChecked(true);
+                    // Show the toast about the set nagging repeat interval (also when nagging was already enabled)
+                    showToastNaggingRepeatInterval();
+                    naggingSwitch.setChecked(true); // Note: this does not trigger the on-cilck listener.
                 })
                 .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> {})
                 .show();
