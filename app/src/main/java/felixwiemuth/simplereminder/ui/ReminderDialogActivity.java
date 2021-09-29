@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -323,18 +322,25 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
 
     protected void makeToast(Reminder reminder) {
         // Create relative description of due date
-        String relativeDueDate = DateUtils.getRelativeTimeSpanString(reminder.getCalendar().getTimeInMillis(), System.currentTimeMillis(), 0).toString();
-        // Convert first letter to lower case to use it in a sentence
-        if (relativeDueDate.length() > 0) {
-            relativeDueDate = relativeDueDate.substring(0, 1).toLowerCase() + relativeDueDate.substring(1);
-        }
-
-        // Create toast
+        Calendar now = Calendar.getInstance();
         String toastText;
-        if (reminder.isNagging()) {
-            toastText = getString(R.string.add_reminder_toast_due_nagging, relativeDueDate);
+        if (reminder.getCalendar().before(now)) { // This is a rare case / does not happen in a usual use case.
+            toastText = getString(R.string.add_reminder_toast_due_in_past);
         } else {
-            toastText = getString(R.string.add_reminder_toast_due, relativeDueDate);
+            String relativeDueDate;
+            DateTimeUtil.Duration durationUntilDue = DateTimeUtil.daysHoursMinutesBetween(now, reminder.getCalendar());
+            if (durationUntilDue.isZero()) {
+                // This happens when the reminder is due in less than a minute, as the seconds were cut off.
+                relativeDueDate = getString(R.string.duration_less_than_a_minute);
+            } else {
+                // Note that the string cannot be empty when the duration is not zero with the chosen rounding (either their is at least one day, or at least one minute or hour).
+                relativeDueDate = durationUntilDue.toString(DateTimeUtil.Duration.Resolution.MINUTES_IF_0_DAYS, DateTimeUtil.Duration.RoundingMode.CLOSEST, this);
+            }
+            if (reminder.isNagging()) {
+                toastText = getString(R.string.add_reminder_toast_due_nagging, relativeDueDate);
+            } else {
+                toastText = getString(R.string.add_reminder_toast_due, relativeDueDate);
+            }
         }
         int duration = Toast.LENGTH_LONG;
         Toast toast = Toast.makeText(this, toastText, duration);
