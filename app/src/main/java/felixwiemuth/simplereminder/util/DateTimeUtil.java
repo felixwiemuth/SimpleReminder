@@ -184,27 +184,15 @@ public class DateTimeUtil {
             StringBuilder sb = new StringBuilder();
             boolean lastConjunctionUsed = false; // Whether the conjunction to be used between the last two units has been used
             if (printMinutes != 0) {
-                if (printMinutes == 1) {
-                    sb.append(context.getString(R.string.duration_minute, printMinutes));
-                } else {
-                    sb.append(context.getString(R.string.duration_minutes, printMinutes));
-                }
+                sb.insert(0, formatMinutes(printMinutes, context));
             }
             if (printHours != 0) {
                 lastConjunctionUsed = insertConjunction(lastConjunctionUsed, sb, context);
-                if (printHours == 1) {
-                    sb.insert(0, context.getString(R.string.duration_hour, printHours));
-                } else {
-                    sb.insert(0, context.getString(R.string.duration_hours, printHours));
-                }
+                sb.insert(0, formatHours(printHours, context));
             }
             if (printDays != 0) {
                 lastConjunctionUsed = insertConjunction(lastConjunctionUsed, sb, context);
-                if (printDays == 1) {
-                    sb.insert(0, context.getString(R.string.duration_day, printDays));
-                } else {
-                    sb.insert(0, context.getString(R.string.duration_days, printDays));
-                }
+                sb.insert(0, formatDays(printDays, context));
             }
             return sb.toString();
         }
@@ -253,6 +241,54 @@ public class DateTimeUtil {
                     ", minutes=" + minutes +
                     ", positive=" + positive +
                     '}';
+        }
+    }
+
+    /**
+     * Format the given amount of minutes (e.g. "0 minutes", "1 minute").
+     * Uses singular form for input "1" and plural form otherwise.
+     *
+     * @param minutes
+     * @param context
+     * @return
+     */
+    public static String formatMinutes(long minutes, Context context) {
+        if (minutes == 1) {
+            return context.getString(R.string.duration_minute, minutes);
+        } else {
+            return context.getString(R.string.duration_minutes, minutes);
+        }
+    }
+
+    /**
+     * Format the given amount of hours (e.g. "0 hours", "1 hour").
+     * Uses singular form for input "1" and plural form otherwise.
+     *
+     * @param hours
+     * @param context
+     * @return
+     */
+    public static String formatHours(long hours, Context context) {
+        if (hours == 1) {
+            return context.getString(R.string.duration_hour, hours);
+        } else {
+            return context.getString(R.string.duration_hours, hours);
+        }
+    }
+
+    /**
+     * Format the given amount of days (e.g. "0 days", "1 day").
+     * Uses singular form for input "1" and plural form otherwise.
+     *
+     * @param days
+     * @param context
+     * @return
+     */
+    public static String formatDays(long days, Context context) {
+        if (days == 1) {
+            return context.getString(R.string.duration_day, days);
+        } else {
+            return context.getString(R.string.duration_days, days);
         }
     }
 
