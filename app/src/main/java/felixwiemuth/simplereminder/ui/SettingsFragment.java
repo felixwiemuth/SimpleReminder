@@ -38,6 +38,7 @@ import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderService;
 import felixwiemuth.simplereminder.ui.util.UIUtils;
+import felixwiemuth.simplereminder.util.DateTimeUtil;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -58,8 +59,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
         EditTextPreference naggingRepeatIntervalPref = findPreference(getString(R.string.prefkey_nagging_repeat_interval));
         naggingRepeatIntervalPref.setOnBindEditTextListener(editText -> editText.setInputType(InputType.TYPE_CLASS_NUMBER));
-        naggingRepeatIntervalPref.setSummaryProvider(preference ->
-                getString(R.string.preference_nagging_repeat_interval_summary, Prefs.getNaggingRepeatInterval(getContext())));
+        naggingRepeatIntervalPref.setSummaryProvider(preference -> DateTimeUtil.formatMinutes(Prefs.getNaggingRepeatInterval(getContext()), getContext()));
         // Validation
         naggingRepeatIntervalPref.setOnPreferenceChangeListener((preference, newValue) -> {
             try {

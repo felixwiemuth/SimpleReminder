@@ -300,7 +300,7 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     }
 
     private void showToastNaggingRepeatInterval() {
-        Toast.makeText(ReminderDialogActivity.this, getString(R.string.add_reminder_toast_nagging_enabled, naggingRepeatInterval), Toast.LENGTH_SHORT).show();
+        Toast.makeText(ReminderDialogActivity.this, getString(R.string.add_reminder_toast_nagging_enabled, DateTimeUtil.formatMinutes(naggingRepeatInterval, this)), Toast.LENGTH_SHORT).show();
     }
 
     protected Reminder.ReminderBuilder buildReminderWithTimeTextNagging() {

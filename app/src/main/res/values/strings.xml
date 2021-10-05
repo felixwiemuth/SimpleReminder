@@ -39,7 +39,7 @@
     <string name="edit_reminder_title">Edit reminder</string>
     <string name="button_add_reminder">Add</string>
     <string name="keyboard_action_add_reminder">Add</string>
-    <string name="add_reminder_toast_nagging_enabled">Nagging set to %d minute(s)</string>
+    <string name="add_reminder_toast_nagging_enabled">Nagging set to %s</string>
     <string name="add_reminder_toast_due">Reminder due in %s</string>
     <string name="add_reminder_toast_due_nagging">Nagging reminder due in %s</string>
     <string name="add_reminder_toast_due_in_past">Reminder due in the past</string>
@@ -81,7 +81,6 @@
     <string name="preference_priority">Priority of notifications</string>
     <string name="preference_enable_sound">Enable sound of notifications</string>
     <string name="preference_nagging_repeat_interval">Default repeat interval for nagging reminders</string>
-    <string name="preference_nagging_repeat_interval_summary">%d minute(s)</string>
     <string name="preference_nagging_repeat_interval_format_error">The repeat interval must be a positive number of minutes</string>
     <string name="preference_notification_channel_settings">Change notification settings</string>
     <string name="preference_category_app">General</string>
