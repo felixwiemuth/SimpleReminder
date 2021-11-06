@@ -99,7 +99,9 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
                             if (newSelectedDate.before(Calendar.getInstance())) {
                                 Toast.makeText(this, R.string.add_reminder_toast_invalid_date, Toast.LENGTH_LONG).show();
                             } else {
-                                setSelectedDateTimeAndSelectionMode(newSelectedDate);
+                                setSelectedDateTime(newSelectedDate);
+                                dateSelectionMode = DateSelectionMode.MANUAL;
+                                renderSelectedDate();
                             }
                         },
                         selectedDate.get(Calendar.YEAR),
@@ -168,13 +170,22 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     }
 
     /**
+     * Set the selected time to that of the given calendar, setting seconds to 0.
+     * Does not render the date/time display.
+     * @param calendar
+     */
+    protected void setSelectedDateTime(Calendar calendar) {
+        selectedDate.setTime(calendar.getTime());
+        selectedDate.set(Calendar.SECOND, 0); // We leave milliseconds as-is, as a little randomness in time is probably good
+    }
+
+    /**
      * Set the selected and displayed date/time to that of the given calendar (seconds are set to 0).
      * Also sets the {@link #dateSelectionMode} based on whether the selected time lies within the next 24 hours.
      * @param calendar
      */
     protected void setSelectedDateTimeAndSelectionMode(Calendar calendar) {
-        selectedDate.setTime(calendar.getTime());
-        selectedDate.set(Calendar.SECOND, 0); // We leave milliseconds as-is, as a little randomness in time is probably good
+        setSelectedDateTime(calendar);
 
         // Determine date selection mode based on the given date.
         // Check whether the selected time is within the next 24 hours (i.e., decrementing it by one day would move it to the past).
