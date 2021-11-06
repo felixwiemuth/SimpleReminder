@@ -207,18 +207,11 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     }
 
     /**
-     * If in NEXT24 mode, switches to MANUAL mode and adds a day if not
-     * already at +1; in MANUAL mode just adds a day.
+     * Increment the date and set mode to MANUAL.
      */
     private void incrementDateAction() {
-        if (dateSelectionMode == DateSelectionMode.NEXT24) {
-            dateSelectionMode = DateSelectionMode.MANUAL;
-            if (getDiffSelectedDate() == 0) {
-                incrementDate();
-            }
-        } else {
-            incrementDate();
-        }
+        dateSelectionMode = DateSelectionMode.MANUAL;
+        incrementDate();
         renderSelectedDate();
     }
 
