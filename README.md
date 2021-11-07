@@ -22,7 +22,7 @@ SimpleReminder is currently under development, and new features are added contin
 
 ## Features
 - Easily add a reminder for a time within the next 24 hours with a custom message
-  - Use the launcher icon or the Quick Settings tile
+  - Use the launcher icon or the Quick Settings tile (Android 7.0+)
 - When a reminder is due, a notification is shown (with customizable importance and optional sound)
 - Clear breakdown on due, upcoming and past reminders
 - **Reschedule** or **edit** a reminder by clicking on the notification or its entry in the list
