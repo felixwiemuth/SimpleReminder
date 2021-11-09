@@ -58,6 +58,10 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     private TimePicker timePicker;
 
     private DateSelectionMode dateSelectionMode;
+    /**
+     * The currently selected date. It is an invariant that after every user interaction this
+     * date is in the future (except initially, before changing time or date).
+     */
     private Calendar selectedDate;
 
     protected int naggingRepeatInterval;
@@ -87,26 +91,11 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
 
         dateDisplay = findViewById(R.id.dateDisplay);
         dateDisplay.setOnClickListener(v -> new DatePickerDialog(
-                        ReminderDialogActivity.this,
-                        (view, year, month, dayOfMonth) -> {
-                            Calendar newSelectedDate = Calendar.getInstance();
-                            newSelectedDate.set(Calendar.YEAR, year);
-                            newSelectedDate.set(Calendar.MONTH, month);
-                            newSelectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                            newSelectedDate.set(Calendar.HOUR_OF_DAY, selectedDate.get(Calendar.HOUR_OF_DAY));
-                            newSelectedDate.set(Calendar.MINUTE, selectedDate.get(Calendar.MINUTE));
-                            // Validate new selected date
-                            if (newSelectedDate.before(Calendar.getInstance())) {
-                                Toast.makeText(this, R.string.add_reminder_toast_invalid_date, Toast.LENGTH_LONG).show();
-                            } else {
-                                setSelectedDateTime(newSelectedDate);
-                                dateSelectionMode = DateSelectionMode.MANUAL;
-                                renderSelectedDate();
-                            }
-                        },
-                        selectedDate.get(Calendar.YEAR),
-                        selectedDate.get(Calendar.MONTH),
-                        selectedDate.get(Calendar.DAY_OF_MONTH)
+                ReminderDialogActivity.this,
+                (view, year, month, dayOfMonth) -> setDateAction(year, month, dayOfMonth),
+                selectedDate.get(Calendar.YEAR),
+                selectedDate.get(Calendar.MONTH),
+                selectedDate.get(Calendar.DAY_OF_MONTH)
         ).show());
 
         naggingSwitch = findViewById(R.id.naggingSwitch);
@@ -172,6 +161,7 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     /**
      * Set the selected time to that of the given calendar, setting seconds to 0.
      * Does not render the date/time display.
+     *
      * @param calendar
      */
     protected void setSelectedDateTime(Calendar calendar) {
@@ -182,6 +172,8 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     /**
      * Set the selected and displayed date/time to that of the given calendar (seconds are set to 0).
      * Also sets the {@link #dateSelectionMode} based on whether the selected time lies within the next 24 hours.
+     * Renders the result.
+     *
      * @param calendar
      */
     protected void setSelectedDateTimeAndSelectionMode(Calendar calendar) {
@@ -209,8 +201,28 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     }
 
     /**
+     * If the selected date is the current day, switch to NEXT24 mode and correct the date
+     * to the next day if the currently selected time is in the past (as by definition of
+     * NEXT24 mode).
+     *
+     * @return whether the selected date was the current day
+     */
+    private boolean switchToNEXT24IfToday() {
+        if (DateTimeUtil.isToday(selectedDate.getTime())) {
+            dateSelectionMode = DateSelectionMode.NEXT24;
+            if (selectedDate.before(Calendar.getInstance())) {
+                incrementDate();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Get the number of day changes between the current date and the selected date.
      * If this number is greater than {@link Integer#MAX_VALUE}, the return value is undefined.
+     *
      * @return
      */
     private int getDiffSelectedDate() {
@@ -218,7 +230,37 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     }
 
     /**
-     * Increment the date and set mode to MANUAL.
+     * Set the selected date to the given year, month and day-of-month and render.
+     * If the chosen date is before the current day, do not set the date and show an error toast.
+     * If the chosen date is the current day, switch to NEXT24 mode, otherwise switch to MANUAL mode.
+     * When switching to NEXT24 mode and the selected time is in the past, correct the date to the
+     * next day (as per definition of NEXT24 mode).
+     *
+     * @param year
+     * @param month
+     * @param dayOfMonth
+     */
+    private void setDateAction(int year, int month, int dayOfMonth) {
+        Calendar newSelectedDate = Calendar.getInstance();
+        newSelectedDate.set(Calendar.YEAR, year);
+        newSelectedDate.set(Calendar.MONTH, month);
+        newSelectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        newSelectedDate.set(Calendar.HOUR_OF_DAY, selectedDate.get(Calendar.HOUR_OF_DAY));
+        newSelectedDate.set(Calendar.MINUTE, selectedDate.get(Calendar.MINUTE));
+
+        if (newSelectedDate.before(Calendar.getInstance()) && !DateTimeUtil.isToday(newSelectedDate.getTime())) {
+            Toast.makeText(this, R.string.add_reminder_toast_invalid_date, Toast.LENGTH_LONG).show();
+        } else { // newSelectedDate is today or any future day
+            setSelectedDateTime(newSelectedDate);
+            if (!switchToNEXT24IfToday()) {
+                dateSelectionMode = DateSelectionMode.MANUAL;
+            }
+            renderSelectedDate();
+        }
+    }
+
+    /**
+     * Increment the date, set mode to MANUAL and render.
      */
     private void incrementDateAction() {
         dateSelectionMode = DateSelectionMode.MANUAL;
@@ -227,22 +269,18 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     }
 
     /**
-     * In MANUAL mode, decrement the date if it is not on the current day (and thus on a future day).
+     * In MANUAL mode, decrement the date if it is not on the current day.
      * If the resulting date is on the current day, switch to NEXT24 mode, and if it is in the past,
      * increment it again to the next day (as per definition of NEXT24 mode).
      * In NEXT24 mode this does not apply and is ignored.
+     * Renders the result.
      */
     private void decrementDateAction() {
         if (dateSelectionMode == DateSelectionMode.NEXT24 || DateTimeUtil.isToday(selectedDate.getTime())) {
             return;
         }
         decrementDate();
-        if (DateTimeUtil.isToday(selectedDate.getTime())) {
-            dateSelectionMode = DateSelectionMode.NEXT24;
-            if (selectedDate.before(Calendar.getInstance())) {
-                incrementDate();
-            }
-        }
+        switchToNEXT24IfToday();
 
         renderSelectedDate();
     }
