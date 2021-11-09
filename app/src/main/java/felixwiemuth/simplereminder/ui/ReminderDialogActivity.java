@@ -227,28 +227,23 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     }
 
     /**
-     * In MANUAL mode, decrement the date if it is not within the next 24 hours. If the resulting date is
-     * within the next 24 hours, switch to NEXT24 mode.
+     * In MANUAL mode, decrement the date if it is not on the current day (and thus on a future day).
+     * If the resulting date is on the current day, switch to NEXT24 mode, and if it is in the past,
+     * increment it again to the next day (as per definition of NEXT24 mode).
      * In NEXT24 mode this does not apply and is ignored.
      */
     private void decrementDateAction() {
-        if (dateSelectionMode == DateSelectionMode.NEXT24) {
+        if (dateSelectionMode == DateSelectionMode.NEXT24 || DateTimeUtil.isToday(selectedDate.getTime())) {
             return;
         }
         decrementDate();
-        // Check whether we already were within the next 24 hours (or more precisely, whether decrementing moved the date to the past).
-        // In that case, by definition of NEXT24 mode, the next day is meant, so we have to increment the date again.
-        if (selectedDate.before(Calendar.getInstance())) {
-            incrementDate();
+        if (DateTimeUtil.isToday(selectedDate.getTime())) {
             dateSelectionMode = DateSelectionMode.NEXT24;
-        } else {
-            // Otherwise check whether decrementing moved the date to within the next 24 hours (by checking whether further decrementing it by one day moves it to the past).
-            decrementDate();
             if (selectedDate.before(Calendar.getInstance())) {
-                dateSelectionMode = DateSelectionMode.NEXT24;
+                incrementDate();
             }
-            incrementDate();
         }
+
         renderSelectedDate();
     }
 
