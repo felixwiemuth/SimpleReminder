@@ -33,6 +33,7 @@
 
         <activity
             android:name=".ui.reminderslist.RemindersListActivity"
+            android:exported="true"
             android:label="@string/title_activity_reminders_list"
             android:taskAffinity="felixwiemuth.simplereminder.main"
             android:theme="@style/AppTheme.NoActionBar">
@@ -45,7 +46,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts_main"/>
+                android:resource="@xml/shortcuts_main" />
         </activity>
 
         <activity
@@ -54,9 +55,10 @@
 
         <activity
             android:name=".ui.AddReminderDialogActivity"
+            android:exported="true"
             android:label="@string/add_reminder_title"
-            android:taskAffinity="felixwiemuth.simplereminder.addreminder"
             android:launchMode="singleTask"
+            android:taskAffinity="felixwiemuth.simplereminder.addreminder"
             android:theme="@style/AppTheme.DialogActivity"
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
@@ -65,14 +67,14 @@
             </intent-filter>
             <meta-data
                 android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts_add_reminder"/>
+                android:resource="@xml/shortcuts_add_reminder" />
         </activity>
 
         <activity
             android:name=".ui.EditReminderDialogActivity"
             android:label="@string/edit_reminder_title"
-            android:taskAffinity="felixwiemuth.simplereminder.editreminder"
             android:launchMode="singleTask"
+            android:taskAffinity="felixwiemuth.simplereminder.editreminder"
             android:theme="@style/AppTheme.DialogActivity"
             android:windowSoftInputMode="stateVisible" />
 
@@ -82,6 +84,7 @@
             android:exported="false" />
         <service
             android:name=".QuickTileService"
+            android:exported="false"
             android:icon="@drawable/ic_launcher_foreground"
             android:label="@string/quick_tile_add_reminder_label"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
@@ -92,7 +95,8 @@
 
         <receiver
             android:name=".BootReceiver"
-            android:enabled="false">
+            android:enabled="false"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />

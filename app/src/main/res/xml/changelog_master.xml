@@ -17,6 +17,10 @@
   -->
 
 <changelog>
+    <release version="0.9.10" versioncode="910100" >
+        <change>The date for a reminder can now be chosen with +/- buttons or with a calendar widget.</change>
+        <change>The duration until a reminder is due is now shown more precisely.</change>
+    </release>
     <release version="0.9.9" versioncode="909100" >
         <change>New: Nagging reminders</change>
         <change>When editing a scheduled reminder, the selected time is now set to the due date (and not to the current time as for due or done reminders).</change>
@@ -27,7 +31,7 @@
         <change>Quick Settings tile to add reminder (on Android 7.0+)</change>
         <change>Launcher shortcuts to add reminder / view reminders list on the respective other launcher icon (on Android 7.1+)</change>
         <change>Some UI and navigation improvements</change>
-        <change>Reminders will now be shown in Do Not Disturb mode when in the settings the "Reminders" category has been allowed for interruption.</change>
+        <change>Reminders will now be shown in Do Not Disturb mode when in the system settings the "Reminders" category has been allowed for interruption.</change>
     </release>
     <release version="0.9.7" versioncode="12" >
         <change>Use clock widget instead of spinner for choosing time (only applies to Android 5.0+).</change>
@@ -35,7 +39,7 @@
     </release>
     <release version="0.9.6" versioncode="11" >
         <change>On Android 8+ replaced notification settings for sound and priority (which did not have any effect) with a link to the notification channel settings.</change>
-        <change>Fixed: When scheduled reminders were marked as done or were deleted, they would still be shown at the due time (deleted reminders were attempted to be shown which lead to a crash).</change>
+        <change>Fixed: When scheduled reminders were marked as done or were deleted, they would still be shown at the due time (deleted reminders were attempted to be shown which led to a crash).</change>
         <change>Now ask to disable battery optimization on launch as this is essential to the working of SimpleReminder.</change>
     </release>
     <release version="0.9.5" versioncode="9" >

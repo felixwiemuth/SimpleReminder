@@ -1,4 +1,4 @@
 * Quick Settings tile to add reminder (on Android 7.0+)
 * Launcher shortcuts to add reminder / view reminders list on the respective other launcher icon (on Android 7.1+)
 * Some UI and navigation improvements
-* Reminders will now be shown in Do Not Disturb mode when in the settings the "Reminders" category has been allowed for interruption.
+* Reminders will now be shown in Do Not Disturb mode when in the system settings the "Reminders" category has been allowed for interruption.
