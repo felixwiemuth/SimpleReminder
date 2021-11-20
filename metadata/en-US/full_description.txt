@@ -2,7 +2,18 @@ Something to remember crosses your mind and an alarm or a note is the best solut
 
 This app lets you set up a scheduled reminder in very few steps:
 1. Click "Add Reminder" on your home screen or use the Quick Settings Tile
-2. Enter a message and select a time
+2. Enter a message and select a time (and date)
 3. Click OK
 
 A notification with your message will pop up at the time selected!
+
+<b>Features</b>
+<ul>
+<li>Use the specific launcher icon or the Quick Settings tile (Android 7.0+) to directly reach the "Add Reminder" dialog</li>
+<li>Easily add a reminder within the next 24 hours by using just a clock widget</li>
+<li>Choose a custom date for a reminder with "+"/"-" buttons or in a calendar</li>
+<li>When a reminder is due, a notification is shown (customizable via notification settings)</li>
+<li>Clear breakdown on due, upcoming and past reminders</li>
+<li><b>Reschedule</b> or <b>edit</b> a reminder by clicking on the notification or its entry in the list</li>
+<li><b>Nagging reminders</b>: repeat notifications in a given interval until dismissed</li>
+</ul>
