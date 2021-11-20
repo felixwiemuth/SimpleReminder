@@ -21,9 +21,10 @@ SimpleReminder is currently under development, and new features are added contin
 
 
 ## Features
-- Easily add a reminder for a time within the next 24 hours with a custom message
-  - Use the launcher icon or the Quick Settings tile (Android 7.0+)
-- When a reminder is due, a notification is shown (with customizable importance and optional sound)
+- Specific launcher icon and Quick Settings tile (Android 7.0+) to directly reach the "Add Reminder" dialog
+- Easily add a reminder within the next 24 hours by using a clock widget
+- Choose a custom date for a reminder with +/- buttons or in a calendar
+- When a reminder is due, a notification is shown (customizable via notification settings)
 - Clear breakdown on due, upcoming and past reminders
 - **Reschedule** or **edit** a reminder by clicking on the notification or its entry in the list
 - **Nagging reminders**: repeat notifications in a given interval until dismissed
@@ -36,9 +37,10 @@ You are welcome to comment and make suggestions − early feedback can help impr
 - Create **templates** to quickly add frequent reminders
 - Access templates with specific **launcher icons**
 - Individual notification settings (including sound, vibration, LED) for each reminder (multiple notification channels on Android 8+)
+- Recurring reminders: repeat every day/week/month/year ([#20](https://github.com/felixwiemuth/SimpleReminder/issues/20))
 - Advanced possibilities to choose reminder time ([discussion](https://github.com/felixwiemuth/SimpleReminder/discussions/16))
   - Choose time relatively (e.g. "in one hour")
-  - Choose an arbitrary day ([#10](https://github.com/felixwiemuth/SimpleReminder/issues/10))
+  - Use text input to specify time and date directly from the description text field
 - Auto complete reminder text based on previous reminders / suggestions of templates
 - Add **media** to reminders: take a photo, record a sound, ... − it will be shown in the notification!
 - Sharing of reminder content
