@@ -15,11 +15,13 @@ This app lets you set up a reminder in very few steps:
 
 The reminder is saved and will pop up at the time set.
 
+<p float="left">
 <img src="https://raw.githubusercontent.com/felixwiemuth/SimpleReminder/develop/metadata/en-US/images/phoneScreenshots/1_AddReminder_v0.9.10.png" height="400">
 <img src="https://raw.githubusercontent.com/felixwiemuth/SimpleReminder/develop/metadata/en-US/images/phoneScreenshots/2_RemindersList_v0.9.10.png" height="400">
 <img src="https://raw.githubusercontent.com/felixwiemuth/SimpleReminder/develop/metadata/en-US/images/phoneScreenshots/3_Notification_v0.9.10.png" height="400">
 <img src="https://raw.githubusercontent.com/felixwiemuth/SimpleReminder/develop/metadata/en-US/images/phoneScreenshots/4_AddReminderCalendar_v0.9.10.png" height="400">
 <img src="https://raw.githubusercontent.com/felixwiemuth/SimpleReminder/develop/metadata/en-US/images/phoneScreenshots/5_AddReminderDaysAhead_v0.9.10.png" height="400">
+</p>
 
 ## Project status
 SimpleReminder is currently under development, and new features are added continuously. Your [feedback](#feedback) is welcome!
