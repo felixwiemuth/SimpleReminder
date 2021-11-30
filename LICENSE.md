@@ -33,7 +33,6 @@ The following lists included unmodified third-party software.
 
 | Name                                                                                                                            | Copyright                            | License                           |
 |---------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|-----------------------------------|
-| [SectionedRecyclerViewAdapter](https://github.com/felixwiemuth/SectionedRecyclerViewAdapter/tree/feature/multipleItemViewTypes) | 2016 Gustavo Pagani and contributors | [MIT](LICENSES/MIT)               |
 | [ckChangeLog](https://github.com/cketti/ckChangeLog)                                                                            | 2012-2015 cketti and contributors    | [Apache 2.0](LICENSES/APACHE-2.0) |
 | [ACRA (Application Crash Reporting for Android)](https://github.com/ACRA/acra)                                                  | 2013 Kevin Gaudin                    | [Apache 2.0](LICENSES/APACHE-2.0) |
 | [Gson](https://github.com/google/gson)                                                                                          | 2008 Google Inc.                     | [Apache 2.0](LICENSES/APACHE-2.0) |

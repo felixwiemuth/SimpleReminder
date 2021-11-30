@@ -15,5 +15,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-include ':app', ':sectionedrecyclerviewadapter'
-project(':sectionedrecyclerviewadapter').projectDir = new File('app/lib/SectionedRecyclerViewAdapter/library')
+include ':app'

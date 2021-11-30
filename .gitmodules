@@ -1,4 +1,0 @@
-[submodule "SectionedRecyclerViewAdapter"]
-	path = app/lib/SectionedRecyclerViewAdapter
-	url = https://github.com/felixwiemuth/SectionedRecyclerViewAdapter
-	branch = feature/multipleItemViewTypes
