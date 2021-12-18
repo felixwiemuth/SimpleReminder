@@ -17,6 +17,9 @@
   -->
 
 <changelog>
+    <release version="0.9.11" versioncode="911100" >
+        <change>Empty sections are not shown anymore in the reminders list.</change>
+    </release>
     <release version="0.9.10" versioncode="910100" >
         <change>The date for a reminder can now be chosen with +/- buttons or with a calendar widget.</change>
         <change>The duration until a reminder is due is now shown more precisely.</change>

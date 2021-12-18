@@ -262,13 +262,15 @@ class RemindersListFragment : Fragment() {
         remindersDue.sortWith { o1: Reminder, o2: Reminder -> -o1.compareTo(o2) }
 
         // Section for due reminders (with a date not in the future)
-        addSection.apply(
-            ReminderSection(
-                getString(R.string.reminder_section_due),
-                DisplayType.TIME_ONLY_IF_TODAY,
-                remindersDue
+        if (remindersDue.isNotEmpty()) {
+            addSection.apply(
+                ReminderSection(
+                    getString(R.string.reminder_section_due),
+                    DisplayType.TIME_ONLY_IF_TODAY,
+                    remindersDue
+                )
             )
-        )
+        }
         it = remindersScheduled.listIterator()
 
         // Construct sections for the next MAX_DAY_SECTIONS days
@@ -339,22 +341,27 @@ class RemindersListFragment : Fragment() {
         while (it.hasNext()) {
             futureReminders.add(it.next())
         }
-        addSection.apply(
-            ReminderSection(
-                getString(R.string.reminder_section_future),
-                DisplayType.FULL,
-                futureReminders
+        if (futureReminders.isNotEmpty()) {
+            addSection.apply(
+                ReminderSection(
+                    getString(R.string.reminder_section_future),
+                    DisplayType.FULL,
+                    futureReminders
+                )
             )
-        )
+        }
 
         // Section for DONE reminders
-        addSection.apply(
-            ReminderSection(
-                getString(R.string.reminder_section_done),
-                DisplayType.FULL,
-                remindersDone
+        if (remindersDone.isNotEmpty()) {
+            addSection.apply(
+                ReminderSection(
+                    getString(R.string.reminder_section_done),
+                    DisplayType.FULL,
+                    remindersDone
+                )
             )
-        )
+        }
+
         remindersListRecyclerView.adapter = concatAdapter // This relayouts the view
     }
 
