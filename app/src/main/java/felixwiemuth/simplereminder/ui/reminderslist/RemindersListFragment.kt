@@ -16,12 +16,14 @@
  */
 package felixwiemuth.simplereminder.ui.reminderslist
 
+import android.app.Activity
 import android.content.*
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.util.SparseArray
 import android.view.*
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.arch.core.util.Function
@@ -37,6 +39,7 @@ import felixwiemuth.simplereminder.ReminderManager
 import felixwiemuth.simplereminder.ReminderStorage
 import felixwiemuth.simplereminder.data.Reminder
 import felixwiemuth.simplereminder.ui.EditReminderDialogActivity
+import felixwiemuth.simplereminder.ui.reminderslist.RemindersListFragment.Companion.BROADCAST_REMINDERS_UPDATED
 import felixwiemuth.simplereminder.util.DateTimeUtil
 import felixwiemuth.simplereminder.util.ImplementationError
 import java.util.*
@@ -103,11 +106,7 @@ class RemindersListFragment : Fragment() {
             // which results in the RecyclerView being reloaded.
             when (item.itemId) {
                 R.id.action_reschedule -> {
-                    val intent = EditReminderDialogActivity.getIntentEditReminder(
-                        context,
-                        onlySelectedReminder.id
-                    )
-                    startActivityForResult(intent, 0)
+                    startEditReminderDialogActivityAndReloadOnOK(onlySelectedReminder.id)
                     mode.finish()
                 }
                 R.id.action_copy_text -> {
@@ -206,6 +205,24 @@ class RemindersListFragment : Fragment() {
     override fun onPause() {
         LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(broadcastReceiver)
         super.onPause()
+    }
+
+    /*
+     * Start [EditReminderDialogActivity] and reload reminders list when the activity finishes
+     * with [Activity.RESULT_OK].
+     */
+    private fun startEditReminderDialogActivityAndReloadOnOK(reminderId: Int) {
+        val intent = EditReminderDialogActivity.getIntentEditReminder(
+            context,
+            reminderId
+        )
+        val startActivityForResult =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+                if (activityResult.resultCode == Activity.RESULT_OK) {
+                    reloadRemindersListAndUpdateRecyclerView()
+                }
+            }
+        startActivityForResult.launch(intent)
     }
 
     /**
@@ -526,11 +543,7 @@ class RemindersListFragment : Fragment() {
 
             holder.itemView.setOnClickListener {
                 if (actionMode == null) {
-                    val intent = EditReminderDialogActivity.getIntentEditReminder(
-                        context,
-                        reminder.id
-                    )
-                    startActivityForResult(intent, 0)
+                    startEditReminderDialogActivityAndReloadOnOK(reminder.id)
                 } else {
                     if (selection.contains(reminder.id)) {
                         selection.remove(reminder.id)

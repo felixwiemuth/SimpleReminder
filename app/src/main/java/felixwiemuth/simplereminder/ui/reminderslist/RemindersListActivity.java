@@ -17,6 +17,7 @@
 
 package felixwiemuth.simplereminder.ui.reminderslist;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +25,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -94,7 +97,14 @@ public class RemindersListActivity extends AppCompatActivity {
             if (!Prefs.isAddReminderDialogUsed(RemindersListActivity.this)) {
                 Toast.makeText(RemindersListActivity.this, R.string.toast_info_add_reminder_dialog, Toast.LENGTH_LONG).show();
             }
-            startActivityForResult(new Intent(this, AddReminderDialogActivity.class), 0);
+            // Start AddReminderDialogActivity, which reports back to RemindersListActivity when a reminder is edited so the list will be reloaded
+            ActivityResultLauncher<Intent> startActivityForResult =
+                    registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), activityResult -> {
+                        if (activityResult.getResultCode() == Activity.RESULT_OK && remindersFragment != null) {
+                            remindersFragment.reloadRemindersListAndUpdateRecyclerView();
+                        }
+                    });
+            startActivityForResult.launch(new Intent(this, AddReminderDialogActivity.class));
         });
 
         showStartupDialogs();
@@ -135,16 +145,6 @@ public class RemindersListActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         // Intent content is not used
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (remindersFragment != null) {
-                remindersFragment.reloadRemindersListAndUpdateRecyclerView();
-            }
-        }
     }
 
     @Override
