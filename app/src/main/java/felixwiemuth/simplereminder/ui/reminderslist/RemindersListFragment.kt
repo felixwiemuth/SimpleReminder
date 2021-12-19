@@ -106,7 +106,14 @@ class RemindersListFragment : Fragment() {
             // which results in the RecyclerView being reloaded.
             when (item.itemId) {
                 R.id.action_reschedule -> {
-                    startEditReminderDialogActivityAndReloadOnOK(onlySelectedReminder.id)
+                    startActivity(
+                        EditReminderDialogActivity.getIntentEditReminder(
+                            context,
+                            onlySelectedReminder.id
+                        )
+                    )
+                    // The following is currently not necessary as reminder updates result in a broadcast received by the fragment.
+                    // startEditReminderDialogActivityAndReloadOnOK(onlySelectedReminder.id)
                     mode.finish()
                 }
                 R.id.action_copy_text -> {
@@ -543,7 +550,14 @@ class RemindersListFragment : Fragment() {
 
             holder.itemView.setOnClickListener {
                 if (actionMode == null) {
-                    startEditReminderDialogActivityAndReloadOnOK(reminder.id)
+                    startActivity(
+                        EditReminderDialogActivity.getIntentEditReminder(
+                            context,
+                            reminder.id
+                        )
+                    )
+                    // The following is currently not necessary as reminder updates result in a broadcast received by the fragment.
+                    // startEditReminderDialogActivityAndReloadOnOK(reminder.id)
                 } else {
                     if (selection.contains(reminder.id)) {
                         selection.remove(reminder.id)
