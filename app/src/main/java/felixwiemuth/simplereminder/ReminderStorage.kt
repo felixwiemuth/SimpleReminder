@@ -84,7 +84,7 @@ object ReminderStorage {
      * @return
      */
     private fun getRemindersFromPrefs(prefs: SharedPreferences): List<Reminder> {
-        return Reminder.fromJson(prefs.getString(Prefs.PREF_STATE_CURRENT_REMINDERS, "[]"))
+        return Reminder.fromJson(prefs.getString(Prefs.PREF_STATE_CURRENT_REMINDERS, "[]")!!)
     }
 
     fun getReminders(context: Context): List<Reminder> {

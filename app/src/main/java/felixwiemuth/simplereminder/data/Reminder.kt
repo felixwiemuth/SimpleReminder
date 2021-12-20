@@ -16,18 +16,14 @@
  */
 package felixwiemuth.simplereminder.data
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonSerializer
-import com.google.gson.JsonSerializationContext
-import com.google.gson.JsonPrimitive
-import java.lang.reflect.Type
+import felixwiemuth.simplereminder.util.DateSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.util.*
 
+@Serializable
 data class Reminder
 constructor(
     /**
@@ -38,6 +34,7 @@ constructor(
     /**
      * Reminder's due date.
      */
+    @Serializable(with = DateSerializer::class)
     val date: Date,
 
     /**
@@ -97,35 +94,13 @@ constructor(
         @JvmStatic
         fun builder(date: Date, text: String): Builder = Builder(date = date, text = text)
 
-        private var gson: Gson? = null
-            private get() {
-                if (field == null) {
-                    field = GsonBuilder()
-                        .registerTypeAdapter(
-                            Date::class.java,
-                            JsonDeserializer { json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext? ->
-                                Date(json.asJsonPrimitive.asLong)
-                            } as JsonDeserializer<Date>)
-                        .registerTypeAdapter(
-                            Date::class.java,
-                            JsonSerializer { date: Date, type: Type?, jsonSerializationContext: JsonSerializationContext? ->
-                                JsonPrimitive(date.time)
-                            } as JsonSerializer<Date>)
-                        .create()
-                }
-                return field
-            }
+        @JvmStatic
+        fun toJson(reminders: List<Reminder?>?): String =
+            Json.encodeToString(reminders)
 
         @JvmStatic
-        fun toJson(reminders: List<Reminder?>?): String {
-            return gson!!.toJson(reminders)
-        }
-
-        @JvmStatic
-        fun fromJson(json: String?): List<Reminder> {
-            val collectionType = object : TypeToken<Collection<Reminder?>?>() {}.type
-            return gson!!.fromJson(json, collectionType)
-        }
+        fun fromJson(json: String): List<Reminder> =
+            Json.decodeFromString(ListSerializer(serializer()), json)
 
         /**
          * Request code for a pending intent to be used to start [felixwiemuth.simplereminder.ui.EditReminderDialogActivity].
