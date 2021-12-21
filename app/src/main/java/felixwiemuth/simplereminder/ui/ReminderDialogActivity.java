@@ -340,13 +340,14 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         Toast.makeText(ReminderDialogActivity.this, getString(R.string.add_reminder_toast_nagging_enabled, DateTimeUtil.formatMinutes(naggingRepeatInterval, this)), Toast.LENGTH_SHORT).show();
     }
 
-    protected Reminder.ReminderBuilder buildReminderWithTimeTextNagging() {
-        Reminder.ReminderBuilder reminderBuilder = Reminder.builder()
-                .date(selectedDate.getTime())
-                .text(nameTextView.getText().toString());
+    protected Reminder.Builder buildReminderWithTimeTextNagging() {
+        Reminder.Builder reminderBuilder = Reminder.builder(
+                selectedDate.getTime(),
+                nameTextView.getText().toString()
+        );
 
         if (naggingSwitch.isChecked()) {
-            reminderBuilder.naggingRepeatInterval(naggingRepeatInterval);
+            reminderBuilder.naggingRepeatInterval = naggingRepeatInterval;
         }
 
         return reminderBuilder;

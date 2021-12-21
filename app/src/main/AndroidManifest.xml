@@ -44,15 +44,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts_main" />
         </activity>
-
         <activity
             android:name=".ui.SettingsActivity"
             android:taskAffinity="felixwiemuth.simplereminder.main" />
-
         <activity
             android:name=".ui.AddReminderDialogActivity"
             android:exported="true"
@@ -63,13 +62,14 @@
             android:windowSoftInputMode="stateVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts_add_reminder" />
         </activity>
-
         <activity
             android:name=".ui.EditReminderDialogActivity"
             android:label="@string/edit_reminder_title"
@@ -78,10 +78,6 @@
             android:theme="@style/AppTheme.DialogActivity"
             android:windowSoftInputMode="stateVisible" />
 
-        <service
-            android:name=".ReminderService"
-            android:enabled="true"
-            android:exported="false" />
         <service
             android:name=".QuickTileService"
             android:exported="false"
@@ -103,6 +99,10 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".ReminderBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

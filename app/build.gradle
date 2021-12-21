@@ -90,6 +90,7 @@ dependencies {
     // Note: version 1.4.0-rc01 currently gives a resource linking error.
     implementation 'androidx.appcompat:appcompat:1.4.0-alpha03'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
     // Note: version 1.5.0-alpha03 currently gives a resource linking error.
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'

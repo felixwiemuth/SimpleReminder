@@ -36,7 +36,7 @@ import androidx.preference.SwitchPreferenceCompat;
 import felixwiemuth.simplereminder.BootReceiver;
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
-import felixwiemuth.simplereminder.ReminderService;
+import felixwiemuth.simplereminder.ReminderManager;
 import felixwiemuth.simplereminder.ui.util.UIUtils;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 
@@ -85,7 +85,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             notificationChannelPreference.setOnPreferenceClickListener(preference -> {
                 Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
                 intent.putExtra(Settings.EXTRA_APP_PACKAGE, getContext().getPackageName());
-                intent.putExtra(Settings.EXTRA_CHANNEL_ID, ReminderService.NOTIFICATION_CHANNEL_REMINDER);
+                intent.putExtra(Settings.EXTRA_CHANNEL_ID, ReminderManager.NOTIFICATION_CHANNEL_REMINDER);
                 startActivity(intent);
                 return true;
             });

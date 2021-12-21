@@ -15,19 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package felixwiemuth.simplereminder.ui.reminderslist;
+package felixwiemuth.simplereminder.ui.reminderslist
 
-import android.view.View;
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import felixwiemuth.simplereminder.R;
+import android.view.View
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import felixwiemuth.simplereminder.R
 
-/**
- * View holder for items where only time is to be shown.
- */
-public class TimeOnlyItemViewHolder extends ItemViewHolder {
-
-    public TimeOnlyItemViewHolder(@NonNull View itemView) {
-        super(R.layout.reminder_card_datefield_time_only, (CardView) itemView);
-    }
+class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val titleView: TextView = itemView.findViewById(R.id.title)
 }
