@@ -1,0 +1,205 @@
+/*
+ * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package felixwiemuth.simplereminder.ui.reminderslist
+
+import android.content.DialogInterface
+import android.content.Intent
+import android.os.Build
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
+import de.cketti.library.changelog.ChangeLog
+import felixwiemuth.simplereminder.BuildConfig
+import felixwiemuth.simplereminder.Main
+import felixwiemuth.simplereminder.Prefs
+import felixwiemuth.simplereminder.R
+import felixwiemuth.simplereminder.ui.AddReminderDialogActivity
+import felixwiemuth.simplereminder.ui.SettingsActivity
+import felixwiemuth.simplereminder.ui.actions.DisplayChangeLog
+import felixwiemuth.simplereminder.ui.actions.DisplayWelcomeMessage
+import felixwiemuth.simplereminder.ui.actions.DisplayWelcomeMessageUpdate
+import felixwiemuth.simplereminder.ui.util.HtmlDialogFragment
+import felixwiemuth.simplereminder.util.ImplementationError
+
+class RemindersListActivity : AppCompatActivity() {
+
+    private lateinit var viewPager: ViewPager2
+    private lateinit var tabLayout: TabLayout
+    private lateinit var toolbar: Toolbar
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_reminders_list)
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        tabLayout = findViewById(R.id.tabLayout)
+        viewPager = findViewById(R.id.container)
+        viewPager.adapter = ViewPagerAdapter()
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> getString(R.string.tab_reminders)
+                1 -> getString(R.string.tab_templates)
+                else -> throw ImplementationError("Invalid tab number $position")
+            }
+        }.attach()
+        val fab = findViewById<FloatingActionButton>(R.id.fab)
+        fab.setOnClickListener {
+            if (!Prefs.isAddReminderDialogUsed(this@RemindersListActivity)) {
+                Toast.makeText(
+                    this@RemindersListActivity,
+                    R.string.toast_info_add_reminder_dialog,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            startActivity(Intent(this, AddReminderDialogActivity::class.java))
+        }
+        showStartupDialogs()
+    }
+
+    /**
+     * Show dialogs with messages or question to be shown to the user on startup.
+     */
+    private fun showStartupDialogs() {
+        // NOTE: the user will see the dialogs in reversed order as they are opened.
+        val showGeneralWelcomeMessage = !Prefs.checkAndUpdateWelcomeMessageShown(this)
+
+        // Welcome message for new version (if not first launch of app) and Changelog
+        val changeLog = ChangeLog(this)
+        val isFirstRunOfVersion = changeLog.isFirstRun
+        if (isFirstRunOfVersion) {
+            changeLog.logDialog.show()
+        }
+
+        // Check whether battery optimization is disabled and show dialog to disable it otherwise.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkBatteryOptimization()
+        }
+
+        // Check whether run on boot is enabled and whether should ask user to enable it.
+        checkRunOnBoot()
+
+        // Show general welcome dialog on first launch of app and update welcome dialog on first launch with new version
+        if (showGeneralWelcomeMessage) {
+            Main.showWelcomeMessage(this)
+        } else if (isFirstRunOfVersion) {
+            Main.showWelcomeMessageUpdate(this)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        // Intent content is not used
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_reminders_list, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                return true
+            }
+            R.id.action_help -> {
+                HtmlDialogFragment.displayHtmlDialogFragment(
+                    supportFragmentManager,
+                    R.string.menu_entry_help,
+                    R.raw.help
+                )
+            }
+            R.id.action_about -> {
+                val title = getString(R.string.app_name) + " " + BuildConfig.VERSION_NAME
+                HtmlDialogFragment.displayHtmlDialogFragment(
+                    supportFragmentManager, title, R.raw.about,
+                    DisplayChangeLog::class.java,
+                    DisplayWelcomeMessage::class.java,
+                    DisplayWelcomeMessageUpdate::class.java
+                )
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun checkRunOnBoot() {
+        if (Prefs.isRunOnBoot(this) || Prefs.isRunOnBootDontShowAgain(this)) {
+            return
+        }
+        AlertDialog.Builder(this)
+            .setTitle(R.string.dialog_startup_run_on_boot_title)
+            .setMessage(R.string.dialog_startup_run_on_boot_message)
+            .setPositiveButton(R.string.dialog_startup_run_on_boot_enable) { _: DialogInterface?, _: Int ->
+                Prefs.enableRunOnBoot(
+                    this,
+                    this
+                )
+            }
+            .setNeutralButton(R.string.dialog_startup_later, null)
+            .setNegativeButton(R.string.dialog_startup_dont_show_again) { _: DialogInterface?, _: Int ->
+                Prefs.setRunOnBootDontShowAgain(
+                    this
+                )
+            }
+            .show()
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private fun checkBatteryOptimization() {
+        if (Prefs.isBatteryOptimizationDontShowAgain(this) || Prefs.isIgnoringBatteryOptimization(this)) {
+            return
+        }
+        AlertDialog.Builder(this)
+            .setTitle(R.string.dialog_startup_disable_battery_optimization_title)
+            .setMessage(R.string.dialog_startup_disable_battery_optimization_message)
+            .setPositiveButton(
+                R.string.dialog_startup_disable_battery_optimization_turn_off
+            ) { _: DialogInterface?, _: Int ->
+                startActivity(
+                    Prefs.getIntentDisableBatteryOptimization(this)
+                )
+            }
+            .setNeutralButton(R.string.dialog_startup_later, null)
+            .setNegativeButton(
+                R.string.dialog_startup_dont_show_again
+            ) { _: DialogInterface?, _: Int -> Prefs.setBatteryOptimizationDontShowAgain(this) }
+            .show()
+    }
+
+    inner class ViewPagerAdapter : FragmentStateAdapter(this) {
+        override fun getItemCount(): Int = 2
+
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> RemindersListFragment.newInstance()
+                1 -> TemplatesFragment.newInstance()
+                else -> throw ImplementationError("Invalid tab number $position")
+            }
+        }
+    }
+}
