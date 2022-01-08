@@ -19,10 +19,8 @@ To get the best results and avoid problems, please follow these steps:
 - Do not change the copyright year of existing files.
 
 ## Attribution ##
-For non-minor contributions you will be added to the [CONTRIBUTORS.md](CONTRIBUTORS.md) list.
-/ be listed in the <> file.
-with a link to your Github account.
-You will be asked whether you want to use a different name than your Github display name and whether you want your email address to be displayed.
+For non-minor contributions you will be added to the [CONTRIBUTORS.md](CONTRIBUTORS.md) list with a link to your Github account.
+You will be asked whether you want to use a different name than your Github display name and whether you want to add an email address to be displayed.
 
 <!--  LocalWords:  SimpleReminder Readme APIs Github
  -->
