@@ -18,6 +18,7 @@
 
 <changelog>
     <release version="0.9.11" versioncode="911100" >
+        <change>Set notification channel importance to "urgent", which increases reliability of notifications being shown in time.</change>
         <change>Empty sections are not shown anymore in the reminders list.</change>
     </release>
     <release version="0.9.10" versioncode="910100" >

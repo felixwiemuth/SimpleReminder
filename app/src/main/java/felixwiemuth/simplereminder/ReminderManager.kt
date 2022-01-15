@@ -416,7 +416,7 @@ object ReminderManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name: CharSequence = context.getString(R.string.channel_name)
             val description = context.getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(NOTIFICATION_CHANNEL_REMINDER, name, importance)
             channel.description = description
             val notificationManager = context.getSystemService(NotificationManager::class.java)
