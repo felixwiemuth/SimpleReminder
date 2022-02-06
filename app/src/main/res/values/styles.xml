@@ -22,6 +22,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:forceDarkAllowed">true</item>
     </style>
 
     <style name="AppTheme.DialogActivity" parent="Theme.AppCompat.Dialog">
