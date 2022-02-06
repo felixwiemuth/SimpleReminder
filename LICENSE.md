@@ -23,7 +23,6 @@ The following lists possibly modified third-party work incorporated into this pr
 | Original work                                                          | Copyright                                                                   | License                                                     | Commit  |
 |------------------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------|---------|
 | [Android Licenses Page](https://github.com/adamsp/AndroidLicensesPage) | 2013 Adam Speakman                                                          | [Apache 2.0](LICENSES/APACHE-2.0)                           | e4de56f |
-| [EnumUtil](https://stackoverflow.com/a/9753178/905686)                 | [pablisco (Stackoverflow)](https://stackoverflow.com/users/458365/pablisco) | [CC BY-SA](https://creativecommons.org/licenses/by-sa/3.0/) | b65e031 |
 
 ### Included unmodified work ###
 
