@@ -31,10 +31,11 @@ The following lists included unmodified third-party software.
 
 #### Included libraries ####
 
-| Name                                                                                                                            | Copyright                            | License                           |
-|---------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|-----------------------------------|
-| [ckChangeLog](https://github.com/cketti/ckChangeLog)                                                                            | 2012-2015 cketti and contributors    | [Apache 2.0](LICENSES/APACHE-2.0) |
-| [ACRA (Application Crash Reporting for Android)](https://github.com/ACRA/acra)                                                  | 2013 Kevin Gaudin                    | [Apache 2.0](LICENSES/APACHE-2.0) |
-| [Gson](https://github.com/google/gson)                                                                                          | 2008 Google Inc.                     | [Apache 2.0](LICENSES/APACHE-2.0) |
-| [Material Components for Android](https://github.com/material-components/material-components-android)                           | The Android Open Source Project      | [Apache 2.0](LICENSES/APACHE-2.0) |
-| [AndroidX libraries](https://android.googlesource.com/platform/frameworks/support.git)                                          | The Android Open Source Project      | [Apache 2.0](LICENSES/APACHE-2.0) |
+| Name                                                                                                  | Copyright                                                       | License                           |
+|-------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------|-----------------------------------|
+| [ckChangeLog](https://github.com/cketti/ckChangeLog)                                                  | 2012-2015 cketti and contributors                               | [Apache 2.0](LICENSES/APACHE-2.0) |
+| [ACRA (Application Crash Reporting for Android)](https://github.com/ACRA/acra)                        | 2013 Kevin Gaudin                                               | [Apache 2.0](LICENSES/APACHE-2.0) |
+| [Gson](https://github.com/google/gson)                                                                | 2008 Google Inc.                                                | [Apache 2.0](LICENSES/APACHE-2.0) |
+| [Material Components for Android](https://github.com/material-components/material-components-android) | The Android Open Source Project                                 | [Apache 2.0](LICENSES/APACHE-2.0) |
+| [AndroidX libraries](https://android.googlesource.com/platform/frameworks/support.git)                | The Android Open Source Project                                 | [Apache 2.0](LICENSES/APACHE-2.0) |
+| [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization)                              | 2017-2019 JetBrains s.r.o and respective authors and developers | [Apache 2.0](LICENSES/APACHE-2.0) |
