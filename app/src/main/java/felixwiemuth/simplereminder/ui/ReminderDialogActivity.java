@@ -50,7 +50,7 @@ import felixwiemuth.simplereminder.util.DateTimeUtil;
  */
 public abstract class ReminderDialogActivity extends AppCompatActivity {
     protected AutoCompleteTextView nameTextView;
-    protected SwitchCompat naggingSwitch;
+//    protected SwitchCompat naggingSwitch;
     private Button addButton;
     private Button dateMinusButton;
     private Button datePlusButton;
@@ -98,16 +98,16 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
                 selectedDate.get(Calendar.DAY_OF_MONTH)
         ).show());
 
-        naggingSwitch = findViewById(R.id.naggingSwitch);
-        naggingSwitch.setOnClickListener(v -> {
-            if (naggingSwitch.isChecked()) {
-                showToastNaggingRepeatInterval();
-            }
-        });
-        naggingSwitch.setOnLongClickListener(view -> {
-            showChooseNaggingRepeatIntervalDialog();
-            return true;
-        });
+//        naggingSwitch = findViewById(R.id.naggingSwitch);
+//        naggingSwitch.setOnClickListener(v -> {
+//            if (naggingSwitch.isChecked()) {
+//                showToastNaggingRepeatInterval();
+//            }
+//        });
+//        naggingSwitch.setOnLongClickListener(view -> {
+//            showChooseNaggingRepeatIntervalDialog();
+//            return true;
+//        });
         timePicker = findViewById(R.id.timePicker);
 
         nameTextView.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -330,7 +330,7 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
                     naggingRepeatInterval = naggingRepeatIntervalNumberPicker.getValue();
                     // Show the toast about the set nagging repeat interval (also when nagging was already enabled)
                     showToastNaggingRepeatInterval();
-                    naggingSwitch.setChecked(true); // Note: this does not trigger the on-cilck listener.
+//                    naggingSwitch.setChecked(true); // Note: this does not trigger the on-cilck listener.
                 })
                 .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> {})
                 .show();
@@ -345,9 +345,9 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
                 .date(selectedDate.getTime())
                 .text(nameTextView.getText().toString());
 
-        if (naggingSwitch.isChecked()) {
-            reminderBuilder.naggingRepeatInterval(naggingRepeatInterval);
-        }
+//        if (naggingSwitch.isChecked()) {
+//            reminderBuilder.naggingRepeatInterval(naggingRepeatInterval);
+//        }
 
         return reminderBuilder;
     }

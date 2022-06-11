@@ -84,7 +84,7 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
             if (reminder.getStatus() == Reminder.Status.SCHEDULED) {
                 setSelectedDateTimeAndSelectionMode(reminder.getCalendar());
             }
-            naggingSwitch.setChecked(reminder.isNagging());
+//            naggingSwitch.setChecked(reminder.isNagging());
             if (reminder.isNagging()) {
                 naggingRepeatInterval = reminder.getNaggingRepeatInterval();
             }
