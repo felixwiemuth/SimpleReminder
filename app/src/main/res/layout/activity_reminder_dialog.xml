@@ -104,4 +104,53 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/timePicker" />
+
+    <com.kelmer.android.fabmenu.linear.AdvancedFabMenu
+        android:id="@+id/reminder_type_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu_colorNormal="@android:color/holo_blue_dark"
+        app:menu_colorPressed="@android:color/holo_orange_dark"
+        app:menu_colorRipple="@android:color/holo_red_light"
+        app:menu_do_reveal="true"
+        app:menu_fab_size="mini"
+        app:menu_labels_position="left"
+        app:menu_openDirection="down"
+        app:menu_showShadow="false"
+        app:menu_type="linear">
+
+        <com.kelmer.android.fabmenu.fab.FloatingActionButton
+            android:id="@+id/reminder_type_alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="?attr/actionModePasteDrawable"
+            app:fab_colorNormal="@android:color/holo_orange_dark"
+            app:fab_label="Alarm"
+            app:fab_showShadow="false"
+            app:fab_size="mini" />
+
+        <com.kelmer.android.fabmenu.fab.FloatingActionButton
+            android:id="@+id/reminder_type_nagging"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="?attr/actionModeCutDrawable"
+            app:fab_colorNormal="@android:color/holo_orange_light"
+            app:fab_label="Nagging"
+            app:fab_showShadow="false"
+            app:fab_size="mini" />
+
+        <com.kelmer.android.fabmenu.fab.FloatingActionButton
+            android:id="@+id/reminder_type_normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="?attr/actionModeCopyDrawable"
+            app:fab_colorNormal="@android:color/holo_green_light"
+            app:fab_label="Normal"
+            app:fab_showShadow="false"
+            app:fab_size="mini" />
+    </com.kelmer.android.fabmenu.linear.AdvancedFabMenu>
 </androidx.constraintlayout.widget.ConstraintLayout>
