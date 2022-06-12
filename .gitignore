@@ -1,3 +1,4 @@
+# Android development
 *.iml
 .gradle
 /local.properties
@@ -15,3 +16,6 @@
 /build
 /captures
 .externalNativeBuild
+
+# Emacs
+*.~undo-tree~
