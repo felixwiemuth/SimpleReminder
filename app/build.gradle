@@ -62,7 +62,7 @@ android {
 
         versionName = versionCodeMajor + "." + versionCodeMinor + "." + versionCodePoint + "-" + releaseChannel + "-" + gitDescription
 
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 27
 
         archivesBaseName = "SimpleReminder_" + versionName
@@ -94,4 +94,11 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.4'
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
     testImplementation 'junit:junit:4.13.2'
+    implementation 'com.github.kelmer44:fabmenus:1.33'
+}
+
+allprojects {
+    repositories {
+        maven { url "https://jitpack.io" }
+    }
 }
