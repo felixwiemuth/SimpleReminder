@@ -78,10 +78,17 @@ public class Reminder implements Comparable<Reminder> {
      */
     private final int naggingRepeatInterval;
     private @Setter String text;
+    private @Setter ReminderType reminderType;
     private @Setter Status status;
 
+    public enum ReminderType {
+        NORMAL,
+        NAGGING,
+        ALARM,
+    }
+
     @Builder //(builderClassName = "Builder")
-    public Reminder(int id, @NonNull Date date, int naggingRepeatInterval, @NonNull String text) {
+    public Reminder(int id, @NonNull Date date, int naggingRepeatInterval, @NonNull String text, @NonNull ReminderType reminderType) {
         if (id < 0) {
             throw new IllegalArgumentException("Id must be >= 0.");
         }
@@ -89,6 +96,7 @@ public class Reminder implements Comparable<Reminder> {
         this.date = date;
         this.naggingRepeatInterval = naggingRepeatInterval;
         this.text = text;
+        this.reminderType = reminderType;
         this.status = Status.SCHEDULED;
     }
 
@@ -132,7 +140,7 @@ public class Reminder implements Comparable<Reminder> {
     }
 
     public boolean isNagging() {
-        return naggingRepeatInterval > 0;
+        return reminderType.equals(ReminderType.NAGGING);
     }
 
     public long getNaggingRepeatIntervalInMillis() {

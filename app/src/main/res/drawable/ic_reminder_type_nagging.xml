@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="12dp"
+        android:height="12dp"
+        android:viewportWidth="12"
+        android:viewportHeight="12">
+    <path
+        android:pathData="M 3 10.472 L 3 2.12 Q 3.415 2.073 4.029 2.037 A 29.919 29.919 0 0 1 4.044 2.036 Q 4.668 2 5.472 2 A 6.517 6.517 0 0 1 6.363 2.057 Q 6.815 2.119 7.183 2.251 A 2.712 2.712 0 0 1 7.836 2.582 Q 8.634 3.143 8.663 4.088 A 2.343 2.343 0 0 1 8.664 4.16 A 2.046 2.046 0 0 1 8.589 4.726 A 1.656 1.656 0 0 1 8.31 5.282 A 2.194 2.194 0 0 1 7.844 5.727 Q 7.599 5.903 7.284 6.044 A 3.626 3.626 0 0 1 7.84 6.291 Q 8.258 6.523 8.52 6.842 A 1.83 1.83 0 0 1 8.924 7.814 A 2.414 2.414 0 0 1 8.94 8.096 A 2.32 2.32 0 0 1 8.762 9.02 Q 8.539 9.538 8.04 9.914 A 2.962 2.962 0 0 1 7.155 10.359 Q 6.429 10.592 5.424 10.592 A 26.62 26.62 0 0 1 4.454 10.575 A 22.508 22.508 0 0 1 4.038 10.556 A 27.291 27.291 0 0 1 3.728 10.537 Q 3.288 10.508 3 10.472 Z M 5.508 6.608 L 4.14 6.608 L 4.14 9.572 Q 4.776 9.644 5.508 9.644 Q 6.209 9.644 6.708 9.479 A 2.072 2.072 0 0 0 7.176 9.26 A 1.305 1.305 0 0 0 7.586 8.857 Q 7.746 8.603 7.771 8.27 A 1.68 1.68 0 0 0 7.776 8.144 A 1.407 1.407 0 0 0 7.671 7.592 Q 7.539 7.279 7.24 7.054 A 1.683 1.683 0 0 0 7.188 7.016 A 2.004 2.004 0 0 0 6.627 6.752 Q 6.362 6.671 6.041 6.636 A 4.874 4.874 0 0 0 5.508 6.608 Z M 4.14 2.984 L 4.14 5.72 L 5.46 5.72 A 3.679 3.679 0 0 0 6.064 5.674 Q 6.382 5.621 6.64 5.507 A 1.831 1.831 0 0 0 6.966 5.324 A 1.463 1.463 0 0 0 7.295 5.01 A 1.147 1.147 0 0 0 7.524 4.304 A 1.296 1.296 0 0 0 7.443 3.836 Q 7.322 3.52 7.019 3.309 A 1.477 1.477 0 0 0 6.972 3.278 Q 6.42 2.924 5.46 2.924 Q 5.064 2.924 4.74 2.942 Q 4.416 2.96 4.14 2.984 Z"
+        android:strokeWidth="1"
+        android:fillColor="#fff"
+        android:strokeColor="#fff" />
+</vector>
