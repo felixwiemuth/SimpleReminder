@@ -125,6 +125,7 @@
         app:menu_labels_position="left"
         app:menu_openDirection="down"
         app:menu_showShadow="false"
+        app:menu_labels_textSize="18dp"
         app:menu_type="linear">
 
         <com.kelmer.android.fabmenu.fab.FloatingActionButton
