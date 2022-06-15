@@ -5,3 +5,4 @@
 [submodule "fabmenus"]
 	path = app/lib/fabmenus
 	url = https://github.com/maxcutlyp/fabmenus
+	branch = SimpleReminder-changes
