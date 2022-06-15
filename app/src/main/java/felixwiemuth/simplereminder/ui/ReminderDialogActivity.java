@@ -190,6 +190,11 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         ReminderTypeFabInfo fi = reminderTypeMap.get(newType);
         assert fi != null; // if another type is added to ReminderType later, this assertion will trip
         reminderTypeFabMenu.setIcon(fi.icon);
+        reminderTypeFabMenu.menuButton.setColors(
+                fi.fab.getColorNormal(),
+                reminderTypeFabMenu.menuButton.getColorPressed(),
+                reminderTypeFabMenu.menuButton.getColorRipple());
+        reminderTypeFabMenu.menuButton.updateBackground();
 
         for (ReminderType type : ReminderType.values()) {
             ReminderTypeFabInfo fabInfo = reminderTypeMap.get(type);
