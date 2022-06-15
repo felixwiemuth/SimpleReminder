@@ -15,5 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-include ':app', ':sectionedrecyclerviewadapter'
+include ':app', ':sectionedrecyclerviewadapter', ':fabmenus'
 project(':sectionedrecyclerviewadapter').projectDir = new File('app/lib/SectionedRecyclerViewAdapter/library')
+project(':fabmenus').projectDir = new File('app/lib/fabmenus/fabmenu')
