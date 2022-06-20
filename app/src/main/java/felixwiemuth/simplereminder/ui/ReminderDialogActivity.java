@@ -145,12 +145,19 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
             assert fabInfo != null; // if another type is added to ReminderType later, this assertion will trip
             FloatingActionButton fab = findViewById(fabInfo.viewIdRes);
 
-            fab.setOnClickListener(v -> {
-                reminderType = type;
-                reminderTypeFabMenu.close(true);
+            // TODO: remove if-block when alarm reminders are implemented
+            if (type.equals(ReminderType.ALARM)) {
+                fab.setOnClickListener(v -> {
+                    Toast.makeText(this, R.string.add_reminder_toast_alarm_coming_soon, Toast.LENGTH_SHORT).show();
+                });
+            } else {
+                fab.setOnClickListener(v -> {
+                    reminderType = type;
+                    reminderTypeFabMenu.close(true);
 
-                updateReminderTypeFabMenu(type);
-            });
+                    updateReminderTypeFabMenu(type);
+                });
+            }
 
             fabInfo.fab = fab;
         }
