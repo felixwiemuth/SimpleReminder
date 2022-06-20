@@ -99,11 +99,15 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         public FloatingActionButton fab;
         public int viewIdRes;
         public Drawable icon;
+        public Runnable onClick;
+        public Runnable onLongClick;
 
-        public ReminderTypeFabInfo(@Nullable FloatingActionButton fab, int viewIdRes, Drawable icon) {
+        public ReminderTypeFabInfo(@Nullable FloatingActionButton fab, int viewIdRes, Drawable icon, @Nullable Runnable onClick, @Nullable Runnable onLongClick) {
             this.fab = fab;
             this.viewIdRes = viewIdRes;
             this.icon = icon;
+            this.onClick = onClick;
+            this.onLongClick = onLongClick;
         }
     }
 
@@ -131,15 +135,24 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         reminderType = ReminderType.NORMAL;
         reminderTypeFabMenu = findViewById(R.id.reminder_type_menu);
 
-        reminderTypeMap.put(ReminderType.NORMAL, new ReminderTypeFabInfo(null,
+        reminderTypeMap.put(ReminderType.NORMAL, new ReminderTypeFabInfo(
+                null,
                 R.id.reminder_type_normal,
-                AppCompatResources.getDrawable(this, R.drawable.ic_reminder_type_normal)));
-        reminderTypeMap.put(ReminderType.NAGGING, new ReminderTypeFabInfo(null,
+                AppCompatResources.getDrawable(this, R.drawable.ic_reminder_type_normal),
+                null,
+                null));
+        reminderTypeMap.put(ReminderType.NAGGING, new ReminderTypeFabInfo(
+                null,
                 R.id.reminder_type_nagging,
-                AppCompatResources.getDrawable(this, R.drawable.ic_reminder_type_nagging)));
-        reminderTypeMap.put(ReminderType.ALARM, new ReminderTypeFabInfo(null,
+                AppCompatResources.getDrawable(this, R.drawable.ic_reminder_type_nagging),
+                this::showToastNaggingRepeatInterval,
+                this::showChooseNaggingRepeatIntervalDialog));
+        reminderTypeMap.put(ReminderType.ALARM, new ReminderTypeFabInfo(
+                null,
                 R.id.reminder_type_alarm,
-                AppCompatResources.getDrawable(this, R.drawable.ic_reminder_type_alarm)));
+                AppCompatResources.getDrawable(this, R.drawable.ic_reminder_type_alarm),
+                null,
+                () -> Toast.makeText(this, R.string.add_reminder_toast_alarm_coming_soon, Toast.LENGTH_SHORT).show()));
 
         for (ReminderType type : ReminderType.values()) {
             ReminderTypeFabInfo fabInfo = reminderTypeMap.get(type);
@@ -151,27 +164,25 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
                 fab.setOnClickListener(v -> {
                     Toast.makeText(this, R.string.add_reminder_toast_alarm_coming_soon, Toast.LENGTH_SHORT).show();
                 });
-
-                fab.setOnLongClickListener(v -> {
-                    Toast.makeText(this, R.string.add_reminder_toast_alarm_coming_soon, Toast.LENGTH_SHORT).show();
-                    return true;
-                });
             } else {
                 fab.setOnClickListener(v -> {
                     reminderType = type;
+                    if (fabInfo.onClick != null)
+                        fabInfo.onClick.run();
                     reminderTypeFabMenu.close(true);
 
                     updateReminderTypeFabMenu(type);
                 });
             }
 
+            fab.setOnLongClickListener(v -> {
+                if (fabInfo.onLongClick != null)
+                    fabInfo.onLongClick.run();
+                return true;
+            });
+
             fabInfo.fab = fab;
         }
-
-        Objects.requireNonNull(reminderTypeMap.get(ReminderType.NAGGING)).fab.setOnLongClickListener(v -> {
-            showChooseNaggingRepeatIntervalDialog();
-            return true;
-        });
 
         updateReminderTypeFabMenu(reminderType);
 
