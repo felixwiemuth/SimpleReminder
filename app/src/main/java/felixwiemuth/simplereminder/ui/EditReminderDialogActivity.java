@@ -85,10 +85,15 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
                 setSelectedDateTimeAndSelectionMode(reminder.getCalendar());
             }
 
-            updateReminderTypeFabMenu(reminder.getReminderType());
+            // TODO: once data.Reminder has a reminderType field, use something like
+            // updateReminderTypeFabMenu(reminder.getReminderType());
+            // instead of the else case below
 
             if (reminder.isNagging()) {
                 naggingRepeatInterval = reminder.getNaggingRepeatInterval();
+                updateReminderTypeFabMenu(ReminderType.NAGGING);
+            } else {
+                updateReminderTypeFabMenu(ReminderType.NORMAL);
             }
             reminderToUpdate = reminderId;
         } catch (ReminderManager.ReminderNotFoundException e) {

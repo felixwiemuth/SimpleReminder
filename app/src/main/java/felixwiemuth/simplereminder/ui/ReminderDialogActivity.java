@@ -49,7 +49,6 @@ import java.util.EnumMap;
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.data.Reminder;
-import felixwiemuth.simplereminder.data.Reminder.ReminderType;
 import felixwiemuth.simplereminder.util.DateTimeUtil;
 
 /**
@@ -84,6 +83,12 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
          * The date is selected manually.
          */
         MANUAL
+    }
+
+    protected enum ReminderType {
+        NORMAL,
+        NAGGING,
+        ALARM,
     }
 
     /**
@@ -409,8 +414,8 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     protected Reminder.ReminderBuilder buildReminderWithTimeTextNagging() {
         Reminder.ReminderBuilder reminderBuilder = Reminder.builder()
                 .date(selectedDate.getTime())
-                .text(nameTextView.getText().toString())
-                .reminderType(reminderType);
+                .text(nameTextView.getText().toString());
+        // TODO: add ReminderType
 
         if (reminderType.equals(ReminderType.NAGGING)) {
             reminderBuilder.naggingRepeatInterval(naggingRepeatInterval);
