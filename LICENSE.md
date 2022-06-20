@@ -24,6 +24,8 @@ The following lists possibly modified third-party work incorporated into this pr
 |------------------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------|---------|
 | [Android Licenses Page](https://github.com/adamsp/AndroidLicensesPage) | 2013 Adam Speakman                                                          | [Apache 2.0](LICENSES/APACHE-2.0)                           | e4de56f |
 | [EnumUtil](https://stackoverflow.com/a/9753178/905686)                 | [pablisco (Stackoverflow)](https://stackoverflow.com/users/458365/pablisco) | [CC BY-SA](https://creativecommons.org/licenses/by-sa/3.0/) | b65e031 |
+| [SystemUI "ringer" icon](https://android.googlesource.com/platform/frameworks/base/+/master/packages/SystemUI/res/drawable/ic_volume_ringer.xml) | 2017 The Android Open Source Project | [Apache 2.0](LICENSES/APACHE-2.0) | 8cfc87 |
+| [SystemUI "alarm" icon](https://android.googlesource.com/platform/frameworks/base/+/master/packages/SystemUI/res/drawable/ic_volume_alarm.xml)  | 2017 The Android Open Source Project | [Apache 2.0](LICENSES/APACHE-2.0) | 8cfc87 |
 
 ### Included unmodified work ###
 
