@@ -45,6 +45,7 @@ import com.kelmer.android.fabmenu.linear.AdvancedFabMenu;
 
 import java.util.Calendar;
 import java.util.EnumMap;
+import java.util.Objects;
 
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
@@ -150,6 +151,11 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
                 fab.setOnClickListener(v -> {
                     Toast.makeText(this, R.string.add_reminder_toast_alarm_coming_soon, Toast.LENGTH_SHORT).show();
                 });
+
+                fab.setOnLongClickListener(v -> {
+                    Toast.makeText(this, R.string.add_reminder_toast_alarm_coming_soon, Toast.LENGTH_SHORT).show();
+                    return true;
+                });
             } else {
                 fab.setOnClickListener(v -> {
                     reminderType = type;
@@ -161,6 +167,12 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
 
             fabInfo.fab = fab;
         }
+
+        Objects.requireNonNull(reminderTypeMap.get(ReminderType.NAGGING)).fab.setOnLongClickListener(v -> {
+            showChooseNaggingRepeatIntervalDialog();
+            return true;
+        });
+
         updateReminderTypeFabMenu(reminderType);
 
         timePicker = findViewById(R.id.timePicker);
@@ -408,7 +420,11 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
                     naggingRepeatInterval = naggingRepeatIntervalNumberPicker.getValue();
                     // Show the toast about the set nagging repeat interval (also when nagging was already enabled)
                     showToastNaggingRepeatInterval();
-//                    naggingSwitch.setChecked(true); // Note: this does not trigger the on-cilck listener.
+
+                    reminderType = ReminderType.NAGGING;
+                    reminderTypeFabMenu.close(true);
+
+                    updateReminderTypeFabMenu(reminderType);
                 })
                 .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> {})
                 .show();
