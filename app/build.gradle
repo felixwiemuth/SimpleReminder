@@ -93,7 +93,8 @@ dependencies {
     implementation project(':sectionedrecyclerviewadapter')
     compileOnly 'org.projectlombok:lombok:1.18.4'
     annotationProcessor 'org.projectlombok:lombok:1.18.4'
-    implementation 'androidx.core:core-ktx:1.8.0'
+    // Note: version 1.8.0 currently gives a resource linking error.
+    implementation 'androidx.core:core-ktx:1.6.0'
     testImplementation 'junit:junit:4.13.2'
     implementation project(':fabmenus')
 }
