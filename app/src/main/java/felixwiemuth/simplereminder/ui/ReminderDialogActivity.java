@@ -184,6 +184,14 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
             fabInfo.fab = fab;
         }
 
+        reminderTypeFabMenu.menuButton.setOnLongClickListener(v -> {
+            Runnable onLongClick = Objects.requireNonNull(reminderTypeMap.get(reminderType)).onLongClick;
+            if (onLongClick != null) {
+                onLongClick.run();
+            }
+            return true;
+        });
+
         updateReminderTypeFabMenu(reminderType);
 
         timePicker = findViewById(R.id.timePicker);
