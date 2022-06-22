@@ -18,6 +18,7 @@
 package felixwiemuth.simplereminder.ui;
 
 import android.app.DatePickerDialog;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
@@ -34,11 +35,17 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.content.res.AppCompatResources;
+
+import com.kelmer.android.fabmenu.fab.FloatingActionButton;
+import com.kelmer.android.fabmenu.linear.AdvancedFabMenu;
 
 import java.util.Calendar;
+import java.util.EnumMap;
+import java.util.Objects;
 
 import felixwiemuth.simplereminder.Prefs;
 import felixwiemuth.simplereminder.R;
@@ -50,7 +57,7 @@ import felixwiemuth.simplereminder.util.DateTimeUtil;
  */
 public abstract class ReminderDialogActivity extends AppCompatActivity {
     protected AutoCompleteTextView nameTextView;
-    protected SwitchCompat naggingSwitch;
+    private AdvancedFabMenu reminderTypeFabMenu;
     private Button addButton;
     private Button dateMinusButton;
     private Button datePlusButton;
@@ -58,6 +65,8 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
     private TimePicker timePicker;
 
     private DateSelectionMode dateSelectionMode;
+    protected ReminderType reminderType;
+    private final EnumMap<ReminderType, ReminderTypeFabInfo> reminderTypeMap = new EnumMap<>(ReminderType.class);
     /**
      * The currently selected date. It is an invariant that after every user interaction this
      * date is in the future (except initially, before changing time or date).
@@ -75,6 +84,31 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
          * The date is selected manually.
          */
         MANUAL
+    }
+
+    protected enum ReminderType {
+        NORMAL,
+        NAGGING,
+        ALARM,
+    }
+
+    /**
+     * Simple helper class to connect info about reminder type FABs. Should be only used in the context of reminderTypeMap.
+     */
+    private static class ReminderTypeFabInfo {
+        public FloatingActionButton fab;
+        public int viewIdRes;
+        public Drawable icon;
+        public Runnable onClick;
+        public Runnable onLongClick;
+
+        public ReminderTypeFabInfo(@Nullable FloatingActionButton fab, int viewIdRes, Drawable icon, @Nullable Runnable onClick, @Nullable Runnable onLongClick) {
+            this.fab = fab;
+            this.viewIdRes = viewIdRes;
+            this.icon = icon;
+            this.onClick = onClick;
+            this.onLongClick = onLongClick;
+        }
     }
 
     @Override
@@ -98,16 +132,83 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
                 selectedDate.get(Calendar.DAY_OF_MONTH)
         ).show());
 
-        naggingSwitch = findViewById(R.id.naggingSwitch);
-        naggingSwitch.setOnClickListener(v -> {
-            if (naggingSwitch.isChecked()) {
-                showToastNaggingRepeatInterval();
+        reminderType = ReminderType.NORMAL;
+        reminderTypeFabMenu = findViewById(R.id.reminder_type_menu);
+
+        reminderTypeMap.put(ReminderType.NORMAL, new ReminderTypeFabInfo(
+                null,
+                R.id.reminder_type_normal,
+                AppCompatResources.getDrawable(this, R.drawable.ic_reminder_type_normal),
+                null,
+                null));
+        reminderTypeMap.put(ReminderType.NAGGING, new ReminderTypeFabInfo(
+                null,
+                R.id.reminder_type_nagging,
+                AppCompatResources.getDrawable(this, R.drawable.ic_reminder_type_nagging),
+                this::showToastNaggingRepeatInterval,
+                this::showChooseNaggingRepeatIntervalDialog));
+        reminderTypeMap.put(ReminderType.ALARM, new ReminderTypeFabInfo(
+                null,
+                R.id.reminder_type_alarm,
+                AppCompatResources.getDrawable(this, R.drawable.ic_reminder_type_alarm),
+                null,
+                () -> Toast.makeText(this, R.string.add_reminder_toast_alarm_coming_soon, Toast.LENGTH_SHORT).show()));
+
+        for (ReminderType type : ReminderType.values()) {
+            ReminderTypeFabInfo fabInfo = reminderTypeMap.get(type);
+            assert fabInfo != null; // if another type is added to ReminderType later, this assertion will trip
+            FloatingActionButton fab = findViewById(fabInfo.viewIdRes);
+
+            // TODO: remove if-block when alarm reminders are implemented
+            if (type.equals(ReminderType.ALARM)) {
+                fab.setOnClickListener(v -> {
+                    Toast.makeText(this, R.string.add_reminder_toast_alarm_coming_soon, Toast.LENGTH_SHORT).show();
+                });
+            } else {
+                fab.setOnClickListener(v -> {
+                    reminderType = type;
+                    if (fabInfo.onClick != null)
+                        fabInfo.onClick.run();
+                    reminderTypeFabMenu.close(true);
+
+                    updateReminderTypeFabMenu(type);
+                });
             }
+
+            fab.setOnLongClickListener(v -> {
+                if (fabInfo.onLongClick != null)
+                    fabInfo.onLongClick.run();
+                return true;
+            });
+
+            fabInfo.fab = fab;
+        }
+
+        View.OnClickListener existing_listener = reminderTypeFabMenu.menuButton.getOnClickListener();
+        reminderTypeFabMenu.menuButton.setOnClickListener(v -> {
+            if (existing_listener != null)
+                existing_listener.onClick(v);
+
+            ReminderTypeFabInfo fi = reminderTypeMap.get(reminderType);
+            assert fi != null; // if another type is added to ReminderType later, this assertion will trip
+            reminderTypeFabMenu.menuButton.setColorsWithoutSettingCurrentColor(
+                    reminderTypeFabMenu.menuButton.getColorNormal(),
+                    reminderTypeFabMenu.menuButton.getColorPressed(),
+                    reminderTypeFabMenu.isOpened() ? fi.fab.getColorNormal() : reminderTypeFabMenu.menuButton.getColorReveal()
+            );
+            reminderTypeFabMenu.menuButton.updateBackground();
         });
-        naggingSwitch.setOnLongClickListener(view -> {
-            showChooseNaggingRepeatIntervalDialog();
+
+        reminderTypeFabMenu.menuButton.setOnLongClickListener(v -> {
+            Runnable onLongClick = Objects.requireNonNull(reminderTypeMap.get(reminderType)).onLongClick;
+            if (onLongClick != null) {
+                onLongClick.run();
+            }
             return true;
         });
+
+        updateReminderTypeFabMenu(reminderType);
+
         timePicker = findViewById(R.id.timePicker);
 
         nameTextView.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -141,6 +242,29 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         naggingRepeatInterval = Prefs.getNaggingRepeatInterval(this);
 
         renderSelectedDate();
+    }
+
+    protected void updateReminderTypeFabMenu(ReminderType newType) {
+        ReminderTypeFabInfo fi = reminderTypeMap.get(newType);
+        assert fi != null; // if another type is added to ReminderType later, this assertion will trip
+        reminderTypeFabMenu.setIcon(fi.icon);
+        reminderTypeFabMenu.menuButton.setColors(
+                fi.fab.getColorNormal(),
+                reminderTypeFabMenu.menuButton.getColorPressed(),
+                reminderTypeFabMenu.menuButton.getColorRipple());
+        reminderTypeFabMenu.menuButton.updateBackground();
+
+        for (ReminderType type : ReminderType.values()) {
+            ReminderTypeFabInfo fabInfo = reminderTypeMap.get(type);
+            assert fabInfo != null;
+            FloatingActionButton fab = fabInfo.fab;
+
+            if (newType.equals(type)) {
+                fab.showProgressBar();
+            } else {
+                fab.hideProgress();
+            }
+        }
     }
 
     /**
@@ -330,7 +454,11 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
                     naggingRepeatInterval = naggingRepeatIntervalNumberPicker.getValue();
                     // Show the toast about the set nagging repeat interval (also when nagging was already enabled)
                     showToastNaggingRepeatInterval();
-                    naggingSwitch.setChecked(true); // Note: this does not trigger the on-cilck listener.
+
+                    reminderType = ReminderType.NAGGING;
+                    reminderTypeFabMenu.close(true);
+
+                    updateReminderTypeFabMenu(reminderType);
                 })
                 .setNegativeButton(android.R.string.cancel, (dialogInterface, i) -> {})
                 .show();
@@ -344,8 +472,9 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         Reminder.ReminderBuilder reminderBuilder = Reminder.builder()
                 .date(selectedDate.getTime())
                 .text(nameTextView.getText().toString());
+        // TODO: add ReminderType
 
-        if (naggingSwitch.isChecked()) {
+        if (reminderType.equals(ReminderType.NAGGING)) {
             reminderBuilder.naggingRepeatInterval(naggingRepeatInterval);
         }
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="28dp"
+        android:height="28dp"
+        android:viewportWidth="23"
+        android:viewportHeight="23">
+    <path
+        android:pathData="M 18.5 16 v -6 c 0 -1.9708 -0.7035 -3.7863 -2 -5 v 13 h 4 v -2 Z M 10.5 1.5 C 9.67 1.5 9 2.17 9 3 V 3.68 C 6.14 4.36 4.5 6.92 4.5 10 V 16 H 2.5 V 18 H 10.5 V 16 H 6.5 V 10 C 6.5 7.52 8.01 5.5 10.5 5.5 Z M 10.5 21 V 19 H 8.5 C 8.5 20.1 9.4 21 10.5 21 Z M 12.5 19 v -19 h 2 v 19 z m 0 2 v 2 h 2 v -2 z"
+        android:strokeWidth="0"
+        android:fillColor="#fff"
+        android:strokeColor="#fff" />
+</vector>

@@ -2,3 +2,7 @@
 	path = app/lib/SectionedRecyclerViewAdapter
 	url = https://github.com/felixwiemuth/SectionedRecyclerViewAdapter
 	branch = feature/multipleItemViewTypes
+[submodule "fabmenus"]
+	path = app/lib/fabmenus
+	url = https://github.com/maxcutlyp/fabmenus
+	branch = SimpleReminder-changes

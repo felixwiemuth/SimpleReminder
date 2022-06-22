@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/lib/SectionedRecyclerViewAdapter" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/app/lib/fabmenus" vcs="Git" />
   </component>
 </project>

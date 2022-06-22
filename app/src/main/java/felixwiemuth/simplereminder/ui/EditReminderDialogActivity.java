@@ -84,9 +84,16 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
             if (reminder.getStatus() == Reminder.Status.SCHEDULED) {
                 setSelectedDateTimeAndSelectionMode(reminder.getCalendar());
             }
-            naggingSwitch.setChecked(reminder.isNagging());
+
+            // TODO: once data.Reminder has a reminderType field, use something like
+            // updateReminderTypeFabMenu(reminder.getReminderType());
+            // instead of the else case below
+
             if (reminder.isNagging()) {
                 naggingRepeatInterval = reminder.getNaggingRepeatInterval();
+                updateReminderTypeFabMenu(ReminderType.NAGGING);
+            } else {
+                updateReminderTypeFabMenu(ReminderType.NORMAL);
             }
             reminderToUpdate = reminderId;
         } catch (ReminderManager.ReminderNotFoundException e) {
