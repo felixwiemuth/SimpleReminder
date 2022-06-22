@@ -184,6 +184,21 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
             fabInfo.fab = fab;
         }
 
+        View.OnClickListener existing_listener = reminderTypeFabMenu.menuButton.getOnClickListener();
+        reminderTypeFabMenu.menuButton.setOnClickListener(v -> {
+            if (existing_listener != null)
+                existing_listener.onClick(v);
+
+            ReminderTypeFabInfo fi = reminderTypeMap.get(reminderType);
+            assert fi != null; // if another type is added to ReminderType later, this assertion will trip
+            reminderTypeFabMenu.menuButton.setColorsWithoutSettingCurrentColor(
+                    reminderTypeFabMenu.menuButton.getColorNormal(),
+                    reminderTypeFabMenu.menuButton.getColorPressed(),
+                    reminderTypeFabMenu.isOpened() ? fi.fab.getColorNormal() : reminderTypeFabMenu.menuButton.getColorReveal()
+            );
+            reminderTypeFabMenu.menuButton.updateBackground();
+        });
+
         reminderTypeFabMenu.menuButton.setOnLongClickListener(v -> {
             Runnable onLongClick = Objects.requireNonNull(reminderTypeMap.get(reminderType)).onLongClick;
             if (onLongClick != null) {
