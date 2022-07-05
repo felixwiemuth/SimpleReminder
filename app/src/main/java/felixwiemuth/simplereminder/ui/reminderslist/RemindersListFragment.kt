@@ -29,6 +29,7 @@ import androidx.appcompat.view.ActionMode
 import androidx.arch.core.util.Function
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.util.valueIterator
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.ConcatAdapter
@@ -268,12 +269,10 @@ class RemindersListFragment : Fragment() {
         // Further section scheduled reminders
         val now = Calendar.getInstance()
         val currentTime = Calendar.getInstance() // represents the day for the current section
-        var it =
-            remindersScheduled.listIterator() // iterates through all reminders to be divided among the sections
+        var it = remindersScheduled.listIterator() // iterates through all reminders to be divided among the sections
 
         // If some of the scheduled reminders are actually already due (in mean time or because the status was not correctly updated) move them to the due list
-        while (it.hasNext()) {
-            val reminder = it.next()
+        for (reminder in it) {
             if (!reminder.date.after(now.time)) {
                 remindersDue.add(reminder)
                 it.remove()
@@ -329,8 +328,7 @@ class RemindersListFragment : Fragment() {
                 DisplayType.TIME_ONLY,
                 remindersCurrentDay
             ) // the current section
-            iteratorLoop@ while (it.hasNext()) {
-                val reminder = it.next()
+            iteratorLoop@ for (reminder in it) {
                 // If the current reminder does not belong to the current day, advance the current day until it matches the reminder's or the maximum day is reached
                 while (!DateTimeUtil.isSameDay(reminder.date, currentTime.time)) {
                     // If there were reminders for the current section, add it to the adapter and create a new list for the next section
@@ -360,10 +358,9 @@ class RemindersListFragment : Fragment() {
                 addSection.apply(section)
             }
         }
-        val futureReminders: MutableList<Reminder> =
-            ArrayList() // Scheduled reminders which are further in the future than the days which have an own section
-        while (it.hasNext()) {
-            futureReminders.add(it.next())
+        val futureReminders: MutableList<Reminder> = ArrayList() // Scheduled reminders which are further in the future than the days which have an own section
+        for (reminder in it) {
+            futureReminders.add(reminder)
         }
         if (futureReminders.isNotEmpty()) {
             addSection.apply(
@@ -427,8 +424,8 @@ class RemindersListFragment : Fragment() {
             }
         }
         // Add all reminders to selection
-        for (i in 0 until reminders.size()) {
-            selection.add(reminders.valueAt(i).id)
+        for ((id) in reminders.valueIterator()) {
+            selection.add(id)
         }
     }
 

@@ -261,8 +261,7 @@ object ReminderStorage {
      * @param reminder
      */
     private fun removeReminderWithSameId(it: MutableIterator<Reminder>, reminder: Reminder) {
-        while (it.hasNext()) {
-            val (id) = it.next()
+        for ((id) in it) {
             if (id == reminder.id) {
                 it.remove()
                 break
@@ -284,12 +283,7 @@ object ReminderStorage {
         for ((id) in reminders) {
             idsToRemove.add(id)
         }
-        while (it.hasNext()) {
-            val (id) = it.next()
-            if (idsToRemove.contains(id)) {
-                it.remove()
-            }
-        }
+        it.forEach { (id) -> if (idsToRemove.contains(id)) it.remove() }
     }
 
     /**
@@ -299,12 +293,7 @@ object ReminderStorage {
      * @param ids
      */
     private fun removeRemindersById(it: MutableIterator<Reminder>, ids: Set<Int>) {
-        while (it.hasNext()) {
-            val (id) = it.next()
-            if (ids.contains(id)) {
-                it.remove()
-            }
-        }
+        it.forEach { (id) -> if (ids.contains(id)) it.remove() }
     }
 
     /**
