@@ -47,9 +47,8 @@ import java.util.*
 
 /**
  * A fragment displaying a list of reminders. May only be used in an [AppCompatActivity] with a toolbar. Displays reminders in sections:
- * - A "Due" section: SCHEDULED and NOTIFIED reminders which are due according to the current time, sorted descending by date
- * NOTIFIED)
- * - One section for each of the next 7 (MAX_DAY_SECTIONS) days (including today) for the reminders schedules for those days, each sorted ascending by date
+ * - A "Due" section: SCHEDULED and NOTIFIED reminders which are due according to the current time, sorted descending by date)
+ * - One section for each of the next [maxDaySections] days (including today) for the reminders scheduled for those days, each sorted ascending by date
  * - A "Future" section for the remaining scheduled reminders, sorted ascending by date
  * - A "Done" section for reminders with status DONE, sorted descending by date
  *
@@ -61,7 +60,7 @@ class RemindersListFragment : Fragment() {
     /**
      * Maximum number of sections (days in the future) for the recycler view to display scheduled reminders in their own section.
      */
-    private val maxDaySections = 7
+    val maxDaySections = 7
 
     /**
      * Mapping containing currently displayed reminders, the key being the reminder ID. May only be updated via [reloadRemindersListAndUpdateRecyclerView].
@@ -71,7 +70,7 @@ class RemindersListFragment : Fragment() {
     private lateinit var concatAdapter: ConcatAdapter
 
     /**
-     * The current selection of items in [.remindersListRecyclerView] (reminder IDs). Must be updated when reminders are removed.
+     * The current selection of items in [remindersListRecyclerView] (reminder IDs). Must be updated when reminders are removed.
      */
     private lateinit var selection // initialized in onCreate; using IDs as reminder content can change
             : MutableSet<Int>
@@ -84,7 +83,6 @@ class RemindersListFragment : Fragment() {
     private var menuActionCopyText: MenuItem? = null
     private var menuActionMarkDone: MenuItem? = null
 
-    //    private MenuItem menuActionEdit;
     private val actionModeCallback: ActionMode.Callback = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
             val inflater = mode.menuInflater
