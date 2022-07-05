@@ -38,7 +38,7 @@ constructor(
     val date: Date,
 
     /**
-     * The interval in minutes this reminder should be repeated until dismissed.
+     * The interval in minutes with which this reminder should be repeated until dismissed.
      * This field is optional. A value <= 0 (or omitting in JSON) means that nagging is disabled, which is the default.
      * @since 0.9.9
      */
@@ -72,6 +72,9 @@ constructor(
         require(id >= 0) { "Id must be >= 0." }
     }
 
+    /**
+     * Get a new [Calendar] instance set to the reminder's date.
+     */
     val calendar: Calendar
         get() {
             val c = Calendar.getInstance()
@@ -112,7 +115,7 @@ constructor(
     }
 
     /**
-     * Used to construct a [Reminder] step by step. Necessary as the ID for a new reminder is first created when adding the reminder to the storage.
+     * Used to construct a [Reminder] step by step. This allows the ID for a new reminder to be first created when adding the reminder to the storage.
      */
     data class Builder
     @JvmOverloads
