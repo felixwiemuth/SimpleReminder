@@ -23,8 +23,6 @@ import android.content.SharedPreferences
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import felixwiemuth.simplereminder.data.Reminder
 import felixwiemuth.simplereminder.ui.reminderslist.RemindersListFragment
-import java.lang.RuntimeException
-import java.util.HashSet
 import java.util.concurrent.locks.ReentrantLock
 
 /**
@@ -57,7 +55,9 @@ object ReminderStorage {
     /**
      * Edit the state preferences exclusively and commit after the operation has successfully completed. This ensures that different threads editing these preferences do not overwrite their changes. Also sends a [RemindersListFragment.BROADCAST_REMINDERS_UPDATED] broadcast to inform about a change. Only change reminders via this method.
      *
-     * @param operation The operation to perform; the result of this operation is returned by this method
+     * This is for complete top-level operations, which can be composed of partial operations working on the state prefs and a corresponding editor.
+     *
+     * @param operation The operation to perform on state prefs and a corresponding editor; the result of this operation is returned by this method
      */
     @SuppressLint("ApplySharedPref")
     private fun <T> performExclusivelyOnStatePrefsAndCommit(
@@ -111,15 +111,39 @@ object ReminderStorage {
         ) { _, editor ->
             val reminders = getReminders(context).toMutableList()
             operation(reminders)
-            updateRemindersListInEditor(editor, reminders)
+            writeRemindersListInEditor(editor, reminders)
         }
     }
 
-    private fun updateRemindersListInEditor(
+    private fun writeRemindersListInEditor(
         editor: SharedPreferences.Editor,
-        reminders: List<Reminder?>
+        reminders: List<Reminder>
     ) {
         editor.putString(Prefs.PREF_STATE_CURRENT_REMINDERS, Reminder.toJson(reminders))
+    }
+
+    private fun updateRemindersListInEditor(
+        prefs: SharedPreferences,
+        editor: SharedPreferences.Editor,
+        operation: (MutableList<Reminder>) -> Unit
+    ) {
+        val reminders = getRemindersFromPrefs(prefs).toMutableList()
+        operation(reminders)
+        writeRemindersListInEditor(editor, reminders)
+    }
+
+    private fun requireReminderIDNotExists(reminders: Iterable<Reminder>, id: Int) =
+        require(reminders.find { it.id == id } == null) { "Reminder with id $id already exists." }
+
+    private fun addReminderInEditor(
+        prefs: SharedPreferences,
+        editor: SharedPreferences.Editor,
+        reminder: Reminder
+    ) {
+        updateRemindersListInEditor(prefs, editor) {
+            requireReminderIDNotExists(it, reminder.id)
+            it.add(reminder)
+        }
     }
 
     /**
@@ -128,14 +152,14 @@ object ReminderStorage {
      * @param context
      * @param reminder
      * @return the argument reminder
+     * @throws IllegalArgumentException if a reminder with the same ID already exists
      */
     fun addReminder(context: Context, reminder: Reminder): Reminder {
-        return performExclusivelyOnStatePrefsAndCommit(
-            context
-        ) { prefs, editor ->
-            addReminderToReminders(prefs, editor, reminder)
-            reminder
+        updateRemindersList(context) {
+            requireReminderIDNotExists(it, reminder.id)
+            it.add(reminder)
         }
+        return reminder
     }
 
     /**
@@ -154,14 +178,13 @@ object ReminderStorage {
             reminderBuilder.id = nextId
             val reminder = reminderBuilder.build()
             editor.putInt(Prefs.PREF_STATE_NEXTID, nextId + 2) // Reminder IDs may only be even
-            addReminderToReminders(prefs, editor, reminder)
+            addReminderInEditor(prefs, editor, reminder)
             reminder
         }
     }
 
     /**
-     * Replaces the reminder which has the ID of the given reminder with the given reminder.
-     * If no reminder with that ID exists, the reminder will be created.
+     * Remove a reminder with the same ID of the given one (if such exists) and add the given one.
      *
      * @param context
      * @param reminder
@@ -170,14 +193,14 @@ object ReminderStorage {
     fun updateReminder(context: Context, reminder: Reminder) {
         updateRemindersList(
             context
-        ) { currentReminders: MutableList<Reminder> ->
-            removeReminderWithSameId(currentReminders.iterator(), reminder)
-            currentReminders.add(reminder)
+        ) {
+            removeReminderWithSameId(it.iterator(), reminder)
+            it.add(reminder)
         }
     }
 
     /**
-     * For each given reminder, replaces the existing reminder with the ID of the given reminder with the given one.
+     * Remove all reminders which have the ID of one of the given reminders and add all the given reminders.
      *
      * @param context
      * @param reminders
@@ -187,9 +210,7 @@ object ReminderStorage {
             context
         ) { currentReminders: MutableList<Reminder> ->
             removeRemindersWithSameId(currentReminders.iterator(), reminders)
-            for (reminder in reminders) {
-                currentReminders.add(reminder)
-            }
+            currentReminders.addAll(reminders)
         }
     }
 
@@ -205,7 +226,7 @@ object ReminderStorage {
         context: Context,
         transformation: (Reminder) -> Unit,
         ids: Set<Int>
-    ) : List<Reminder> {
+    ): List<Reminder> {
         val updated = mutableListOf<Reminder>()
         updateRemindersList(context) { currentReminders: List<Reminder> ->
             for (reminder in currentReminders) {
@@ -225,33 +246,7 @@ object ReminderStorage {
      * @param ids
      */
     fun removeReminders(context: Context, ids: Set<Int>) {
-        updateRemindersList(
-            context
-        ) { currentReminders: MutableList<Reminder> ->
-            removeRemindersById(currentReminders.iterator(), ids)
-        }
-    }
-
-    /**
-     * Add the given reminder to the list of reminders. No reminder with the same ID must exist yet.
-     *
-     * @param prefs
-     * @param editor
-     * @param reminder
-     */
-    private fun addReminderToReminders(
-        prefs: SharedPreferences,
-        editor: SharedPreferences.Editor,
-        reminder: Reminder
-    ) {
-        val reminders = getRemindersFromPrefs(prefs)
-        for (r in reminders) {
-            if (r.id == reminder.id) {
-                throw RuntimeException("Cannot add reminder: reminder with id " + reminder.id + " already exists.")
-            }
-        }
-        val remindersUpdated = reminders + reminder
-        updateRemindersListInEditor(editor, remindersUpdated)
+        updateRemindersList(context) { removeRemindersById(it.iterator(), ids) }
     }
 
     /**
@@ -270,7 +265,7 @@ object ReminderStorage {
     }
 
     /**
-     * Removes all occurrence of reminders with the IDs of the given reminders on the iterator.
+     * From the first given reminders, remove all with an ID matching one of the second given reminders.
      *
      * @param it
      * @param reminders
@@ -283,7 +278,7 @@ object ReminderStorage {
         for ((id) in reminders) {
             idsToRemove.add(id)
         }
-        it.forEach { (id) -> if (idsToRemove.contains(id)) it.remove() }
+        removeRemindersById(it, idsToRemove)
     }
 
     /**
