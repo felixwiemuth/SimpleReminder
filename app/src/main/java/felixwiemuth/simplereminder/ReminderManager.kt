@@ -46,6 +46,15 @@ object ReminderManager {
      */
     const val NOTIFICATION_CHANNEL_REMINDER = "Reminder"
 
+    private const val OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT = Reminder.MAX_REMINDER_ID + 1
+
+    /**
+     * Request code for a pending intent to be used to start [felixwiemuth.simplereminder.ui.EditReminderDialogActivity].
+     */
+    private fun getRequestCodeEditReminderDialogActivityPendingIntent(reminderID: Int): Int {
+        return OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT + reminderID
+    }
+
     private var DEFAULT_SOUND: Uri? = null
         get() {
             if (field == null) {
@@ -250,7 +259,7 @@ object ReminderManager {
         val editReminderIntent = EditReminderDialogActivity.getIntentEditReminder(context, reminder.id)
         val editReminderPendingIntent = PendingIntent.getActivity(
             context,
-            Reminder.getRequestCodeEditReminderDialogActivityPendingIntent(reminder.id),
+            getRequestCodeEditReminderDialogActivityPendingIntent(reminder.id),
             editReminderIntent,
             /* Using a mutable pending intent might be necessary because of scheduling with AlarmManager and the use in notifications
                (see https://developer.android.com/guide/components/intents-filters#DeclareMutabilityPendingIntent).

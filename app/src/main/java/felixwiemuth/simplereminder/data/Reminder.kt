@@ -16,6 +16,7 @@
  */
 package felixwiemuth.simplereminder.data
 
+import felixwiemuth.simplereminder.data.Reminder.Companion.MAX_REMINDER_ID
 import felixwiemuth.simplereminder.util.DateSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
@@ -27,7 +28,7 @@ import java.util.*
 data class Reminder
 constructor(
     /**
-     * ID of the reminder, also used for notifications. Must be in the interval [0,[OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT]) and even (used by [felixwiemuth.simplereminder.ReminderManager] for correct scheduling).
+     * ID of the reminder, also used for notifications. Must be in the range 0..[MAX_REMINDER_ID] and even.
      */
     val id: Int,
 
@@ -69,7 +70,7 @@ constructor(
     }
 
     init {
-        require(id >= 0) { "Id must be >= 0." }
+        require(id in 0..MAX_REMINDER_ID && id % 2 == 0) { "Id must be even, >= 0 and <= $MAX_REMINDER_ID." }
     }
 
     /**
@@ -92,7 +93,7 @@ constructor(
         get() = (60 * 1000 * naggingRepeatInterval).toLong()
 
     companion object {
-        const val OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT = 1000000
+        const val MAX_REMINDER_ID = 1000000
 
         @JvmStatic
         fun builder(date: Date, text: String): Builder = Builder(date = date, text = text)
@@ -104,14 +105,6 @@ constructor(
         @JvmStatic
         fun fromJson(json: String): List<Reminder> =
             Json.decodeFromString(ListSerializer(serializer()), json)
-
-        /**
-         * Request code for a pending intent to be used to start [felixwiemuth.simplereminder.ui.EditReminderDialogActivity].
-         */
-        @JvmStatic
-        fun getRequestCodeEditReminderDialogActivityPendingIntent(reminderID: Int): Int {
-            return OFFSET_REQUEST_CODE_ADD_REMINDER_DIALOG_ACTIVITY_PENDING_INTENT + reminderID
-        }
     }
 
     /**
