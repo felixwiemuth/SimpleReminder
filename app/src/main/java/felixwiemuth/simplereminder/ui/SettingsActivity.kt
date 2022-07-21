@@ -16,8 +16,8 @@
  */
 package felixwiemuth.simplereminder.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import felixwiemuth.simplereminder.R
 
 class SettingsActivity : AppCompatActivity() {

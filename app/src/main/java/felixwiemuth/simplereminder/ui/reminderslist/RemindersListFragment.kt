@@ -356,7 +356,8 @@ class RemindersListFragment : Fragment() {
                 addSection.apply(section)
             }
         }
-        val futureReminders: MutableList<Reminder> = ArrayList() // Scheduled reminders which are further in the future than the days which have an own section
+        // Scheduled reminders which are further in the future than the days which have an own section
+        val futureReminders: MutableList<Reminder> = ArrayList()
         for (reminder in it) {
             futureReminders.add(reminder)
         }
