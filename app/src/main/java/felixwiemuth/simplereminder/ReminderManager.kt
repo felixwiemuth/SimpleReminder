@@ -28,6 +28,7 @@ import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import felixwiemuth.simplereminder.data.Reminder
+import felixwiemuth.simplereminder.data.Reminder.Status
 import felixwiemuth.simplereminder.ui.EditReminderDialogActivity
 import felixwiemuth.simplereminder.util.AlarmManagerUtil
 import kotlinx.serialization.Serializable
@@ -74,7 +75,7 @@ object ReminderManager {
         abstract val reminderId: Int
 
         /**
-         * Show the reminder and set its status to [Reminder.Status.NOTIFIED]. Should be used on due reminders.
+         * Show the reminder and set its status to [Status.NOTIFIED]. Should be used on due reminders.
          * Schedules the next nag event if the reminder is nagging.
          */
         @Serializable
@@ -95,7 +96,7 @@ object ReminderManager {
         class Nag(override val reminderId: Int, val nextNagTime: Long) : ReminderAction()
 
         /**
-         * Mark the reminder done (set its status to [Reminder.Status.DONE] and cancel any current
+         * Mark the reminder done (set its status to [Status.DONE] and cancel any current
          * notifications or scheduled actions).
          */
         @Serializable
@@ -130,7 +131,7 @@ object ReminderManager {
                 is MarkDone -> {
                     // Cancel possible further alarms (nagging reminders)
                     cancelReminder(context, reminder.id)
-                    reminder.status = Reminder.Status.DONE
+                    reminder.status = Status.DONE
                     updateReminder(context, reminder, false)
                 }
             }
@@ -230,7 +231,7 @@ object ReminderManager {
      */
     private fun showReminder(context: Context, reminder: Reminder) {
         sendNotification(context, reminder)
-        reminder.status = Reminder.Status.NOTIFIED
+        reminder.status = Status.NOTIFIED
         updateReminder(context, reminder, false)
         if (reminder.isNagging) {
             scheduleNextNag(
@@ -329,7 +330,7 @@ object ReminderManager {
      *
      * @param context
      * @param reminder
-     * @param reschedule if true, checks whether the reminder should be rescheduled: If the given reminder's status is not [Reminder.Status.SCHEDULED] or its time is not in the future, a possible scheduled notification is cancelled. If the status is [Reminder.Status.SCHEDULED] and its time is in the future, a notification is scheduled.
+     * @param reschedule if true, checks whether the reminder should be rescheduled: If the given reminder's status is not [Status.SCHEDULED] or its time is not in the future, a possible scheduled notification is cancelled. If the status is [Status.SCHEDULED] and its time is in the future, a notification is scheduled.
      */
     @JvmStatic
     fun updateReminder(context: Context, reminder: Reminder, reschedule: Boolean) {
@@ -344,7 +345,7 @@ object ReminderManager {
      *
      * @param context
      * @param reminders
-     * @param reschedule if true, checks whether the reminders should be rescheduled: If the given reminder's status is not [Reminder.Status.SCHEDULED] or its time is not in the future, a possible scheduled notification is cancelled. If the status is [Reminder.Status.SCHEDULED] and its time is in the future, a notification is scheduled.
+     * @param reschedule if true, checks whether the reminders should be rescheduled: If the given reminder's status is not [Status.SCHEDULED] or its time is not in the future, a possible scheduled notification is cancelled. If the status is [Status.SCHEDULED] and its time is in the future, a notification is scheduled.
      */
     fun updateReminders(context: Context, reminders: Iterable<Reminder>, reschedule: Boolean) {
         ReminderStorage.updateReminders(context, reminders)
@@ -359,7 +360,7 @@ object ReminderManager {
      * @param context
      * @param transformation
      * @param ids
-     * @param reschedule if true, checks whether the reminders should be rescheduled: If the given reminder's status is not [Reminder.Status.SCHEDULED] or its time is not in the future, a possible scheduled notification is cancelled. If the status is [Reminder.Status.SCHEDULED] and its time is in the future, a notification is scheduled.
+     * @param reschedule if true, checks whether the reminders should be rescheduled: If the given reminder's status is not [Status.SCHEDULED] or its time is not in the future, a possible scheduled notification is cancelled. If the status is [Status.SCHEDULED] and its time is in the future, a notification is scheduled.
      */
     fun updateReminders(
         context: Context,
@@ -374,7 +375,7 @@ object ReminderManager {
     }
 
     /**
-     * Cancel potential existing scheduling and notification for the given reminder and reschedule it if its status is [Reminder.Status.SCHEDULED] and its time is in the future.
+     * Cancel potential existing scheduling and notification for the given reminder and reschedule it if its status is [Status.SCHEDULED] and its time is in the future.
      *
      * @param context
      * @param reminder
@@ -382,7 +383,7 @@ object ReminderManager {
     private fun rescheduleReminder(context: Context, reminder: Reminder) {
         cancelReminder(context, reminder.id)
         val isFuture = reminder.date.time > System.currentTimeMillis()
-        if (reminder.status === Reminder.Status.SCHEDULED && isFuture) {
+        if (reminder.status === Status.SCHEDULED && isFuture) {
             scheduleReminder(context, reminder)
         }
     }
@@ -397,7 +398,7 @@ object ReminderManager {
     fun scheduleAllReminders(context: Context) {
         val currentTime = System.currentTimeMillis()
         for (r in ReminderStorage.getReminders(context)) {
-            if (r.status === Reminder.Status.SCHEDULED) {
+            if (r.status === Status.SCHEDULED) {
                 if (r.date.time <= currentTime) {
                     showReminder(context, r)
                 } else {
