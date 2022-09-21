@@ -72,10 +72,17 @@ android {
         archivesBaseName = "SimpleReminder_" + versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
+        debug {
+            // NOTE Currently minifying is necessary also in debug build because otherwise the 64K limit is exceeded (and we don't want to deal with multidex for now).
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
