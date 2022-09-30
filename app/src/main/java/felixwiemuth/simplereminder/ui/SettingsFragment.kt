@@ -107,13 +107,14 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            Prefs.PREF_KEY_RUN_ON_BOOT -> if (sharedPreferences.getBoolean(key, false)) {
-                // Note: This will set the preference again through SharedPreferences, but that should not result in calling this listener again.
-                Prefs.enableRunOnBoot(context, activity)
-            } else {
-                // Disable run on boot
-                BootReceiver.setBootReceiverEnabled(context, false)
-            }
+            Prefs.PREF_KEY_RUN_ON_BOOT ->
+                if (sharedPreferences.getBoolean(key, false)) {
+                    // Note: This will set the preference again through SharedPreferences, but that should not result in calling this listener again.
+                    Prefs.enableRunOnBoot(context, activity)
+                } else {
+                    // Disable run on boot
+                    BootReceiver.setBootReceiverEnabled(context, false)
+                }
         }
     }
 
