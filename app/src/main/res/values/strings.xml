@@ -26,6 +26,8 @@
     <string name="dialog_startup_disable_battery_optimization_title">Battery Optimization</string>
     <string name="dialog_startup_disable_battery_optimization_message">You must disable battery optimization so that reminders can be shown reliably.\n\nSimpleReminder still only becomes active when a scheduled reminder is due.</string>
     <string name="dialog_startup_disable_battery_optimization_turn_off">Turn off for SimpleReminder</string>
+    <string name="dialog_startup_show_notifications_title">Notifications</string>
+    <string name="dialog_startup_show_notifications_message">For the app to be able to show reminders, you have to grant the notification permission.</string>
     <string name="dialog_startup_run_on_boot_title">@string/preference_run_on_boot</string>
     <string name="dialog_startup_run_on_boot_message">To keep showing reminders after a restart of the device, please allow the app to run on startup.</string>
     <string name="dialog_startup_run_on_boot_enable">Enable</string>

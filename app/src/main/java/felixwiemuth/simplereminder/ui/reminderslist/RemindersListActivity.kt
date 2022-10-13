@@ -16,8 +16,10 @@
  */
 package felixwiemuth.simplereminder.ui.reminderslist
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -44,6 +46,7 @@ import felixwiemuth.simplereminder.ui.actions.DisplayChangeLog
 import felixwiemuth.simplereminder.ui.actions.DisplayWelcomeMessage
 import felixwiemuth.simplereminder.ui.actions.DisplayWelcomeMessageUpdate
 import felixwiemuth.simplereminder.ui.util.HtmlDialogFragment
+import felixwiemuth.simplereminder.ui.util.UIUtils
 import felixwiemuth.simplereminder.util.ImplementationError
 
 class RemindersListActivity : AppCompatActivity() {
@@ -102,6 +105,11 @@ class RemindersListActivity : AppCompatActivity() {
         // Check whether run on boot is enabled and whether should ask user to enable it.
         checkRunOnBoot()
 
+        // Check whether the notification permission is granted and request it if not.
+        if (Build.VERSION.SDK_INT >= 33) {
+            checkNotificationPermission()
+        }
+
         // Show general welcome dialog on first launch of app and update welcome dialog on first launch with new version
         if (showGeneralWelcomeMessage) {
             Main.showWelcomeMessage(this)
@@ -145,6 +153,19 @@ class RemindersListActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    @RequiresApi(33)
+    private fun checkNotificationPermission() {
+        if (checkSelfPermission(POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // Note: shouldShowRequestPermissionRationale(POST_NOTIFICATIONS) is not used because we always want to show our message
+            UIUtils.showMessageDialog(
+                R.string.dialog_startup_show_notifications_title,
+                R.string.dialog_startup_show_notifications_message,
+                this
+            )
+            { requestPermissions(arrayOf(POST_NOTIFICATIONS), 0) }
+        }
     }
 
     private fun checkRunOnBoot() {
