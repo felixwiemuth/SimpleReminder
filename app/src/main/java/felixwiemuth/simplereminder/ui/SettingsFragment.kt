@@ -39,7 +39,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
         val runOnBootPref = findPreference<SwitchPreferenceCompat>(getString(R.string.prefkey_run_on_boot))
-        runOnBootPref!!.summaryOff = UIUtils.makeAlertText(R.string.preference_run_on_boot_summary_off, context)
+        runOnBootPref!!.summaryOff = UIUtils.makeAlertText(R.string.preference_run_on_boot_summary_off, requireContext())
         runOnBootPref.setSummaryOn(R.string.preference_run_on_boot_summary_on)
         val batPref = findPreference<Preference>(getString(R.string.prefkey_disable_battery_optimization))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -135,7 +135,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
                 }
         } else {
             // NOTE: As the text should change with "setSummary" here, the markup should apply. Should the text be equal, would need a workaround.
-            batPref!!.summary = UIUtils.makeAlertText(R.string.preference_disable_battery_optimization_summary_no, context)
+            batPref!!.summary = UIUtils.makeAlertText(R.string.preference_disable_battery_optimization_summary_no, requireContext())
             batPref.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
                     startActivity(Prefs.getIntentDisableBatteryOptimization(context))
