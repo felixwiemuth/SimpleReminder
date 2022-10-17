@@ -63,12 +63,12 @@ class Main : Application() {
 
         @JvmStatic
         fun showWelcomeMessage(context: Context) {
-            UIUtils.showMessageDialog(R.string.dialog_welcome_title, context.getString(R.string.welcome_message), context)
+            UIUtils.showMessageDialog(R.string.dialog_welcome_title, R.string.welcome_message, context)
         }
 
         @JvmStatic
         fun showWelcomeMessageUpdate(context: Context) {
-            UIUtils.showMessageDialog(R.string.dialog_welcome_title, context.getString(R.string.welcome_message_update), context)
+            UIUtils.showMessageDialog(R.string.dialog_welcome_title, R.string.welcome_message_update, context)
         }
     }
 }

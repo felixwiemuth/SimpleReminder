@@ -29,11 +29,12 @@ import felixwiemuth.simplereminder.R
  * @author Felix Wiemuth
  */
 object UIUtils {
-    fun showMessageDialog(resTitle: Int, message: String, context: Context) {
+    fun showMessageDialog(@StringRes resTitle: Int, @StringRes resMessage: Int, context: Context, onDismiss : DialogInterface.OnDismissListener? = null) {
         AlertDialog.Builder(context)
             .setPositiveButton(android.R.string.ok) { dialog: DialogInterface, _ -> dialog.dismiss() }
             .setTitle(resTitle)
-            .setMessage(message)
+            .setMessage(resMessage)
+            .setOnDismissListener(onDismiss)
             .show()
     }
 
