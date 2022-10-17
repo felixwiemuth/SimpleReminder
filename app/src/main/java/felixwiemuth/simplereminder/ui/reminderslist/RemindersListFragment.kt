@@ -18,6 +18,7 @@ package felixwiemuth.simplereminder.ui.reminderslist
 
 import android.app.Activity
 import android.content.*
+import android.os.Build
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.util.SparseArray
@@ -124,11 +125,13 @@ class RemindersListFragment : Fragment() {
                             onlySelectedReminder.text
                         )
                     )
-                    Toast.makeText(
-                        context,
-                        getString(R.string.reminder_list_action_copy_text_feedback),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    if (Build.VERSION.SDK_INT < 33) { // On API 33+, the system shows a visual confirmation (clipboard preview)
+                        Toast.makeText(
+                            context,
+                            getString(R.string.reminder_list_action_copy_text_feedback),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
                 R.id.action_mark_done -> {
                     ReminderManager.updateReminders(
