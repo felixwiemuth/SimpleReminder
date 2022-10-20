@@ -113,15 +113,15 @@ constructor(
     data class Builder
     @JvmOverloads
     constructor(
-        @kotlin.jvm.JvmField
+        @JvmField
         var id: Int? = null,
-        @kotlin.jvm.JvmField
+        @JvmField
         val date: Date,
-        @kotlin.jvm.JvmField
+        @JvmField
         var naggingRepeatInterval: Int = 0,
-        @kotlin.jvm.JvmField
+        @JvmField
         val text: String = "",
-        @kotlin.jvm.JvmField
+        @JvmField
         var status: Status = Status.SCHEDULED
     ) {
         fun build() = Reminder(requireNotNull(id), date, naggingRepeatInterval, text, status)
