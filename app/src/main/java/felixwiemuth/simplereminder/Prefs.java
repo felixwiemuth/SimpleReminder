@@ -86,10 +86,12 @@ public class Prefs {
         return getStatePrefs(context).getBoolean(PREF_STATE_REMINDERS_UPDATED, false);
     }
 
+    @SuppressLint("ApplySharedPref")
     public static void setRemindersUpdated(boolean b, Context context) {
         getStatePrefs(context).edit().putBoolean(PREF_STATE_REMINDERS_UPDATED, b).commit();
     }
 
+    @SuppressLint("ApplySharedPref")
     public static int getStoredRemindersListFormatVersion(Context context) {
         SharedPreferences prefs = getStatePrefs(context);
         if (!prefs.contains(PREF_STATE_REMINDERS_FORMAT_VERSION)) {

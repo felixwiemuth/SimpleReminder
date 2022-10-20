@@ -105,6 +105,7 @@ public class HtmlDialogFragment extends DialogFragment {
         //noinspection ConstantConditions
         for (String actionName : getArguments().getStringArray(ARG_ACTIONS)) {
             try {
+                @SuppressWarnings("unchecked")
                 Class<? extends Action> actionClass = (Class<? extends Action>) Class.forName(actionName);
                 Action action = actionClass.newInstance();
                 actions.put(action.getName(), action);
@@ -255,7 +256,6 @@ public class HtmlDialogFragment extends DialogFragment {
                 }
             });
         } else { //TODO test on an API < 24 device
-            //noinspection deprecation
             webView.setWebViewClient(new WebViewClient() {
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView webView, String url) {

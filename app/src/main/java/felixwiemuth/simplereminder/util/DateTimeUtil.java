@@ -300,6 +300,7 @@ public class DateTimeUtil {
     }
 
 
+    @SuppressLint("SimpleDateFormat")
     private static DateFormat getTimeFormat() {
         if (dfTime == null) {
             dfTime = new SimpleDateFormat("HH:mm");
