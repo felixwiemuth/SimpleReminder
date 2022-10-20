@@ -354,8 +354,7 @@ public class DateTimeUtil {
      * @return
      */
     public static boolean isSameDay(Date d1, Date d2) {
-        getDfCompareDay();
-        return dfCompareDay.format(d1).equals(dfCompareDay.format(d2));
+        return getDfCompareDay().format(d1).equals(dfCompareDay.format(d2));
     }
 
     /**
