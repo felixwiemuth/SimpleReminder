@@ -149,7 +149,6 @@ object ReminderManager {
         protected fun makePendingIntent(context: Context, extras: Bundle? = null): PendingIntent {
             val intent = Intent()
             intent.setClass(context.applicationContext, ReminderBroadcastReceiver::class.java)
-            intent.flags = Intent.FLAG_RECEIVER_FOREGROUND
             extras?.let { intent.putExtras(it) }
             val flags =
                 /* Using a mutable pending intent might be necessary because of scheduling with AlarmManager and the use in notifications
