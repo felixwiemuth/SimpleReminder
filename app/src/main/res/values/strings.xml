@@ -40,6 +40,7 @@
     <string name="add_reminder_name_hint">Reminder text (optional)</string>
     <string name="add_reminder_nagging_tooltip">Nagging</string>
     <string name="edit_reminder_title">Edit reminder</string>
+    <string name="edit_reminder_add_button">@android:string/ok</string>
     <string name="button_add_reminder">Add</string>
     <string name="keyboard_action_add_reminder">Add</string>
     <string name="add_reminder_toast_nagging_enabled">Nagging set to %s</string>

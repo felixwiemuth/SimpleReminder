@@ -51,6 +51,7 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(R.string.edit_reminder_title);
+        setAddButtonText(R.string.edit_reminder_add_button);
         setupActivityWithReminder(getIntent());
     }
 

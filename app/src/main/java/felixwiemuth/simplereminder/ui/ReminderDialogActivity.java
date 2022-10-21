@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -351,6 +352,10 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         }
 
         return reminderBuilder;
+    }
+
+    protected void setAddButtonText(@StringRes int textRes) {
+        addButton.setText(textRes);
     }
 
     /**
