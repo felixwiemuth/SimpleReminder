@@ -18,9 +18,10 @@
 
 <changelog>
     <release version="0.9.11" versioncode="911100" >
-        <change>Set notification channel importance to "urgent", which increases reliability of notifications being shown in time.</change>
+        <change>Updated to Android 13</change>
+        <change>Notification channel importance is now "urgent", which increases reliability of notifications being shown in time.</change>
         <change>Empty sections are not shown anymore in the reminders list.</change>
-        <change>Automatic dark theme on Android 10+ (when enabled in system controls)</change>
+        <change>Automatic dark theme on Android 10+ (when dark theme is enabled in system settings)</change>
     </release>
     <release version="0.9.10" versioncode="910100" >
         <change>The date for a reminder can now be chosen with +/- buttons or with a calendar widget.</change>
