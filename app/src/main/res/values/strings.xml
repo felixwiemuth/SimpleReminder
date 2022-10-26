@@ -35,7 +35,7 @@
     <string name="quick_tile_add_reminder_label">@string/add_reminder</string>
     <string name="shortcut_add_reminder">@string/add_reminder</string>
     <string name="action_button_add_reminder">@string/add_reminder</string>
-    <string name="shortcut_reminders_list">Show reminders</string>
+    <string name="shortcut_reminders_list">Show reminders</string> <!-- NOTE: also update in help.html -->
     <string name="add_reminder_title">@string/add_reminder</string>
     <string name="add_reminder_name_hint">Reminder text (optional)</string>
     <string name="add_reminder_nagging_tooltip">Nagging</string>
