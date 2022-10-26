@@ -23,6 +23,7 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import felixwiemuth.simplereminder.R
 
 /**
@@ -39,7 +40,7 @@ object UIUtils {
     }
 
     fun makeAlertText(source: CharSequence?, context: Context): SpannableString {
-        val color = context.resources.getColor(R.color.text_alert) // Deprecated, but same as getColor(R.color.text_alert, null) on newer APIs
+        val color = ContextCompat.getColor(context, R.color.text_alert)
         val spannableString = SpannableString(source)
         spannableString.setSpan(ForegroundColorSpan(color), 0, spannableString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
         return spannableString
