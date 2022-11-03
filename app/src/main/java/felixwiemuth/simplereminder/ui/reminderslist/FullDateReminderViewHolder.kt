@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,23 +14,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package felixwiemuth.simplereminder.ui.reminderslist
 
-package felixwiemuth.simplereminder.ui.reminderslist;
-
-import android.view.View;
-import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import felixwiemuth.simplereminder.R;
+import android.content.Context
+import android.view.View
+import android.widget.TextView
+import androidx.cardview.widget.CardView
+import felixwiemuth.simplereminder.R
+import felixwiemuth.simplereminder.util.DateTimeUtil
+import java.util.*
 
 /**
  * View holder for items where time and date is to be shown.
  */
-public class FullDateItemViewHolder extends ItemViewHolder {
-    final TextView dateView;
-
-    public FullDateItemViewHolder(@NonNull View itemView) {
-        super(R.layout.reminder_card_datefield_full_date, (CardView) itemView);
-        dateView = itemView.findViewById(R.id.date);
+class FullDateReminderViewHolder(itemView: View) :
+    ReminderViewHolder(R.layout.reminder_card_datefield_full_date, (itemView as CardView)) {
+    private val dateView: TextView = itemView.findViewById(R.id.date)
+    override fun initializeDateView(date: Date, context: Context) {
+        dateView.text = DateTimeUtil.formatDate(context, date)
     }
 }

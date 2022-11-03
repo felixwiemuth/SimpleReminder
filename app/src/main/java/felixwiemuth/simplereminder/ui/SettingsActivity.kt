@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,24 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package felixwiemuth.simplereminder.ui
 
-package felixwiemuth.simplereminder;
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import felixwiemuth.simplereminder.R
 
-import android.content.Intent;
-import android.os.Build;
-import android.service.quicksettings.TileService;
-
-import androidx.annotation.RequiresApi;
-
-import felixwiemuth.simplereminder.ui.AddReminderDialogActivity;
-
-@RequiresApi(api = Build.VERSION_CODES.N)
-public class QuickTileService extends TileService {
-
-    @Override
-    public void onClick() {
-        super.onClick();
-        Intent intent = new Intent(this, AddReminderDialogActivity.class);
-        startActivityAndCollapse(intent);
+class SettingsActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_settings)
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.settings_container, SettingsFragment())
+            .commit()
     }
 }

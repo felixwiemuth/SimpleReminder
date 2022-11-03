@@ -14,33 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package felixwiemuth.simplereminder.ui.reminderslist
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+import androidx.cardview.widget.CardView
+import felixwiemuth.simplereminder.R
 
-buildscript {
-    ext.kotlin_version = '1.7.10'
-
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
+/**
+ * View holder for items where only time is to be shown.
+ */
+class TimeOnlyReminderViewHolder(itemView: CardView) :
+    ReminderViewHolder(R.layout.reminder_card_datefield_time_only, itemView)

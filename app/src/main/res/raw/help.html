@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+  ~ Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -36,27 +36,33 @@
     <p>After adding a reminder, the time until it is due is shown in hours and minutes (additional seconds are not displayed). If the reminder is at least 24 hours ahead, the number of (calendar) days and hours is shown (minutes are not shown and rounded towards the closest hour).</p>
 
     <h3>Nagging reminders</h3>
-    <p>The switch next to the reminder text makes the reminder "nagging": when due, the notification will be renewed every x minutes (by default as configured in the settings), producing the same alert (sound, vibration, ...) as when first shown. This continues until the notification is dismissed.</p>
+    <p>The switch next to the reminder text makes the reminder "nagging": when due, the notification will be renewed every x minutes, producing the same alert (sound, vibration, ...) as when first shown. This continues until the notification is dismissed.</p>
 
-    <p>The repeat interval for the current reminder can be adjusted by long-clicking the switch.</p>
+    <p>The repeat interval for the current reminder can be adjusted by long-clicking the switch. The default value can be changed in the settings.</p>
 
-    <p>Note that changing the default repeat interval in the settings does not affect already scheduled reminders.</p>
-
+    <!-- Not necessary to mention: -->
+    <!-- <p>Note that changing the default repeat interval in the settings does not affect already scheduled reminders.</p>
+    -->
     <p>Currently there is no indication in the reminders list or the notification whether a reminder is nagging, this will be added later.</p>
 
     <h3>Editing a reminder</h3>
     To edit a reminder, either click on the notification or the entry in the reminders list.
 
     <h3>Reminders list</h3>
-    <p>The reminders list can be reached via the launcher icon "SimpleReminder" or via long-clicking on the "Add reminder" launcher icon and selecting "Reminders list".</p>
+    <p>The reminders list can be reached via the launcher icon "SimpleReminder" or via long-clicking on the "Add reminder" launcher icon and selecting "Show reminders".</p>
     <p>The reminders list shows all current and past reminders and allows to edit or reschedule them. In addition reminders can be marked as done or deleted. Long-click on a reminder to select it (and potentially further reminders) and see the available actions (a long click on an action symbol shows its name).</p>
     <p>The list consists of three sections:</p>
       <ul>
-        <li><b>Due reminders (yellow):</b> Reminders due according to the set time; a notification has been shown and the reminder has not yet been marked as done yet (e.g. by dismissing the notification)</li>
-        <li><b>Scheduled reminders (green):</b> Reminders with due date in the future, a notification will be shown when the due time is reached; this section is further divided by day of the due date for the next 7 days</li>
+        <li><b>Due reminders (yellow):</b> Reminders due according to the set time; a notification has been shown and the reminder has not been marked as done yet (e.g. by dismissing the notification)</li>
+        <li><b>Scheduled reminders (green):</b> Reminders with due date in the future, a notification will be shown when the due time is reached; this section is further divided into days for the next 7 days</li>
         <li><b>Done reminders (grey):</b> Reminders for which the notification has been dismissed or which have been marked done manually</li>
       </ul>
 
+      <h3>Do Not Disturb mode</h3>
+      <!-- "should not" because it depends on what the default settings for the reminders category are -->
+      By default, reminders should not be shown in Do Not Disturb mode (however, the notification can be seen as soon as Do Not Disturb is disabled). This behaviour can be changed in the system settings under Notifications -> Do Not Disturb -> Alarms and other interruptions. If you enable the category "Reminders", normal and nagging reminders will be shown even in Do Not Disturb mode, with sound and vibration as configured.
+      <!-- Alarm reminders will result in an alarm as long as the category "Alarms" is enabled (which should be the default).
+      -->
       <h3>Tips</h3>
       <ul>
           <li>To <b>test</b> how a reminder is shown, add a reminder without changing the date or time. The reminder will be shown immediately.</li>

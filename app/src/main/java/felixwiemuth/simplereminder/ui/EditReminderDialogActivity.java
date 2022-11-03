@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import felixwiemuth.simplereminder.R;
 import felixwiemuth.simplereminder.ReminderManager;
+import felixwiemuth.simplereminder.ReminderStorage;
 import felixwiemuth.simplereminder.data.Reminder;
 
 /**
@@ -50,6 +51,7 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(R.string.edit_reminder_title);
+        setAddButtonText(R.string.edit_reminder_add_button);
         setupActivityWithReminder(getIntent());
     }
 
@@ -76,7 +78,7 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
         }
         final int reminderId = intent.getIntExtra(EXTRA_REMINDER_ID, -1);
         try {
-            Reminder reminder = ReminderManager.getReminder(this, reminderId);
+            Reminder reminder = ReminderStorage.getReminder(this, reminderId);
             nameTextView.setText(reminder.getText());
             // Move cursor to end of text
             nameTextView.setSelection(nameTextView.length());
@@ -89,7 +91,7 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
                 naggingRepeatInterval = reminder.getNaggingRepeatInterval();
             }
             reminderToUpdate = reminderId;
-        } catch (ReminderManager.ReminderNotFoundException e) {
+        } catch (ReminderStorage.ReminderNotFoundException e) {
             Log.w("AddReminder", "Intent contains invalid reminder ID.");
             Toast.makeText(this, R.string.error_msg_reminder_not_found, Toast.LENGTH_LONG).show();
             completeActivity();
@@ -98,8 +100,8 @@ public class EditReminderDialogActivity extends ReminderDialogActivity {
 
     @Override
     protected void onDone() {
-        Reminder.ReminderBuilder reminderBuilder = buildReminderWithTimeTextNagging();
-        reminderBuilder.id(reminderToUpdate);
+        Reminder.Builder reminderBuilder = buildReminderWithTimeTextNagging();
+        reminderBuilder.id = reminderToUpdate;
         Reminder reminder = reminderBuilder.build();
         ReminderManager.updateReminder(this, reminder, true);
         makeToast(reminder);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,10 +86,12 @@ public class Prefs {
         return getStatePrefs(context).getBoolean(PREF_STATE_REMINDERS_UPDATED, false);
     }
 
+    @SuppressLint("ApplySharedPref")
     public static void setRemindersUpdated(boolean b, Context context) {
         getStatePrefs(context).edit().putBoolean(PREF_STATE_REMINDERS_UPDATED, b).commit();
     }
 
+    @SuppressLint("ApplySharedPref")
     public static int getStoredRemindersListFormatVersion(Context context) {
         SharedPreferences prefs = getStatePrefs(context);
         if (!prefs.contains(PREF_STATE_REMINDERS_FORMAT_VERSION)) {

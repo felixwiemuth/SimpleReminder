@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version"
+}
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -43,7 +47,7 @@ android {
         // Version variables
         def versionCodeMajor = 0
         def versionCodeMinor = 9
-        def versionCodePoint = 10
+        def versionCodePoint = 11
 
         // Sub version for release channel (only used on some release channels)
         def versionCodeSub = 0
@@ -63,35 +67,45 @@ android {
         versionName = versionCodeMajor + "." + versionCodeMinor + "." + versionCodePoint
 
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 33
 
         archivesBaseName = "SimpleReminder_" + versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
+        debug {
+            // NOTE Currently minifying is necessary also in debug build because otherwise the 64K limit is exceeded (and we don't want to deal with multidex for now).
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'felixwiemuth.simplereminder'
 }
 
 dependencies {
-    def acraVersion = '5.3.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    // Note: version 1.4.0-rc01 currently gives a resource linking error.
-    implementation 'androidx.appcompat:appcompat:1.4.0-alpha03'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
-    // Note: version 1.5.0-alpha03 currently gives a resource linking error.
-    implementation 'com.google.android.material:material:1.4.0'
+    def acraVersion = '5.9.6'
+    implementation "androidx.core:core-ktx:1.9.0"
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
+    implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation "ch.acra:acra-mail:$acraVersion"
     implementation "ch.acra:acra-dialog:$acraVersion"
     implementation 'de.cketti.library.changelog:ckchangelog:1.2.2'
-    implementation project(':sectionedrecyclerviewadapter')
-    compileOnly 'org.projectlombok:lombok:1.18.4'
-    annotationProcessor 'org.projectlombok:lombok:1.18.4'
+
+    // Have to specify version here to avoid build failure due to duplicate classes (seems to be used by multiple dependencies)
+    def lifecycle_version = "2.5.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+
     testImplementation 'junit:junit:4.13.2'
 }

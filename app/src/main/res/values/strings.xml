@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+  ~ Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -18,25 +18,29 @@
 <resources>
     <string name="app_name" translatable="false">SimpleReminder</string>
     <string name="dialog_welcome_title">Welcome</string>
-    <string name="welcome_message">Welcome to SimpleReminder! This is an early version and your feedback is needed (see \"About\").\n\nSimpleReminder is free software (licensed under the GNU General Public License) and comes without any warranty.</string>
-    <string name="welcome_message_update">Welcome to an updated version of SimpleReminder! The app is continually being developed and your feedback is needed - see \"About\" for more information.</string>
+    <string name="welcome_message">Welcome to SimpleReminder! This is an early version and your feedback is needed (see \"About\").\n\nPlease test whether reminders work reliably on your device and report it if not.\n\nSimpleReminder is free software (licensed under the GNU General Public License) and comes without any warranty.</string>
+    <string name="welcome_message_update">Welcome to an updated version of SimpleReminder!\n\nThe app has been updated to newer Android versions. Please test whether reminders work reliably on your device and report it if not.\n\nThe app is continually being developed and your feedback is needed - see \"About\" for more information.</string>
     <string name="toast_info_add_reminder_dialog">Tip: There is a launcher icon to reach this dialog!</string>
     <string name="dialog_startup_later">Later</string>
     <string name="dialog_startup_dont_show_again">Don\'t show again</string>
     <string name="dialog_startup_disable_battery_optimization_title">Battery Optimization</string>
     <string name="dialog_startup_disable_battery_optimization_message">You must disable battery optimization so that reminders can be shown reliably.\n\nSimpleReminder still only becomes active when a scheduled reminder is due.</string>
     <string name="dialog_startup_disable_battery_optimization_turn_off">Turn off for SimpleReminder</string>
+    <string name="dialog_startup_show_notifications_title">Notifications</string>
+    <string name="dialog_startup_show_notifications_message">For the app to be able to show reminders, you have to grant the notification permission.</string>
     <string name="dialog_startup_run_on_boot_title">@string/preference_run_on_boot</string>
     <string name="dialog_startup_run_on_boot_message">To keep showing reminders after a restart of the device, please allow the app to run on startup.</string>
     <string name="dialog_startup_run_on_boot_enable">Enable</string>
     <string name="add_reminder">Add reminder</string>
     <string name="quick_tile_add_reminder_label">@string/add_reminder</string>
     <string name="shortcut_add_reminder">@string/add_reminder</string>
-    <string name="shortcut_reminders_list">Show reminders</string>
+    <string name="action_button_add_reminder">@string/add_reminder</string>
+    <string name="shortcut_reminders_list">Show reminders</string> <!-- NOTE: also update in help.html -->
     <string name="add_reminder_title">@string/add_reminder</string>
     <string name="add_reminder_name_hint">Reminder text (optional)</string>
     <string name="add_reminder_nagging_tooltip">Nagging</string>
     <string name="edit_reminder_title">Edit reminder</string>
+    <string name="edit_reminder_add_button">@android:string/ok</string>
     <string name="button_add_reminder">Add</string>
     <string name="keyboard_action_add_reminder">Add</string>
     <string name="add_reminder_toast_nagging_enabled">Nagging set to %s</string>

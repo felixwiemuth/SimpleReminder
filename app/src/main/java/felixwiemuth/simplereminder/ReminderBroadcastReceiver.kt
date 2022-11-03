@@ -15,32 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package felixwiemuth.simplereminder
 
-buildscript {
-    ext.kotlin_version = '1.7.10'
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 
-    repositories {
-        google()
-        mavenCentral()
+class ReminderBroadcastReceiver : BroadcastReceiver() {
+
+    override fun onReceive(context: Context, intent: Intent) {
+        // All actions should with a reasonable storage size be fast enough to execute in the allowed 10 seconds for this method.
+        ReminderManager.processReminderAction(context, intent)
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }

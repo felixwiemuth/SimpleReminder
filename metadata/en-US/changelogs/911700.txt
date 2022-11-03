@@ -1,0 +1,5 @@
+• Updated to Android 13
+• Fix Quick Settings Tile on newer Android versions
+• Notification channel importance is now "urgent", which increases reliability of notifications being shown in time.
+• Empty sections are not shown anymore in the reminders list.
+• Automatic dark theme on Android 10+ (when dark theme is enabled in system settings)

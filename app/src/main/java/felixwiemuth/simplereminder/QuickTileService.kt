@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,20 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package felixwiemuth.simplereminder
 
-package felixwiemuth.simplereminder.ui.reminderslist;
+import androidx.annotation.RequiresApi
+import android.os.Build
+import android.service.quicksettings.TileService
+import android.content.Intent
+import felixwiemuth.simplereminder.ui.AddReminderDialogActivity
 
-import android.view.View;
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import felixwiemuth.simplereminder.R;
-
-/**
- * View holder for items where only time is to be shown.
- */
-public class TimeOnlyItemViewHolder extends ItemViewHolder {
-
-    public TimeOnlyItemViewHolder(@NonNull View itemView) {
-        super(R.layout.reminder_card_datefield_time_only, (CardView) itemView);
+@RequiresApi(api = Build.VERSION_CODES.N)
+class QuickTileService : TileService() {
+    override fun onClick() {
+        super.onClick()
+        startActivityAndCollapse(Intent(this, AddReminderDialogActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 }

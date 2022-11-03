@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -300,6 +300,7 @@ public class DateTimeUtil {
     }
 
 
+    @SuppressLint("SimpleDateFormat")
     private static DateFormat getTimeFormat() {
         if (dfTime == null) {
             dfTime = new SimpleDateFormat("HH:mm");
@@ -353,8 +354,7 @@ public class DateTimeUtil {
      * @return
      */
     public static boolean isSameDay(Date d1, Date d2) {
-        getDfCompareDay();
-        return dfCompareDay.format(d1).equals(dfCompareDay.format(d2));
+        return getDfCompareDay().format(d1).equals(dfCompareDay.format(d2));
     }
 
     /**

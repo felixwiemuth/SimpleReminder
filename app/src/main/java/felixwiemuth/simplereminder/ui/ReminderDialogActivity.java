@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -340,16 +341,21 @@ public abstract class ReminderDialogActivity extends AppCompatActivity {
         Toast.makeText(ReminderDialogActivity.this, getString(R.string.add_reminder_toast_nagging_enabled, DateTimeUtil.formatMinutes(naggingRepeatInterval, this)), Toast.LENGTH_SHORT).show();
     }
 
-    protected Reminder.ReminderBuilder buildReminderWithTimeTextNagging() {
-        Reminder.ReminderBuilder reminderBuilder = Reminder.builder()
-                .date(selectedDate.getTime())
-                .text(nameTextView.getText().toString());
+    protected Reminder.Builder buildReminderWithTimeTextNagging() {
+        Reminder.Builder reminderBuilder = Reminder.builder(
+                selectedDate.getTime(),
+                nameTextView.getText().toString()
+        );
 
         if (naggingSwitch.isChecked()) {
-            reminderBuilder.naggingRepeatInterval(naggingRepeatInterval);
+            reminderBuilder.naggingRepeatInterval = naggingRepeatInterval;
         }
 
         return reminderBuilder;
+    }
+
+    protected void setAddButtonText(@StringRes int textRes) {
+        addButton.setText(textRes);
     }
 
     /**

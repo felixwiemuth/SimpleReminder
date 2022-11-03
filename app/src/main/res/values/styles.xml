@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+  ~ Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -15,13 +15,14 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:forceDarkAllowed" tools:ignore="NewApi">true</item> <!-- applies only on API 29+ -->
     </style>
 
     <style name="AppTheme.DialogActivity" parent="Theme.AppCompat.Dialog">

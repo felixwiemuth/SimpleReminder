@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,23 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package felixwiemuth.simplereminder.ui;
+package felixwiemuth.simplereminder.ui.reminderslist
 
-import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+import android.view.View
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import felixwiemuth.simplereminder.R
 
-import felixwiemuth.simplereminder.R;
-
-public class SettingsActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.settings_container, new SettingsFragment())
-                .commit();
-    }
+class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val titleView: TextView = itemView.findViewById(R.id.title)
 }

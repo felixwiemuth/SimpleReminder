@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (C) 2018-2021 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+  ~ Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -15,11 +15,14 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+<shortcuts xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
         android:icon="@android:drawable/ic_input_add"
         android:shortcutId="addreminder"
-        android:shortcutShortLabel="@string/shortcut_add_reminder">
+        android:shortcutShortLabel="@string/shortcut_add_reminder"
+        tools:ignore="UnusedAttribute"> <!-- Shortcuts only on API 25+ -->
+        <!--suppress AndroidDomInspection -->
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="felixwiemuth.simplereminder.ui.AddReminderDialogActivity"
