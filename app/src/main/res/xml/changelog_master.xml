@@ -17,6 +17,9 @@
   -->
 
 <changelog>
+    <release version="0.9.12" versioncode="912100" >
+        <change>Already notified nagging reminders now keep nagging after reboot and missed occurrences are not all shown at once.</change>
+    </release>
     <release version="0.9.11" versioncode="911100" >
         <change>Updated to Android 13</change>
         <change>Fix Quick Settings Tile on newer Android versions</change>

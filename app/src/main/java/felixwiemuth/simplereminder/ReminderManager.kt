@@ -93,7 +93,7 @@ object ReminderManager {
          * [Reminder.naggingRepeatInterval].
          */
         @Serializable
-        class Nag(override val reminderId: Int, val nextNagTime: Long) : ReminderAction()
+        class Nag(override val reminderId: Int) : ReminderAction()
 
         /**
          * Mark the reminder done (set its status to [Status.DONE] and cancel any current
@@ -125,8 +125,10 @@ object ReminderManager {
                 is Nag -> {
                     // Send the same notification again (replaces the previous)
                     sendNotification(context, reminder)
-                    // Schedule next repetition
-                    scheduleNextNag(context, reminder, nextNagTime)
+                    // Schedule next repetition. This calculates the next occurrence based on the original due date which makes it
+                    // unnecessary to save it in the reminder action and in case the execution of this action is delayed more than
+                    // one repeat interval, this prevents showing all missed occurrences in a row.
+                    scheduleNextNag(context, reminder)
                 }
                 is MarkDone -> {
                     // Cancel possible further alarms (nagging reminders)
@@ -234,18 +236,36 @@ object ReminderManager {
         reminder.status = Status.NOTIFIED
         updateReminder(context, reminder, false)
         if (reminder.isNagging) {
-            scheduleNextNag(
-                context,
-                reminder,
-                reminder.date.time + reminder.naggingRepeatIntervalInMillis
-            )
+            scheduleNextNag(context, reminder)
         }
     }
 
-    private fun scheduleNextNag(context: Context, reminder: Reminder, nextNagTime: Long) {
-        val nextNextNagTime = nextNagTime + reminder.naggingRepeatIntervalInMillis
-        val action = ReminderAction.Nag(reminder.id, nextNextNagTime)
-        AlarmManagerUtil.scheduleExact(context, Date(nextNagTime), action.toPendingIntent(context))
+    private fun scheduleReminderAction(context: Context, date: Date, action: ReminderAction) {
+        AlarmManagerUtil.scheduleExact(context, date, action.toPendingIntent(context))
+    }
+
+    /**
+     * Schedule the next [ReminderAction.Nag] action for a nagging reminder
+     * at the next occurrence in the future according to its original schedule.
+     */
+    private fun scheduleNextNag(context: Context, reminder: Reminder) {
+        assert(reminder.isNagging)
+        val nextNagTime = calculateNextNagTime(reminder)
+        scheduleReminderAction(context, Date(nextNagTime), ReminderAction.Nag(reminder.id))
+    }
+
+    /**
+     * Calculate the next occurrence of a nagging reminder in the future based on its original due date.
+     */
+    private fun calculateNextNagTime(reminder: Reminder): Long {
+        assert(reminder.isNagging)
+        val d = reminder.naggingRepeatIntervalInMillis
+        val now = System.currentTimeMillis()
+        val sinceDue = now - reminder.date.time
+        val sinceLastNag = sinceDue % d
+        val untilNextNag = d - sinceLastNag
+        val nextNag = now + untilNextNag
+        return nextNag
     }
 
     /**
@@ -389,7 +409,8 @@ object ReminderManager {
     }
 
     /**
-     * Schedule all future reminders and show all due reminders.
+     * Schedule all future reminders and show all due, but not yet notified, reminders.
+     * Schedule also the next nag for due nagging reminders.
      * If some of the reminders are already scheduled, the new registration should replace the previous.
      *
      * @param context
@@ -398,12 +419,10 @@ object ReminderManager {
     fun scheduleAllReminders(context: Context) {
         val currentTime = System.currentTimeMillis()
         for (r in ReminderStorage.getReminders(context)) {
-            if (r.status === Status.SCHEDULED) {
-                if (r.date.time <= currentTime) {
-                    showReminder(context, r)
-                } else {
-                    scheduleReminder(context, r)
-                }
+            when (r.status) {
+                Status.SCHEDULED -> if (r.date.time <= currentTime) showReminder(context, r) else scheduleReminder(context, r)
+                Status.NOTIFIED -> if (r.isNagging) scheduleNextNag(context, r)
+                Status.DONE -> {}
             }
         }
     }
