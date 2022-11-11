@@ -11,6 +11,7 @@
 /.idea/modules.xml
 /.idea/runConfigurations.xml
 /.idea/workspace.xml
+/.idea/inspectionProfiles
 .DS_Store
 /app/release
 /build
