@@ -25,6 +25,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import felixwiemuth.simplereminder.data.Reminder
@@ -273,8 +274,9 @@ object ReminderManager {
      *
      * @param context
      * @param reminder
+     * @param silent whether the notification should be shown silently without any alert
      */
-    private fun sendNotification(context: Context, reminder: Reminder) {
+    private fun sendNotification(context: Context, reminder: Reminder, silent: Boolean = false) {
         val markDoneAction = ReminderAction.MarkDone(reminder.id)
         val markDoneIntent = markDoneAction.toPendingIntent(context)
         val editReminderIntent = EditReminderDialogActivity.getIntentEditReminder(context, reminder.id)
@@ -292,6 +294,9 @@ object ReminderManager {
             context,
             NOTIFICATION_CHANNEL_REMINDER
         )
+            .setWhen(reminder.date.time)
+            .setShowWhen(true)
+            .setSilent(silent)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setContentTitle(context.getString(R.string.notification_title))
             .setContentText(reminder.text)
@@ -412,16 +417,21 @@ object ReminderManager {
      * Schedule all future reminders and show all due, but not yet notified, reminders.
      * Schedule also the next nag for due nagging reminders.
      * If some of the reminders are already scheduled, the new registration should replace the previous.
+     * Due reminders are re-shown silently.
      *
      * @param context
      */
     @JvmStatic
-    fun scheduleAllReminders(context: Context) {
+    fun scheduleAndReshowAllReminders(context: Context) {
+        Log.d("SchedulingShowing", "Rescheduling all alarms and reshowing all notifications")
         val currentTime = System.currentTimeMillis()
         for (r in ReminderStorage.getReminders(context)) {
             when (r.status) {
                 Status.SCHEDULED -> if (r.date.time <= currentTime) showReminder(context, r) else scheduleReminder(context, r)
-                Status.NOTIFIED -> if (r.isNagging) scheduleNextNag(context, r)
+                Status.NOTIFIED -> {
+                    sendNotification(context, r, silent = true)
+                    if (r.isNagging) scheduleNextNag(context, r)
+                }
                 Status.DONE -> {}
             }
         }
