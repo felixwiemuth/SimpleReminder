@@ -20,6 +20,7 @@
     <release version="0.9.12" versioncode="912100" >
         <change>Already notified nagging reminders now keep nagging after reboot and missed occurrences are not all shown at once.</change>
         <change>After the app had been force-closed (for whichever reason), reminders now continue to be shown after having opened the app once.</change>
+        <change>After startup of the device, reminders are scheduled and shown already before logging in.</change>
     </release>
     <release version="0.9.11" versioncode="911100" >
         <change>Updated to Android 13</change>
