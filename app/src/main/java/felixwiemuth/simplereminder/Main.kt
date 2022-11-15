@@ -34,8 +34,9 @@ class Main : Application() {
         Prefs.getStoredRemindersListFormatVersion(this) // Initialize if not set
         createNotificationChannel(this)
 
-        // Reschedule reminders on app startup if this was not already done at device startup.
-        Prefs.checkRescheduleOnBoot(this)
+        // Reschedule reminders on app startup. This ensures that reminders are scheduled automatically after reboot
+        // (if this is enabled in settings) and when starting the app again after a force-close which cancels AlarmManager alarms.
+        ReminderManager.scheduleAllReminders(this)
     }
 
     override fun attachBaseContext(base: Context) {

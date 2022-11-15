@@ -17,13 +17,14 @@
 
 package felixwiemuth.simplereminder;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
@@ -33,10 +34,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Stores preferences and current status of the app.
@@ -145,20 +143,13 @@ public class Prefs {
     }
 
     /**
-     * Check whether reschedule on boot is activated. If yes, check whether the required permission is granted (if not, deactivate this option). If not, reschedule reminders.
-     *
+     * Sets the run-on-boot preference and enables/disables the boot receiver.
      * @param context
-     * @return if true, schedule on boot is not activated and it should be manually rescheduled at the start of the app
+     * @param value
      */
-    public static void checkRescheduleOnBoot(Context context) {
-        if (getBooleanPref(R.string.prefkey_run_on_boot, false, context)) {
-            if (ContextCompat.checkSelfPermission(context.getApplicationContext(), Manifest.permission.RECEIVE_BOOT_COMPLETED) != PackageManager.PERMISSION_GRANTED) {
-                PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_KEY_RUN_ON_BOOT, false).apply();
-                BootReceiver.setBootReceiverEnabled(context, false);
-            }
-        } else {
-            ReminderManager.scheduleAllReminders(context);
-        }
+    public static void setRunOnBoot(Context context, Boolean value) {
+        edit(context).putBoolean(Prefs.PREF_KEY_RUN_ON_BOOT, value).apply();
+        BootReceiver.setBootReceiverEnabled(context, value);
     }
 
     /**
@@ -169,12 +160,12 @@ public class Prefs {
      */
     public static void enableRunOnBoot(Context context, Activity activity) {
         // If the required permission is not granted yet, ask the user
-        if (ContextCompat.checkSelfPermission(context.getApplicationContext(), Manifest.permission.RECEIVE_BOOT_COMPLETED) != PackageManager.PERMISSION_GRANTED) {
+        if (!BootReceiver.isPermissionGranted(context.getApplicationContext())) {
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, PERMISSION_REQUEST_CODE_BOOT);
         }
         // If permission is now given, enable run on boot
-        if (ContextCompat.checkSelfPermission(context.getApplicationContext(), Manifest.permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_GRANTED) {
-            BootReceiver.setBootReceiverEnabled(context, true);
+        if (BootReceiver.isPermissionGranted(context.getApplicationContext())) {
+            setRunOnBoot(context, true);
             PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_KEY_RUN_ON_BOOT, true).apply();
         } else {
             Toast.makeText(context, R.string.toast_permission_not_granted, Toast.LENGTH_LONG).show();
@@ -183,6 +174,7 @@ public class Prefs {
 
     /**
      * Check the system settings on whether battery optimization is disabled for this app.
+     *
      * @param context
      * @return
      */
@@ -201,6 +193,15 @@ public class Prefs {
 
     public static int getNaggingRepeatInterval(Context context) {
         return Integer.parseInt(getStringPref(R.string.prefkey_nagging_repeat_interval, "1", context));
+    }
+
+    /**
+     * Get editor for default shared preferences.
+     *
+     * @return
+     */
+    private static SharedPreferences.Editor edit(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).edit();
     }
 
     /**

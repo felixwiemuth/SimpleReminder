@@ -113,7 +113,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
                     Prefs.enableRunOnBoot(context, activity)
                 } else {
                     // Disable run on boot
-                    BootReceiver.setBootReceiverEnabled(context, false)
+                    BootReceiver.setBootReceiverEnabled(requireContext(), false)
                 }
         }
     }
