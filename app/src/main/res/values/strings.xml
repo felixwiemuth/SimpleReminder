@@ -87,6 +87,14 @@
     <string name="preference_nagging_repeat_interval">Default repeat interval for nagging reminders</string>
     <string name="preference_nagging_repeat_interval_format_error">The repeat interval must be a positive number of minutes</string>
     <string name="preference_notification_channel_settings">Change notification settings</string>
+    <string name="preference_notification_time_display">Displayed time in notifications</string>
+    <string name="preference_category_notifications_display">Display original due time in notification (instead of time when notification is shown)</string>
+    <string name="preference_display_original_due_time_normal">First time</string>
+    <string name="preference_display_original_due_time_nag">Nag</string>
+    <string name="preference_display_original_due_time_recreate">Recreation</string>
+    <string name="preference_display_original_due_time_normal_descr">When a notification is shown for the first time (this will make a difference when a reminder is shown delayed, for example after startup of the device, or if the system for some reason delayed the reminder)</string>
+    <string name="preference_display_original_due_time_nag_descr">When a notification is shown again for a nagging reminder</string>
+    <string name="preference_display_original_due_time_recreate_descr">When a notification is reproduced after it has been removed by the system (because of device restart, force-stopping the app etc.)</string>
     <string name="preference_category_app">General</string>
     <string name="preference_run_on_boot">Activate on device startup</string>
     <string name="preference_run_on_boot_summary_off">After a restart of the device, reminders will not be shown until opening the app.</string>

@@ -195,6 +195,18 @@ public class Prefs {
         return Integer.parseInt(getStringPref(R.string.prefkey_nagging_repeat_interval, "1", context));
     }
 
+    public static boolean isDisplayOriginalDueTimeNormal(Context context) {
+        return getBooleanPref(R.string.prefkey_display_original_due_time_normal, false, context);
+    }
+
+    public static boolean isDisplayOriginalDueTimeNag(Context context) {
+        return getBooleanPref(R.string.prefkey_display_original_due_time_nag, false, context);
+    }
+
+    public static boolean isDisplayOriginalDueTimeRecreate(Context context) {
+        return getBooleanPref(R.string.prefkey_display_original_due_time_recreate, false, context);
+    }
+
     /**
      * Get editor for default shared preferences.
      *

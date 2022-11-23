@@ -125,7 +125,7 @@ object ReminderManager {
                 }
                 is Nag -> {
                     // Send the same notification again (replaces the previous)
-                    sendNotification(context, reminder)
+                    sendNotification(context, reminder, displayOriginalDueTime = Prefs.isDisplayOriginalDueTimeNag(context))
                     // Schedule next repetition. This calculates the next occurrence based on the original due date which makes it
                     // unnecessary to save it in the reminder action and in case the execution of this action is delayed more than
                     // one repeat interval, this prevents showing all missed occurrences in a row.
@@ -233,7 +233,7 @@ object ReminderManager {
      * @param reminder
      */
     private fun showReminder(context: Context, reminder: Reminder) {
-        sendNotification(context, reminder)
+        sendNotification(context, reminder, displayOriginalDueTime = Prefs.isDisplayOriginalDueTimeNormal(context))
         reminder.status = Status.NOTIFIED
         updateReminder(context, reminder, false)
         if (reminder.isNagging) {
@@ -276,7 +276,7 @@ object ReminderManager {
      * @param reminder
      * @param silent whether the notification should be shown silently without any alert
      */
-    private fun sendNotification(context: Context, reminder: Reminder, silent: Boolean = false) {
+    private fun sendNotification(context: Context, reminder: Reminder, displayOriginalDueTime: Boolean = false, silent: Boolean = false) {
         val markDoneAction = ReminderAction.MarkDone(reminder.id)
         val markDoneIntent = markDoneAction.toPendingIntent(context)
         val editReminderIntent = EditReminderDialogActivity.getIntentEditReminder(context, reminder.id)
@@ -293,9 +293,10 @@ object ReminderManager {
         val builder = NotificationCompat.Builder(
             context,
             NOTIFICATION_CHANNEL_REMINDER
-        )
-            .setWhen(reminder.date.time)
-            .setShowWhen(true)
+        ).also {
+            if (displayOriginalDueTime)
+                it.setWhen(reminder.date.time).setShowWhen(true)
+        }
             .setSilent(silent)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setContentTitle(context.getString(R.string.notification_title))
@@ -429,7 +430,7 @@ object ReminderManager {
             when (r.status) {
                 Status.SCHEDULED -> if (r.date.time <= currentTime) showReminder(context, r) else scheduleReminder(context, r)
                 Status.NOTIFIED -> {
-                    sendNotification(context, r, silent = true)
+                    sendNotification(context, r, silent = true, displayOriginalDueTime = Prefs.isDisplayOriginalDueTimeRecreate(context))
                     if (r.isNagging) scheduleNextNag(context, r)
                 }
                 Status.DONE -> {}

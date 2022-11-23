@@ -22,6 +22,7 @@
         <change>After the app had been force-closed (for whichever reason), reminders now continue to be shown after having opened the app once.</change>
         <change>After startup of the device, reminders are scheduled and shown already before logging in.</change>
         <change>On device startup and when starting the app, notifications for already shown due reminders are recreated silently.</change>
+        <change>New setting: Displayed time in notifications</change>
     </release>
     <release version="0.9.11" versioncode="911100" >
         <change>Updated to Android 13</change>
