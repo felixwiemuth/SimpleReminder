@@ -20,6 +20,9 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+# Keep all classes from this project
+-keep class felixwiemuth.simplereminder.** { *; }
+
 # ========== kotlinx.serialization, from https://github.com/Kotlin/kotlinx.serialization ==========
 
 # Keep `Companion` object fields of serializable classes.
