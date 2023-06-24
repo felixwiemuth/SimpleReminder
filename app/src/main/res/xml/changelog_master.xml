@@ -23,6 +23,7 @@
         <change>After startup of the device, reminders are scheduled and shown already before logging in.</change>
         <change>On device startup and when starting the app, notifications for already shown due reminders are recreated silently.</change>
         <change>New setting: Displayed time in notifications</change>
+        <change>Long-press on Quick Settings Tile now leads to remiders list</change>
     </release>
     <release version="0.9.11" versioncode="911100" >
         <change>Updated to Android 13</change>
