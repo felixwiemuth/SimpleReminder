@@ -18,12 +18,12 @@
 
 <changelog>
     <release version="0.9.12" versioncode="912100" >
-        <change>Already notified nagging reminders now keep nagging after reboot and missed occurrences are not all shown at once.</change>
-        <change>After the app had been force-closed (for whichever reason), reminders now continue to be shown after having opened the app once.</change>
-        <change>After startup of the device, reminders are scheduled and shown already before logging in.</change>
-        <change>On device startup and when starting the app, notifications for already shown due reminders are recreated silently.</change>
         <change>New setting: Displayed time in notifications</change>
-        <change>Long-press on Quick Settings Tile now leads to remiders list</change>
+        <change>Long-press on Quick Settings Tile now leads to reminders list</change>
+        <change>On device startup and when starting the app, notifications for already shown due reminders are recreated silently.</change>
+        <change>Already notified nagging reminders now keep nagging after reboot and missed occurrences are not all shown at once.</change>
+        <change>After startup of the device, reminders are scheduled and shown already before logging in.</change>
+        <change>After the app had been force-closed (for whichever reason), reminders now continue to be shown after having opened the app once.</change>
     </release>
     <release version="0.9.11" versioncode="911100" >
         <change>Updated to Android 13</change>
