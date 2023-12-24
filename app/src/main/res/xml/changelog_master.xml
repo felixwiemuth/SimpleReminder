@@ -18,11 +18,11 @@
 
 <changelog>
     <release version="0.9.12" versioncode="912100" >
-        <change>New setting: Displayed time in notifications</change>
+        <change>New setting: Which time to display in notifications</change>
         <change>Long-press on Quick Settings Tile now leads to reminders list</change>
         <change>On device startup and when starting the app, notifications for already shown due reminders are recreated silently.</change>
-        <change>Already notified nagging reminders now keep nagging after reboot and missed occurrences are not all shown at once.</change>
-        <change>After startup of the device, reminders are scheduled and shown already before logging in.</change>
+        <change>Already notified nagging reminders now keep nagging after reboot and missed occurrences are skipped (instead of being shown all at once).</change>
+        <change>After startup of the device, reminders are loaded and scheduled already before logging in (can be useful as it otherwise can take several minutes before reminders are shown). Might not be available on all devices.</change>
         <change>After the app had been force-closed (for whichever reason), reminders now continue to be shown after having opened the app once.</change>
     </release>
     <release version="0.9.11" versioncode="911100" >
