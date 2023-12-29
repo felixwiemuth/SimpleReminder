@@ -82,7 +82,7 @@ For a list of contributors, see [CONTRIBUTORS.md](CONTRIBUTORS.md).
 
 ## License ##
 
-Copyright (C) 2018-2022 Felix Wiemuth and [contributors](CONTRIBUTORS.md)
+Copyright (C) 2018-2023 Felix Wiemuth and [contributors](CONTRIBUTORS.md)
 
 
     This program is free software: you can redistribute it and/or modify

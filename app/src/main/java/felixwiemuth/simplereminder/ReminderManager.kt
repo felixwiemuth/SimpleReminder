@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2023 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import felixwiemuth.simplereminder.data.Reminder
+import felixwiemuth.simplereminder.data.Reminder.Status
 import felixwiemuth.simplereminder.ui.EditReminderDialogActivity
 import felixwiemuth.simplereminder.util.AlarmManagerUtil
 import kotlinx.serialization.Serializable
@@ -74,7 +76,7 @@ object ReminderManager {
         abstract val reminderId: Int
 
         /**
-         * Show the reminder and set its status to [Reminder.Status.NOTIFIED]. Should be used on due reminders.
+         * Show the reminder and set its status to [Status.NOTIFIED]. Should be used on due reminders.
          * Schedules the next nag event if the reminder is nagging.
          */
         @Serializable
@@ -92,10 +94,10 @@ object ReminderManager {
          * [Reminder.naggingRepeatInterval].
          */
         @Serializable
-        class Nag(override val reminderId: Int, val nextNagTime: Long) : ReminderAction()
+        class Nag(override val reminderId: Int) : ReminderAction()
 
         /**
-         * Mark the reminder done (set its status to [Reminder.Status.DONE] and cancel any current
+         * Mark the reminder done (set its status to [Status.DONE] and cancel any current
          * notifications or scheduled actions).
          */
         @Serializable
@@ -123,14 +125,16 @@ object ReminderManager {
                 }
                 is Nag -> {
                     // Send the same notification again (replaces the previous)
-                    sendNotification(context, reminder)
-                    // Schedule next repetition
-                    scheduleNextNag(context, reminder, nextNagTime)
+                    sendNotification(context, reminder, displayOriginalDueTime = Prefs.isDisplayOriginalDueTimeNag(context))
+                    // Schedule next repetition. This calculates the next occurrence based on the original due date which makes it
+                    // unnecessary to save it in the reminder action and in case the execution of this action is delayed more than
+                    // one repeat interval, this prevents showing all missed occurrences in a row.
+                    scheduleNextNag(context, reminder)
                 }
                 is MarkDone -> {
                     // Cancel possible further alarms (nagging reminders)
                     cancelReminder(context, reminder.id)
-                    reminder.status = Reminder.Status.DONE
+                    reminder.status = Status.DONE
                     updateReminder(context, reminder, false)
                 }
             }
@@ -229,22 +233,40 @@ object ReminderManager {
      * @param reminder
      */
     private fun showReminder(context: Context, reminder: Reminder) {
-        sendNotification(context, reminder)
-        reminder.status = Reminder.Status.NOTIFIED
+        sendNotification(context, reminder, displayOriginalDueTime = Prefs.isDisplayOriginalDueTimeNormal(context))
+        reminder.status = Status.NOTIFIED
         updateReminder(context, reminder, false)
         if (reminder.isNagging) {
-            scheduleNextNag(
-                context,
-                reminder,
-                reminder.date.time + reminder.naggingRepeatIntervalInMillis
-            )
+            scheduleNextNag(context, reminder)
         }
     }
 
-    private fun scheduleNextNag(context: Context, reminder: Reminder, nextNagTime: Long) {
-        val nextNextNagTime = nextNagTime + reminder.naggingRepeatIntervalInMillis
-        val action = ReminderAction.Nag(reminder.id, nextNextNagTime)
-        AlarmManagerUtil.scheduleExact(context, Date(nextNagTime), action.toPendingIntent(context))
+    private fun scheduleReminderAction(context: Context, date: Date, action: ReminderAction) {
+        AlarmManagerUtil.scheduleExact(context, date, action.toPendingIntent(context))
+    }
+
+    /**
+     * Schedule the next [ReminderAction.Nag] action for a nagging reminder
+     * at the next occurrence in the future according to its original schedule.
+     */
+    private fun scheduleNextNag(context: Context, reminder: Reminder) {
+        assert(reminder.isNagging)
+        val nextNagTime = calculateNextNagTime(reminder)
+        scheduleReminderAction(context, Date(nextNagTime), ReminderAction.Nag(reminder.id))
+    }
+
+    /**
+     * Calculate the next occurrence of a nagging reminder in the future based on its original due date.
+     */
+    private fun calculateNextNagTime(reminder: Reminder): Long {
+        assert(reminder.isNagging)
+        val d = reminder.naggingRepeatIntervalInMillis
+        val now = System.currentTimeMillis()
+        val sinceDue = now - reminder.date.time
+        val sinceLastNag = sinceDue % d
+        val untilNextNag = d - sinceLastNag
+        val nextNag = now + untilNextNag
+        return nextNag
     }
 
     /**
@@ -252,8 +274,9 @@ object ReminderManager {
      *
      * @param context
      * @param reminder
+     * @param silent whether the notification should be shown silently without any alert
      */
-    private fun sendNotification(context: Context, reminder: Reminder) {
+    private fun sendNotification(context: Context, reminder: Reminder, displayOriginalDueTime: Boolean = false, silent: Boolean = false) {
         val markDoneAction = ReminderAction.MarkDone(reminder.id)
         val markDoneIntent = markDoneAction.toPendingIntent(context)
         val editReminderIntent = EditReminderDialogActivity.getIntentEditReminder(context, reminder.id)
@@ -270,7 +293,11 @@ object ReminderManager {
         val builder = NotificationCompat.Builder(
             context,
             NOTIFICATION_CHANNEL_REMINDER
-        )
+        ).also {
+            if (displayOriginalDueTime)
+                it.setWhen(reminder.date.time).setShowWhen(true)
+        }
+            .setSilent(silent)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
             .setContentTitle(context.getString(R.string.notification_title))
             .setContentText(reminder.text)
@@ -329,7 +356,7 @@ object ReminderManager {
      *
      * @param context
      * @param reminder
-     * @param reschedule if true, checks whether the reminder should be rescheduled: If the given reminder's status is not [Reminder.Status.SCHEDULED] or its time is not in the future, a possible scheduled notification is cancelled. If the status is [Reminder.Status.SCHEDULED] and its time is in the future, a notification is scheduled.
+     * @param reschedule if true, checks whether the reminder should be rescheduled: If the given reminder's status is not [Status.SCHEDULED] or its time is not in the future, a possible scheduled notification is cancelled. If the status is [Status.SCHEDULED] and its time is in the future, a notification is scheduled.
      */
     @JvmStatic
     fun updateReminder(context: Context, reminder: Reminder, reschedule: Boolean) {
@@ -344,7 +371,7 @@ object ReminderManager {
      *
      * @param context
      * @param reminders
-     * @param reschedule if true, checks whether the reminders should be rescheduled: If the given reminder's status is not [Reminder.Status.SCHEDULED] or its time is not in the future, a possible scheduled notification is cancelled. If the status is [Reminder.Status.SCHEDULED] and its time is in the future, a notification is scheduled.
+     * @param reschedule if true, checks whether the reminders should be rescheduled: If the given reminder's status is not [Status.SCHEDULED] or its time is not in the future, a possible scheduled notification is cancelled. If the status is [Status.SCHEDULED] and its time is in the future, a notification is scheduled.
      */
     fun updateReminders(context: Context, reminders: Iterable<Reminder>, reschedule: Boolean) {
         ReminderStorage.updateReminders(context, reminders)
@@ -359,7 +386,7 @@ object ReminderManager {
      * @param context
      * @param transformation
      * @param ids
-     * @param reschedule if true, checks whether the reminders should be rescheduled: If the given reminder's status is not [Reminder.Status.SCHEDULED] or its time is not in the future, a possible scheduled notification is cancelled. If the status is [Reminder.Status.SCHEDULED] and its time is in the future, a notification is scheduled.
+     * @param reschedule if true, checks whether the reminders should be rescheduled: If the given reminder's status is not [Status.SCHEDULED] or its time is not in the future, a possible scheduled notification is cancelled. If the status is [Status.SCHEDULED] and its time is in the future, a notification is scheduled.
      */
     fun updateReminders(
         context: Context,
@@ -374,7 +401,7 @@ object ReminderManager {
     }
 
     /**
-     * Cancel potential existing scheduling and notification for the given reminder and reschedule it if its status is [Reminder.Status.SCHEDULED] and its time is in the future.
+     * Cancel potential existing scheduling and notification for the given reminder and reschedule it if its status is [Status.SCHEDULED] and its time is in the future.
      *
      * @param context
      * @param reminder
@@ -382,27 +409,31 @@ object ReminderManager {
     private fun rescheduleReminder(context: Context, reminder: Reminder) {
         cancelReminder(context, reminder.id)
         val isFuture = reminder.date.time > System.currentTimeMillis()
-        if (reminder.status === Reminder.Status.SCHEDULED && isFuture) {
+        if (reminder.status === Status.SCHEDULED && isFuture) {
             scheduleReminder(context, reminder)
         }
     }
 
     /**
-     * Schedule all future reminders and show all due reminders.
+     * Schedule all future reminders and show all due, but not yet notified, reminders.
+     * Schedule also the next nag for due nagging reminders.
      * If some of the reminders are already scheduled, the new registration should replace the previous.
+     * Due reminders are re-shown silently.
      *
      * @param context
      */
     @JvmStatic
-    fun scheduleAllReminders(context: Context) {
+    fun scheduleAndReshowAllReminders(context: Context) {
+        Log.d("SchedulingShowing", "Rescheduling all alarms and reshowing all notifications")
         val currentTime = System.currentTimeMillis()
         for (r in ReminderStorage.getReminders(context)) {
-            if (r.status === Reminder.Status.SCHEDULED) {
-                if (r.date.time <= currentTime) {
-                    showReminder(context, r)
-                } else {
-                    scheduleReminder(context, r)
+            when (r.status) {
+                Status.SCHEDULED -> if (r.date.time <= currentTime) showReminder(context, r) else scheduleReminder(context, r)
+                Status.NOTIFIED -> {
+                    sendNotification(context, r, silent = true, displayOriginalDueTime = Prefs.isDisplayOriginalDueTimeRecreate(context))
+                    if (r.isNagging) scheduleNextNag(context, r)
                 }
+                Status.DONE -> {}
             }
         }
     }

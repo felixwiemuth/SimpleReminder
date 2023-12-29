@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2023 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
                     Prefs.enableRunOnBoot(context, activity)
                 } else {
                     // Disable run on boot
-                    BootReceiver.setBootReceiverEnabled(context, false)
+                    BootReceiver.setBootReceiverEnabled(requireContext(), false)
                 }
         }
     }

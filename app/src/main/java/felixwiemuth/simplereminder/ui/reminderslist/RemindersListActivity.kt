@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2023 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,10 +36,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import de.cketti.library.changelog.ChangeLog
-import felixwiemuth.simplereminder.BuildConfig
-import felixwiemuth.simplereminder.Main
-import felixwiemuth.simplereminder.Prefs
-import felixwiemuth.simplereminder.R
+import felixwiemuth.simplereminder.*
 import felixwiemuth.simplereminder.ui.AddReminderDialogActivity
 import felixwiemuth.simplereminder.ui.SettingsActivity
 import felixwiemuth.simplereminder.ui.actions.DisplayChangeLog
@@ -168,26 +165,34 @@ class RemindersListActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Checks whether run on boot setting is enabled. If not, asks to enable it.
+     * If yes, checks whether permission is granted and warns and disables setting if this is not the case.
+     */
     private fun checkRunOnBoot() {
-        if (Prefs.isRunOnBoot(this) || Prefs.isRunOnBootDontShowAgain(this)) {
-            return
+        if (Prefs.isRunOnBoot(this)) {
+            if (!BootReceiver.isPermissionGranted(applicationContext)) {
+                Prefs.setRunOnBoot(this, false)
+                Toast.makeText(this, R.string.toast_run_on_boot_revoked_therefore_disabled, Toast.LENGTH_LONG).show()
+            }
+        } else {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_startup_run_on_boot_title)
+                .setMessage(R.string.dialog_startup_run_on_boot_message)
+                .setPositiveButton(R.string.dialog_startup_run_on_boot_enable) { _: DialogInterface?, _: Int ->
+                    Prefs.enableRunOnBoot(
+                        this,
+                        this
+                    )
+                }
+                .setNeutralButton(R.string.dialog_startup_later, null)
+                .setNegativeButton(R.string.dialog_startup_dont_show_again) { _: DialogInterface?, _: Int ->
+                    Prefs.setRunOnBootDontShowAgain(
+                        this
+                    )
+                }
+                .show()
         }
-        AlertDialog.Builder(this)
-            .setTitle(R.string.dialog_startup_run_on_boot_title)
-            .setMessage(R.string.dialog_startup_run_on_boot_message)
-            .setPositiveButton(R.string.dialog_startup_run_on_boot_enable) { _: DialogInterface?, _: Int ->
-                Prefs.enableRunOnBoot(
-                    this,
-                    this
-                )
-            }
-            .setNeutralButton(R.string.dialog_startup_later, null)
-            .setNegativeButton(R.string.dialog_startup_dont_show_again) { _: DialogInterface?, _: Int ->
-                Prefs.setRunOnBootDontShowAgain(
-                    this
-                )
-            }
-            .show()
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

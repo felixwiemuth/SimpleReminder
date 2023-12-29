@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+  ~ Copyright (C) 2018-2023 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
     <string name="app_name" translatable="false">SimpleReminder</string>
     <string name="dialog_welcome_title">Welcome</string>
     <string name="welcome_message">Welcome to SimpleReminder! This is an early version and your feedback is needed (see \"About\").\n\nPlease test whether reminders work reliably on your device and report it if not.\n\nSimpleReminder is free software (licensed under the GNU General Public License) and comes without any warranty.</string>
-    <string name="welcome_message_update">Welcome to an updated version of SimpleReminder!\n\nThe app has been updated to newer Android versions. Please test whether reminders work reliably on your device and report it if not.\n\nThe app is continually being developed and your feedback is needed - see \"About\" for more information.</string>
+    <string name="welcome_message_update">Welcome to an updated version of SimpleReminder!\n\nPlease test whether reminders work reliably on your device and report it if not.\n\nThe app is continually being developed and your feedback is needed - see \"About\" for more information.</string>
     <string name="toast_info_add_reminder_dialog">Tip: There is a launcher icon to reach this dialog!</string>
     <string name="dialog_startup_later">Later</string>
     <string name="dialog_startup_dont_show_again">Don\'t show again</string>
@@ -87,6 +87,14 @@
     <string name="preference_nagging_repeat_interval">Default repeat interval for nagging reminders</string>
     <string name="preference_nagging_repeat_interval_format_error">The repeat interval must be a positive number of minutes</string>
     <string name="preference_notification_channel_settings">Change notification settings</string>
+    <string name="preference_notification_time_display">Displayed time in notifications</string>
+    <string name="preference_category_notifications_display">Display original due time in notification (instead of time when notification is shown)</string>
+    <string name="preference_display_original_due_time_normal">First time</string>
+    <string name="preference_display_original_due_time_nag">Nag</string>
+    <string name="preference_display_original_due_time_recreate">Recreation</string>
+    <string name="preference_display_original_due_time_normal_descr">When a notification is shown for the first time (this will make a difference when a reminder is shown delayed, for example after startup of the device, or if the system for some reason delayed the reminder)</string>
+    <string name="preference_display_original_due_time_nag_descr">When a notification is shown again for a nagging reminder</string>
+    <string name="preference_display_original_due_time_recreate_descr">When a notification is reproduced after it has been removed by the system (because of device restart, force-stopping the app etc.)</string>
     <string name="preference_category_app">General</string>
     <string name="preference_run_on_boot">Activate on device startup</string>
     <string name="preference_run_on_boot_summary_off">After a restart of the device, reminders will not be shown until opening the app.</string>
@@ -95,6 +103,7 @@
     <string name="preference_disable_battery_optimization_summary_yes">OK. Battery optimization is disabled for SimpleReminder, reminders will be shown on time. Click to open settings.</string>
     <string name="preference_disable_battery_optimization_summary_no">NOTE: Battery optimization is enabled - reminders might not be shown after the device was idle for too long. Click to disable for SimpleReminder.</string>
     <string name="toast_permission_not_granted">Permission not granted.</string>
+    <string name="toast_run_on_boot_revoked_therefore_disabled">Permission to run on device startup has been revoked, the setting has been disabled.</string>
     <string name="priority_min">Min</string>
     <string name="priority_low">Low</string>
     <string name="priority_default">Middle</string>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2023 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,12 @@ class Main : Application() {
         Prefs.getStoredRemindersListFormatVersion(this) // Initialize if not set
         createNotificationChannel(this)
 
-        // Reschedule reminders on app startup if this was not already done at device startup.
-        Prefs.checkRescheduleOnBoot(this)
+        // Reschedule reminders and show due reminders on app startup. This ensures that reminders are scheduled and re-shown
+        // automatically after reboot (if this is enabled in settings) and when starting the app again after a force-close which cancels
+        // AlarmManager alarms and notifications.
+        // This might also be called in situations where it is not necessary, for example after the system or user killed the app process
+        // without cancelling notifications and alarms. However, there is no handy way of detecting whether this is the case.
+        ReminderManager.scheduleAndReshowAllReminders(this)
     }
 
     override fun attachBaseContext(base: Context) {

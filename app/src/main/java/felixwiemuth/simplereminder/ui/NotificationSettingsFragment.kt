@@ -15,27 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package felixwiemuth.simplereminder.util;
+package felixwiemuth.simplereminder.ui
 
-/**
- * Indicates that the application is in a state which is illegal according to its design. This is
- * probably caused by an implementation error.
- *
- * @author Felix Wiemuth
- */
-public class ImplementationError extends RuntimeException {
-    public ImplementationError() {
-    }
+import android.os.Bundle
+import androidx.preference.PreferenceFragmentCompat
+import felixwiemuth.simplereminder.R
 
-    public ImplementationError(String message) {
-        super(message);
-    }
-
-    public ImplementationError(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ImplementationError(Throwable cause) {
-        super(cause);
+class NotificationSettingsFragment : PreferenceFragmentCompat() {
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.preferences_notifications, rootKey)
     }
 }
