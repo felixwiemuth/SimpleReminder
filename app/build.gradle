@@ -48,7 +48,7 @@ android {
         // Version variables
         def versionCodeMajor = 0
         def versionCodeMinor = 9
-        def versionCodePoint = 12
+        def versionCodePoint = 13
 
         // Sub version for release channel (only used on some release channels)
         def versionCodeSub = 0
