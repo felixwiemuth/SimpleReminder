@@ -105,7 +105,10 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         super.onPause()
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        if (sharedPreferences == null || key == null) {
+            return
+        }
         when (key) {
             Prefs.PREF_KEY_RUN_ON_BOOT ->
                 if (sharedPreferences.getBoolean(key, false)) {
