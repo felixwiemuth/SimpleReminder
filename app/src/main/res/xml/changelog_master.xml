@@ -17,6 +17,11 @@
   -->
 
 <changelog>
+    <release version="0.9.13" versioncode="913100" >
+        <change>New setting: Customize sizes of elements in the "Add reminder" dialog (see Settings -> User Interface)</change>
+        <change>The "Add reminder" dialog now also exits completely on Android 12+ when navigating back (as on previous Android versions)</change>
+        <change>Donations: support the development of SimpleReminder!</change>
+    </release>
     <release version="0.9.12" versioncode="912100" >
         <change>New setting: Which time to display in notifications</change>
         <change>Long-press on Quick Settings Tile now leads to reminders list</change>
