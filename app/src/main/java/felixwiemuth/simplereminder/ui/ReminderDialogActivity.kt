@@ -39,6 +39,7 @@ import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -87,6 +88,11 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reminder_dialog)
+
+        // Note: This adds a warning in logcat "OnBackInvokedCallback is not enabled for the application",
+        // but this is about predictive back navigation, and the callback works.
+        onBackPressedDispatcher.addCallback { completeActivity() }
+
         nameTextView = findViewById(R.id.nameTextView)
         addButton = findViewById(R.id.addButton)
         dateMinusButton = findViewById(R.id.dateMinusButton)
@@ -400,7 +406,7 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
     }
 
     /**
-     * Finish the activity with, removing the task on Lollipop and above.
+     * Finish the activity with RESULT_OK, removing the task on Lollipop and above.
      */
     protected fun completeActivity() {
         setResult(RESULT_OK)
