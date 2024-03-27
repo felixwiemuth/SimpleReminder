@@ -18,18 +18,24 @@ package felixwiemuth.simplereminder.ui
 
 import android.app.DatePickerDialog
 import android.content.DialogInterface
+import android.content.res.Resources
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
+import android.util.TypedValue
 import android.view.KeyEvent
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.DatePicker
+import android.widget.LinearLayout
 import android.widget.NumberPicker
+import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
@@ -62,6 +68,7 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
      * date is in the future (except initially, before changing time or date).
      */
     private lateinit var selectedDate: Calendar
+
     @JvmField
     protected var naggingRepeatInterval = 0
 
@@ -106,7 +113,16 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
             showChooseNaggingRepeatIntervalDialog()
             true
         }
+
         timePicker = findViewById(R.id.timePicker)
+
+        if (!Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_show_keyboard_button, true, this)
+            || Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_customize_size, true, this)
+        ) {
+            adaptTimePickerLayout()
+        }
+
+
         nameTextView.imeOptions = EditorInfo.IME_ACTION_DONE
         nameTextView.setImeActionLabel(getString(R.string.keyboard_action_add_reminder), EditorInfo.IME_ACTION_DONE)
         nameTextView.requestFocus()
@@ -393,5 +409,99 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
         } else {
             finish() // This will leave the task under recent tasks, but it seems that one needs a workaround to prevent this: https://stackoverflow.com/questions/22166282/close-application-and-remove-from-recent-apps
         }
+    }
+
+    /**
+     * Adapt the time picker layout according to user's set preferences.
+     */
+    private fun adaptTimePickerLayout() {
+        // Removing the whole layout with the toggle button
+        //noinspection DiscouragedApi (have to access the internal system resources by name)
+        timePicker.findViewById<View>(Resources.getSystem().getIdentifier("toggle_mode", "id", "android"))
+            ?.let { toggleButton ->
+                toggleButton.parent as? ViewGroup
+            }
+            ?.let { toggleButtonLayout ->
+                (toggleButtonLayout.parent as? ViewGroup)
+                    ?.let { timePickerRootLayout ->
+                        if (!Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_show_keyboard_button, true, this)) {
+                            // Remove all views related to the toggle button
+
+                            timePickerRootLayout.removeView(toggleButtonLayout)
+
+                            timePickerRootLayout.removeView(
+                                timePickerRootLayout.findViewById(
+                                    Resources.getSystem().getIdentifier("input_header", "id", "android")
+                                )
+                            )
+
+                            timePickerRootLayout.removeView(
+                                timePickerRootLayout.findViewById(
+                                    Resources.getSystem().getIdentifier("input_mode", "id", "android")
+                                )
+                            )
+                        }
+
+                        if (Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_customize_size, false, this)) {
+                            // Changing the height of the time display by changing the font size
+                            timePickerRootLayout.findViewById<View>(
+                                Resources.getSystem().getIdentifier("time_header", "id", "android")
+                            )?.let { timeHeader ->
+                                // Adapting the size of all text in the time header (also the AM/PM labels in 12-hour mode).
+                                // Note that the numbers also serve as buttons to switch between hour and minute selection.
+
+                                // In default resource: 60dp
+                                val timeHeaderTextSize = TypedValue.applyDimension(
+                                    TypedValue.COMPLEX_UNIT_DIP,
+                                    Prefs.getReminderDialogTimePickerTextSize(this).toFloat(),
+                                    resources.displayMetrics
+                                )
+
+                                // In default resource: 16dp (smaller than [timeHeaderTextSize] by a factor of 3.75)
+                                val textSizeAmPmLabel = TypedValue.applyDimension(
+                                    TypedValue.COMPLEX_UNIT_DIP,
+                                    Prefs.getReminderDialogTimePickerTextSize(this).toFloat() / 3.75f,
+                                    resources.displayMetrics
+                                )
+
+                                timeHeader.findViewById<TextView>(Resources.getSystem().getIdentifier("hours", "id", "android"))
+                                    ?.let { it.textSize = timeHeaderTextSize }
+                                timeHeader.findViewById<TextView>(Resources.getSystem().getIdentifier("minutes", "id", "android"))
+                                    ?.let { it.textSize = timeHeaderTextSize }
+                                timeHeader.findViewById<TextView>(Resources.getSystem().getIdentifier("separator", "id", "android"))
+                                    ?.let { it.textSize = timeHeaderTextSize }
+                                timeHeader.findViewById<RadioButton>(Resources.getSystem().getIdentifier("am_label", "id", "android"))
+                                    ?.let { it.textSize = textSizeAmPmLabel }
+                                timeHeader.findViewById<RadioButton>(Resources.getSystem().getIdentifier("pm_label", "id", "android"))
+                                    ?.let { it.textSize = textSizeAmPmLabel }
+
+                                // Making the height adapt to the changed font size (however, MATCH_PARENT also seems to work)
+                                // Note: This expects a LinearLayout.LayoutParams despite the parameter type
+                                timeHeader.layoutParams = LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                                )
+
+                                val layoutParams = timeHeader.layoutParams as LinearLayout.LayoutParams
+                                layoutParams.bottomMargin = 16 // 16dp is used both as bottom of time header layout and top of time picker, but 16 in total is more symmetric
+                            }
+
+                            // Changing the height of the TimePicker
+                            timePickerRootLayout.findViewById<View>(
+                                Resources.getSystem().getIdentifier("radial_picker", "id", "android")
+                            )?.let { radialTimePicker ->
+                                // Note: This expects a LinearLayout.LayoutParams despite the parameter type
+                                radialTimePicker.layoutParams = LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    TypedValue.applyDimension(
+                                        TypedValue.COMPLEX_UNIT_DIP,
+                                        Prefs.getReminderDialogTimePickerHeight(this).toFloat(),
+                                        resources.displayMetrics
+                                    ).toInt()
+                                )
+                            }
+                        }
+                    }
+            }
     }
 }

@@ -61,13 +61,21 @@
             android:defaultValue="1"
             android:key="@string/prefkey_nagging_repeat_interval"
             android:title="@string/preference_nagging_repeat_interval"
-            app:iconSpaceReserved="false"
-            />
+            app:iconSpaceReserved="false" />
         <Preference
-            app:fragment="felixwiemuth.simplereminder.ui.NotificationSettingsFragment"
             android:title="@string/preference_notification_time_display"
-            app:iconSpaceReserved="false"
-            />
+            app:fragment="felixwiemuth.simplereminder.ui.NotificationSettingsFragment"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="@string/preference_category_ui"
+        app:iconSpaceReserved="false">
+        <Preference
+            android:title="@string/preference_category_reminder_dialog"
+            app:fragment="felixwiemuth.simplereminder.ui.UISettingsFragment"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
     <PreferenceCategory

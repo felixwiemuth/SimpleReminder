@@ -195,6 +195,14 @@ public class Prefs {
         return Integer.parseInt(getStringPref(R.string.prefkey_nagging_repeat_interval, "1", context));
     }
 
+    public static int getReminderDialogTimePickerTextSize(Context context) {
+        return Integer.parseInt(getStringPref(R.string.prefkey_reminder_dialog_timepicker_text_size, "12", context));
+    }
+
+    public static int getReminderDialogTimePickerHeight(Context context) {
+        return Integer.parseInt(getStringPref(R.string.prefkey_reminder_dialog_timepicker_height, "175", context));
+    }
+
     public static boolean isDisplayOriginalDueTimeNormal(Context context) {
         return getBooleanPref(R.string.prefkey_display_original_due_time_normal, false, context);
     }

@@ -25,6 +25,12 @@
     <string name="prefkey_display_original_due_time_normal">display_original_due_time_normal</string>
     <string name="prefkey_display_original_due_time_nag">display_original_due_time_nag</string>
     <string name="prefkey_display_original_due_time_recreate">display_original_due_time_recreate</string>
+    <string name="prefkey_ui">ui</string>
+    <string name="prefkey_reminder_dialog_timepicker_text_size">ui_time_picker_text_size</string>
+    <string name="prefkey_reminder_dialog_timepicker_height">ui_time_picker_width</string>
+    <string name="prefkey_reminder_dialog_timepicker_show_keyboard_button">reminder_dialog_time_picker_show_keyboard_button</string>
+    <string name="prefkey_reminder_dialog_timepicker_customize_size">reminder_dialog_time_picker_customize_size</string>
+    <string name="prefkey_reminder_dialog_show">reminder_dialog_show</string>
     <string name="prefkey_priority">notification_priority</string>
     <string name="prefkey_enable_sound">notification_enable_sound</string>
     <string name="prefkey_nagging_repeat_interval">nagging_repeat_interval</string>
