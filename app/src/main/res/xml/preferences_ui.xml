@@ -21,6 +21,15 @@
         android:key="@string/prefkey_ui"
         android:title="@string/preference_category_reminder_dialog"
         app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="@string/prefkey_reminder_dialog_close_keyboard_on_timepicker_use"
+            android:title="@string/preference_reminder_dialog_close_keyboard_on_timepicker_use"
+            android:summary="@string/preference_reminder_dialog_close_keyboard_on_timepicker_use_descr"
+            app:singleLineTitle="false"
+            app:iconSpaceReserved="false" />
+
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="@string/prefkey_reminder_dialog_timepicker_show_keyboard_button"

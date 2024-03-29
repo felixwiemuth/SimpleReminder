@@ -16,6 +16,7 @@
  */
 package felixwiemuth.simplereminder.ui
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.DialogInterface
 import android.content.res.Resources
@@ -30,6 +31,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.DatePicker
@@ -44,6 +46,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.view.children
 import felixwiemuth.simplereminder.Prefs
 import felixwiemuth.simplereminder.R
 import felixwiemuth.simplereminder.data.Reminder
@@ -55,6 +58,9 @@ import java.util.Calendar
  * Base class for the reminder dialog activity which is used to add and edit reminders.
  */
 abstract class ReminderDialogActivity : AppCompatActivity() {
+    private val inputMethodManager by lazy {
+        getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    }
     protected lateinit var nameTextView: AutoCompleteTextView
     protected lateinit var naggingSwitch: SwitchCompat
     private lateinit var addButton: Button
@@ -142,15 +148,33 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
         }
         selectedDate = Calendar.getInstance() // Initialize calendar variable
         setSelectedDateTimeAndSelectionMode(Calendar.getInstance())
-        timePicker.setIs24HourView(true)
-        timePicker.setOnTimeChangedListener { _: TimePicker?, hourOfDay: Int, minute: Int ->
-            if (dateSelectionMode == DateSelectionMode.NEXT24) {
-                selectedDate = getTimeWithinNext24Hours(hourOfDay, minute)
-            } else {
-                selectedDate.set(Calendar.HOUR_OF_DAY, hourOfDay)
-                selectedDate.set(Calendar.MINUTE, minute)
+
+        with(timePicker) {
+            setIs24HourView(true)
+            setOnTimeChangedListener { _: TimePicker?, hourOfDay: Int, minute: Int ->
+                if (dateSelectionMode == DateSelectionMode.NEXT24) {
+                    selectedDate = getTimeWithinNext24Hours(hourOfDay, minute)
+                } else {
+                    selectedDate.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                    selectedDate.set(Calendar.MINUTE, minute)
+                }
+                renderSelectedDate()
             }
-            renderSelectedDate()
+            if (Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_close_keyboard_on_timepicker_use, false, this@ReminderDialogActivity)) {
+                // Close the keyboard and remove focus from the TextView when touching any view in the TimePicker
+                fun addKbCloseOnTouch(view: View) {
+                    // noinspection ClickableViewAccessibility
+                    view.setOnTouchListener { _, _ ->
+                        inputMethodManager.hideSoftInputFromWindow(this.windowToken, 0)
+                        nameTextView.clearFocus()
+                        false
+                    }
+                    if (view is ViewGroup) {
+                        view.children.forEach { addKbCloseOnTouch(it) }
+                    }
+                }
+                addKbCloseOnTouch(this)
+            }
         }
         addButton.setOnClickListener { onDone() }
         naggingRepeatInterval = Prefs.getNaggingRepeatInterval(this)

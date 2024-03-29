@@ -97,6 +97,8 @@
     <string name="preference_display_original_due_time_nag_descr">When a notification is shown again for a nagging reminder</string>
     <string name="preference_display_original_due_time_recreate_descr">When a notification is reproduced after it has been removed by the system (because of device restart, force-stopping the app etc.)</string>
     <string name="preference_category_reminder_dialog">Reminder dialog settings</string>
+    <string name="preference_reminder_dialog_close_keyboard_on_timepicker_use">Close keyboard when using clock</string>
+    <string name="preference_reminder_dialog_close_keyboard_on_timepicker_use_descr">When touching the time picker clock, close the keyboard automatically.</string>
     <string name="preference_reminder_dialog_timepicker_show_keyboard_button">Keyboard button</string>
     <string name="preference_reminder_dialog_timepicker_show_keyboard_button_descr">Allows to switch between clock and text input for selecting time. Soon it will be possible to type the time directly in the description field.</string>
     <string name="preference_reminder_dialog_timepicker_customize_size">Apply custom sizes set below</string>
