@@ -84,7 +84,7 @@ For a list of contributors, see [CONTRIBUTORS.md](CONTRIBUTORS.md).
 To support this app, you can donate through the [Sponsor](https://github.com/sponsors/felixwiemuth) button on Github.
 ## License ##
 
-Copyright (C) 2018-2023 Felix Wiemuth and [contributors](CONTRIBUTORS.md)
+Copyright (C) 2018-2024 Felix Wiemuth and [contributors](CONTRIBUTORS.md)
 
 
     This program is free software: you can redistribute it and/or modify
