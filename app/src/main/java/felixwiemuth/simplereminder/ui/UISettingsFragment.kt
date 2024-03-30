@@ -51,7 +51,7 @@ class UISettingsFragment : PreferenceFragmentCompat() {
                 editText.inputType = InputType.TYPE_CLASS_NUMBER
             }
             summaryProvider = Preference.SummaryProvider { _: Preference? ->
-                Prefs.getReminderDialogTimePickerHeight(context).toString()
+                "${Prefs.getReminderDialogTimePickerHeight(context)} (default: ${Prefs.Defaults.REMINDER_DIALOG_TIMEPICKER_HEIGHT})"
             }
             // Validation
             onPreferenceChangeListener =
@@ -76,7 +76,7 @@ class UISettingsFragment : PreferenceFragmentCompat() {
                 editText.inputType = InputType.TYPE_CLASS_NUMBER
             }
             summaryProvider = Preference.SummaryProvider { _: Preference? ->
-                Prefs.getReminderDialogTimePickerTextSize(context).toString()
+                "${Prefs.getReminderDialogTimePickerTextSize(context)} (default: ${Prefs.Defaults.REMINDER_DIALOG_TIMEPICKER_TEXTSIZE})"
             }
             // Validation
             onPreferenceChangeListener =

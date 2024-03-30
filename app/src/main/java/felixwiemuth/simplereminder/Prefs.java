@@ -42,6 +42,12 @@ import androidx.preference.PreferenceManager;
  * @author Felix Wiemuth
  */
 public class Prefs {
+
+    public static class Defaults {
+        public static final int REMINDER_DIALOG_TIMEPICKER_TEXTSIZE = 12;
+        public static final int REMINDER_DIALOG_TIMEPICKER_HEIGHT = 175;
+    }
+
     public static final String PREF_KEY_RUN_ON_BOOT = "run_on_boot";
 
     /**
@@ -196,11 +202,11 @@ public class Prefs {
     }
 
     public static int getReminderDialogTimePickerTextSize(Context context) {
-        return Integer.parseInt(getStringPref(R.string.prefkey_reminder_dialog_timepicker_text_size, "12", context));
+        return Integer.parseInt(getStringPref(R.string.prefkey_reminder_dialog_timepicker_text_size, String.valueOf(Defaults.REMINDER_DIALOG_TIMEPICKER_TEXTSIZE), context));
     }
 
     public static int getReminderDialogTimePickerHeight(Context context) {
-        return Integer.parseInt(getStringPref(R.string.prefkey_reminder_dialog_timepicker_height, "175", context));
+        return Integer.parseInt(getStringPref(R.string.prefkey_reminder_dialog_timepicker_height, String.valueOf(Defaults.REMINDER_DIALOG_TIMEPICKER_HEIGHT), context));
     }
 
     public static boolean isDisplayOriginalDueTimeNormal(Context context) {
