@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2023 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2024 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,12 @@ import androidx.preference.PreferenceManager;
  * @author Felix Wiemuth
  */
 public class Prefs {
+
+    public static class Defaults {
+        public static final int REMINDER_DIALOG_TIMEPICKER_TEXTSIZE = 12;
+        public static final int REMINDER_DIALOG_TIMEPICKER_HEIGHT = 175;
+    }
+
     public static final String PREF_KEY_RUN_ON_BOOT = "run_on_boot";
 
     /**
@@ -193,6 +199,14 @@ public class Prefs {
 
     public static int getNaggingRepeatInterval(Context context) {
         return Integer.parseInt(getStringPref(R.string.prefkey_nagging_repeat_interval, "1", context));
+    }
+
+    public static int getReminderDialogTimePickerTextSize(Context context) {
+        return Integer.parseInt(getStringPref(R.string.prefkey_reminder_dialog_timepicker_text_size, String.valueOf(Defaults.REMINDER_DIALOG_TIMEPICKER_TEXTSIZE), context));
+    }
+
+    public static int getReminderDialogTimePickerHeight(Context context) {
+        return Integer.parseInt(getStringPref(R.string.prefkey_reminder_dialog_timepicker_height, String.valueOf(Defaults.REMINDER_DIALOG_TIMEPICKER_HEIGHT), context));
     }
 
     public static boolean isDisplayOriginalDueTimeNormal(Context context) {

@@ -14,14 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package felixwiemuth.simplereminder.ui
 
-package felixwiemuth.simplereminder.ui.reminderslist
-
-import android.view.View
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
+import android.os.Bundle
+import felixwiemuth.simplereminder.Prefs
 import felixwiemuth.simplereminder.R
+import felixwiemuth.simplereminder.ReminderManager.addReminder
 
-class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val titleView: TextView = itemView.findViewById(R.id.title)
+/**
+ * Shows a dialog allowing to add a reminder. Finishes with [.RESULT_OK] if the reminder has been added.
+ */
+class AddReminderDialogActivity : ReminderDialogActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setTitle(R.string.add_reminder_title)
+    }
+
+    override fun onDone() {
+        val reminder = addReminder(this, buildReminderWithTimeTextNagging())
+        makeToast(reminder)
+        completeActivity()
+        Prefs.setAddReminderDialogUsed(this)
+    }
 }

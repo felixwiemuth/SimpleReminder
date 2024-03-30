@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2023 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
+ * Copyright (C) 2018-2024 Felix Wiemuth and contributors (see CONTRIBUTORS.md)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,9 +13,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * This file incorporates work covered by different licenses.
- * For further information see LICENSE.md.
  */
 
 package felixwiemuth.simplereminder.ui.util;
