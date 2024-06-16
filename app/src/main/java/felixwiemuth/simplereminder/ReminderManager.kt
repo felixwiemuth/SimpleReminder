@@ -16,12 +16,14 @@
  */
 package felixwiemuth.simplereminder
 
+import android.Manifest
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -320,8 +322,15 @@ object ReminderManager {
         if (Prefs.getBooleanPref(R.string.prefkey_enable_sound, false, context)) {
             builder.setSound(DEFAULT_SOUND) // Set default notification sound
         }
+
         val notificationManager = NotificationManagerCompat.from(context)
-        notificationManager.notify(reminder.id, builder.build())
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU // Permission was added in API 33
+            || context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationManager.notify(reminder.id, builder.build())
+        } else {
+            Log.e("Notifications", "Cannot send notification for reminder: permission not granted.")
+        }
     }
 
     /**
