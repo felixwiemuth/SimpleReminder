@@ -13,6 +13,8 @@
 /.idea/runConfigurations.xml
 /.idea/workspace.xml
 /.idea/inspectionProfiles
+/.idea/studiobot.xml
+/.idea/deploymentTargetSelector.xml
 .DS_Store
 /app/release
 /build
