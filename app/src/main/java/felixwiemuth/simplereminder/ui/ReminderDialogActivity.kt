@@ -232,7 +232,7 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             timePicker.hour = calendar[Calendar.HOUR_OF_DAY]
             timePicker.minute = calendar[Calendar.MINUTE]
-        } else {
+        } else @Suppress("DEPRECATION") run {
             timePicker.currentHour = calendar[Calendar.HOUR_OF_DAY]
             timePicker.currentMinute = calendar[Calendar.MINUTE]
         }
