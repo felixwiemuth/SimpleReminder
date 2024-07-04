@@ -17,6 +17,9 @@
   -->
 
 <changelog>
+    <release version="0.9.14" versioncode="914100" >
+        <change>Update to Android 14</change>
+    </release>
     <release version="0.9.13" versioncode="913100" >
         <change>New setting: Customize sizes of elements in the "Add reminder" dialog (see Settings -> User Interface)</change>
         <change>New setting: Close keyboard when using the clock</change>
