@@ -38,36 +38,42 @@ import felixwiemuth.simplereminder.util.DateTimeUtil
 class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
-        val runOnBootPref = findPreference<SwitchPreferenceCompat>(getString(R.string.prefkey_run_on_boot))
-        runOnBootPref!!.summaryOff = UIUtils.makeAlertText(R.string.preference_run_on_boot_summary_off, requireContext())
-        runOnBootPref.setSummaryOn(R.string.preference_run_on_boot_summary_on)
-        val batPref = findPreference<Preference>(getString(R.string.prefkey_disable_battery_optimization))
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            updateBatteryPrefDescription(batPref)
-        } else {
-            batPref!!.parent!!.removePreference(batPref)
+
+        findPreference<SwitchPreferenceCompat>(getString(R.string.prefkey_run_on_boot))?.apply {
+            summaryOff = UIUtils.makeAlertText(R.string.preference_run_on_boot_summary_off, requireContext())
+            setSummaryOn(R.string.preference_run_on_boot_summary_on)
         }
-        val naggingRepeatIntervalPref = findPreference<EditTextPreference>(getString(R.string.prefkey_nagging_repeat_interval))
-        naggingRepeatIntervalPref!!.setOnBindEditTextListener { editText: EditText ->
-            editText.inputType = InputType.TYPE_CLASS_NUMBER
-        }
-        naggingRepeatIntervalPref.summaryProvider = SummaryProvider { _: Preference? ->
-            DateTimeUtil.formatMinutes(Prefs.getNaggingRepeatInterval(context).toLong(), context)
-        }
-        // Validation
-        naggingRepeatIntervalPref.onPreferenceChangeListener =
-            Preference.OnPreferenceChangeListener listener@{ _: Preference?, newValue: Any ->
-                try {
-                    val i = newValue.toString().toInt()
-                    if (i > 0) {
-                        return@listener true
-                    }
-                } catch (ex: NumberFormatException) {
-                    // Incorrect format, handled below
-                }
-                Toast.makeText(context, R.string.preference_nagging_repeat_interval_format_error, Toast.LENGTH_LONG).show()
-                false
+
+        findPreference<Preference>(getString(R.string.prefkey_disable_battery_optimization))?.apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                updateBatteryPrefDescription(this)
+            } else {
+                parent?.removePreference(this)
             }
+        }
+
+        findPreference<EditTextPreference>(getString(R.string.prefkey_nagging_repeat_interval))?.apply {
+            setOnBindEditTextListener { editText: EditText ->
+                editText.inputType = InputType.TYPE_CLASS_NUMBER
+            }
+            summaryProvider = SummaryProvider { _: Preference? ->
+                DateTimeUtil.formatMinutes(Prefs.getNaggingRepeatInterval(context).toLong(), context)
+            }
+            // Validation
+            onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener listener@{ _: Preference?, newValue: Any ->
+                    try {
+                        val i = newValue.toString().toInt()
+                        if (i > 0) {
+                            return@listener true
+                        }
+                    } catch (ex: NumberFormatException) {
+                        // Incorrect format, handled below
+                    }
+                    Toast.makeText(context, R.string.preference_nagging_repeat_interval_format_error, Toast.LENGTH_LONG).show()
+                    false
+                }
+        }
 
         // Priority/Sound settings only work for Android < 8
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -126,9 +132,9 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
      * @param batPref
      */
     @RequiresApi(23)
-    private fun updateBatteryPrefDescription(batPref: Preference?) {
+    private fun updateBatteryPrefDescription(batPref: Preference) {
         if (Prefs.isIgnoringBatteryOptimization(context)) {
-            batPref!!.setSummary(R.string.preference_disable_battery_optimization_summary_yes)
+            batPref.setSummary(R.string.preference_disable_battery_optimization_summary_yes)
             batPref.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
                     val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
@@ -138,7 +144,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
                 }
         } else {
             // NOTE: As the text should change with "setSummary" here, the markup should apply. Should the text be equal, would need a workaround.
-            batPref!!.summary = UIUtils.makeAlertText(R.string.preference_disable_battery_optimization_summary_no, requireContext())
+            batPref.summary = UIUtils.makeAlertText(R.string.preference_disable_battery_optimization_summary_no, requireContext())
             batPref.onPreferenceClickListener =
                 Preference.OnPreferenceClickListener {
                     startActivity(Prefs.getIntentDisableBatteryOptimization(context))
