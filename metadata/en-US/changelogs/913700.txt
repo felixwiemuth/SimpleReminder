@@ -1,0 +1,4 @@
+• New setting: Customize sizes of elements in the "Add reminder" dialog (see Settings -> User Interface)
+• New setting: Close keyboard when using the clock
+• The "Add reminder" dialog now also exits completely on Android 12+ when navigating back (as on previous Android versions)
+• Donations: support the development of SimpleReminder!
