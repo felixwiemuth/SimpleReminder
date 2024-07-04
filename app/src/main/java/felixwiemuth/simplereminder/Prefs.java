@@ -206,6 +206,13 @@ public class Prefs {
         return intent;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    public static Intent getIntentScheduleExactSettings(Context context) {
+        @SuppressLint("BatteryLife") Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+        intent.setData(Uri.parse("package:" + context.getPackageName()));
+        return intent;
+    }
+
     public static int getNaggingRepeatInterval(Context context) {
         return Integer.parseInt(getStringPref(R.string.prefkey_nagging_repeat_interval, "1", context));
     }

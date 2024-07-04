@@ -18,6 +18,8 @@ package felixwiemuth.simplereminder.ui.reminderslist
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.Manifest.permission.SCHEDULE_EXACT_ALARM
+import android.app.AlarmManager
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -208,11 +210,15 @@ class RemindersListActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * On Android 12 and 12L, check whether [AlarmManager.canScheduleExactAlarms]. Before and after
+     * these version, this is not needed (from API 33+ have USE_EXACT_ALARM (non-revocable)).
+     */
     @RequiresApi(api = Build.VERSION_CODES.S)
     private fun checkScheduleExactPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU // On API 33+ we have USE_EXACT_ALARM (non-revocable)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
             || Prefs.isScheduleExactPermissionDontShowAgain(this)
-            || checkSelfPermission(SCHEDULE_EXACT_ALARM) == PackageManager.PERMISSION_GRANTED
+            || (getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms()
         ) return
 
         AlertDialog.Builder(this)
@@ -221,7 +227,7 @@ class RemindersListActivity : AppCompatActivity() {
             .setPositiveButton(
                 R.string.dialog_startup_grant_permission
             ) { _: DialogInterface?, _: Int ->
-                requestPermissions(arrayOf(SCHEDULE_EXACT_ALARM), 0)
+                startActivity(Prefs.getIntentScheduleExactSettings(this))
             }
             .setNeutralButton(R.string.dialog_startup_later, null)
             .setNegativeButton(
