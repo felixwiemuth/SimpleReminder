@@ -78,6 +78,7 @@ public class Prefs {
     private static final String PREF_STATE_ADD_REMINDER_DIALOG_USED = "AddReminderDialogUsed";
 
     private static final String PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN = "battery_optimization_dont_show_again";
+    private static final String PREF_STATE_SCHEDULE_EXACT_PERMISSION_DONT_SHOW_AGAIN = "schedule_exact_permission_dont_show_again";
     private static final String PREF_STATE_RUN_ON_BOOT_DONT_SHOW_AGAIN = "run_on_boot_dont_show_again";
 
     public static final int PERMISSION_REQUEST_CODE_BOOT = 1;
@@ -134,6 +135,14 @@ public class Prefs {
 
     public static void setBatteryOptimizationDontShowAgain(Context context) {
         getStatePrefs(context).edit().putBoolean(PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN, true).apply();
+    }
+
+    public static boolean isScheduleExactPermissionDontShowAgain(Context context) {
+        return getStatePrefs(context).getBoolean(PREF_STATE_SCHEDULE_EXACT_PERMISSION_DONT_SHOW_AGAIN, false);
+    }
+
+    public static void setScheduleExactPermissionDontShowAgain(Context context) {
+        getStatePrefs(context).edit().putBoolean(PREF_STATE_SCHEDULE_EXACT_PERMISSION_DONT_SHOW_AGAIN, true).apply();
     }
 
     public static boolean isRunOnBootDontShowAgain(Context context) {
