@@ -112,7 +112,7 @@
     <string name="preference_reminder_dialog_timepicker_height">Clock height</string>
     <string name="preference_reminder_dialog_timepicker_height_format_error">Choose a positive number</string>
     <string name="preference_reminder_dialog_show">Show reminder dialog</string>
-    <string name="preference_category_app">General</string>
+    <string name="preference_category_app">Run conditions</string>
     <string name="preference_run_on_boot">Activate on device startup</string>
     <string name="preference_run_on_boot_summary_off">After a restart of the device, reminders will not be shown until opening the app.</string>
     <string name="preference_run_on_boot_summary_on">Continue showing reminders after a restart of the device.</string>
