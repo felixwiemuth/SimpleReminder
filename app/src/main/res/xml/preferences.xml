@@ -92,4 +92,15 @@
             android:title="@string/preference_disable_battery_optimization"
             app:iconSpaceReserved="false" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="@string/prefkey_cat_other"
+        android:title="@string/preference_category_other"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="@string/prefkey_reset_dont_show_again"
+            android:title="@string/preference_reset_dont_show_again"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

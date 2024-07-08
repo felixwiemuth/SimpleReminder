@@ -237,6 +237,14 @@ public class Prefs {
         return getBooleanPref(R.string.prefkey_display_original_due_time_recreate, false, context);
     }
 
+    public static void resetAllDontShowAgain(Context context) {
+        getStatePrefs(context).edit()
+                .putBoolean(PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN, false)
+                .putBoolean(PREF_STATE_SCHEDULE_EXACT_PERMISSION_DONT_SHOW_AGAIN, false)
+                .putBoolean(PREF_STATE_RUN_ON_BOOT_DONT_SHOW_AGAIN, false)
+                .apply();
+    }
+
     /**
      * Get editor for default shared preferences.
      *

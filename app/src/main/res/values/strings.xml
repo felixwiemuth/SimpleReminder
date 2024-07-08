@@ -124,6 +124,9 @@
     <string name="preference_disable_battery_optimization_summary_no_API31_exactAllowed">Battery optimization is enabled - on Android 12 this should not be a problem (as \"Alarms &amp; Reminders\" is allowed), but if you experience reminders not being shown on time, consider disabling it for SimpleReminder (click here).</string>
     <string name="preference_disable_battery_optimization_summary_no_API31_exactNotAllowed">NOTE: Battery optimization is enabled and \"Alarms &amp; Reminders\" is not allowed. Reminders might not be shown on time (or not at all after the device was idle for too long). Click to allow \"Alarms &amp; Reminders\".</string>
     <string name="preference_disable_battery_optimization_summary_no_API33">Battery optimization is enabled - from Android 13 on this should not be a problem, but if you experience reminders not being shown on time, consider disabling it for SimpleReminder (click here).</string>
+    <string name="preference_category_other">Other</string>
+    <string name="preference_reset_dont_show_again">Reset \"Don\'t show again\" choices</string>
+    <string name="toast_reset_dont_show_again">\"Don\'t show again\" choices have been reset.</string>
     <string name="toast_permission_not_granted">Permission not granted.</string>
     <string name="toast_run_on_boot_revoked_therefore_disabled">Permission to run on device startup has been revoked, the setting has been disabled.</string>
     <string name="priority_min">Min</string>

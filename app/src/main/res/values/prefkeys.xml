@@ -37,4 +37,6 @@
     <string name="prefkey_nagging_repeat_interval">nagging_repeat_interval</string>
     <string name="prefkey_run_on_boot">run_on_boot</string>
     <string name="prefkey_disable_battery_optimization">disable_battery_optimization</string>
+    <string name="prefkey_cat_other">cat_other</string>
+    <string name="prefkey_reset_dont_show_again">reset_dont_show_again</string>
 </resources>

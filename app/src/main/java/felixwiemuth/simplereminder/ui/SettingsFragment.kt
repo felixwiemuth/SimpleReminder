@@ -99,6 +99,13 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
             notificationChannelPreference.isIconSpaceReserved = false
             notificationsPrefGroup.addPreference(notificationChannelPreference)
         }
+
+        findPreference<Preference>(getString(R.string.prefkey_reset_dont_show_again))?.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                Prefs.resetAllDontShowAgain(context)
+                Toast.makeText(context, R.string.toast_reset_dont_show_again, Toast.LENGTH_LONG).show()
+                true
+            }
     }
 
     override fun onResume() {
