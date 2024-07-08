@@ -17,7 +17,6 @@
 package felixwiemuth.simplereminder.ui.reminderslist
 
 import android.Manifest.permission.POST_NOTIFICATIONS
-import android.Manifest.permission.SCHEDULE_EXACT_ALARM
 import android.app.AlarmManager
 import android.content.Context
 import android.content.DialogInterface
@@ -107,7 +106,7 @@ class RemindersListActivity : AppCompatActivity() {
             checkScheduleExactPermission()
         }
 
-        // Check whether battery optimization is disabled and show dialog to disable it otherwise.
+        // Depending on platform version, check whether battery optimization is disabled and show dialog to disable it otherwise.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkBatteryOptimization()
         }
@@ -212,7 +211,7 @@ class RemindersListActivity : AppCompatActivity() {
 
     /**
      * On Android 12 and 12L, check whether [AlarmManager.canScheduleExactAlarms]. Before and after
-     * these version, this is not needed (from API 33+ have USE_EXACT_ALARM (non-revocable)).
+     * these versions, this is not needed (from API 33+ have USE_EXACT_ALARM (non-revocable)).
      */
     @RequiresApi(api = Build.VERSION_CODES.S)
     private fun checkScheduleExactPermission() {
@@ -238,13 +237,18 @@ class RemindersListActivity : AppCompatActivity() {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private fun checkBatteryOptimization() {
-        if (Prefs.isBatteryOptimizationDontShowAgain(this) || Prefs.isIgnoringBatteryOptimization(this)) {
-            return
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU // Here we don't want to ask explicitly for it anymore
+            || Prefs.isBatteryOptimizationDontShowAgain(this)
+            || Prefs.isIgnoringBatteryOptimization(this)
+        ) return
+
         AlertDialog.Builder(this)
             .setTitle(R.string.dialog_startup_disable_battery_optimization_title)
-            .setMessage(R.string.dialog_startup_disable_battery_optimization_message)
-            .setPositiveButton(
+            .setMessage(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    R.string.dialog_startup_disable_battery_optimization_message_API31
+                else R.string.dialog_startup_disable_battery_optimization_message
+            ).setPositiveButton(
                 R.string.dialog_startup_disable_battery_optimization_turn_off
             ) { _: DialogInterface?, _: Int ->
                 startActivity(

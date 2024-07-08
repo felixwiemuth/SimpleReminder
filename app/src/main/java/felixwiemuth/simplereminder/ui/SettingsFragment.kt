@@ -16,6 +16,8 @@
  */
 package felixwiemuth.simplereminder.ui
 
+import android.app.AlarmManager
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
@@ -26,8 +28,12 @@ import android.text.InputType
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.preference.*
+import androidx.preference.EditTextPreference
+import androidx.preference.Preference
 import androidx.preference.Preference.SummaryProvider
+import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
 import felixwiemuth.simplereminder.BootReceiver
 import felixwiemuth.simplereminder.Prefs
 import felixwiemuth.simplereminder.R
@@ -133,24 +139,52 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
      */
     @RequiresApi(23)
     private fun updateBatteryPrefDescription(batPref: Preference) {
-        if (Prefs.isIgnoringBatteryOptimization(context)) {
-            batPref.setSummary(R.string.preference_disable_battery_optimization_summary_yes)
-            batPref.onPreferenceClickListener =
-                Preference.OnPreferenceClickListener {
-                    val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
-                    startActivity(intent)
-                    updateBatteryPrefDescription(batPref)
-                    true
-                }
-        } else {
-            // NOTE: As the text should change with "setSummary" here, the markup should apply. Should the text be equal, would need a workaround.
-            batPref.summary = UIUtils.makeAlertText(R.string.preference_disable_battery_optimization_summary_no, requireContext())
-            batPref.onPreferenceClickListener =
-                Preference.OnPreferenceClickListener {
-                    startActivity(Prefs.getIntentDisableBatteryOptimization(context))
-                    updateBatteryPrefDescription(batPref)
-                    true
-                }
-        }
+        val api = Build.VERSION.SDK_INT
+        val canScheduleExact =
+
+            if (Prefs.isIgnoringBatteryOptimization(context)) {
+                batPref.summary = getString(
+                    when {
+                        api >= 33 -> R.string.preference_disable_battery_optimization_summary_yes_API33
+                        api >= 31 -> R.string.preference_disable_battery_optimization_summary_yes_API31
+                        else -> R.string.preference_disable_battery_optimization_summary_yes
+                    }
+                )
+                batPref.onPreferenceClickListener =
+                    Preference.OnPreferenceClickListener {
+                        val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                        startActivity(intent)
+                        updateBatteryPrefDescription(batPref)
+                        true
+                    }
+            } else {
+                // NOTE: As the text should change with "setSummary" here, the markup should apply. Should the text be equal, would need a workaround.
+                batPref.summary =
+                    when {
+                        api >= 33 -> getString(R.string.preference_disable_battery_optimization_summary_no_API33)
+                        // noinspection NewApi
+                        api >= 31 -> if ((requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms())
+                            getString(R.string.preference_disable_battery_optimization_summary_no_API31_exactAllowed)
+                        else
+                            UIUtils.makeAlertText(
+                                R.string.preference_disable_battery_optimization_summary_no_API31_exactNotAllowed,
+                                requireContext()
+                            )
+
+                        else -> UIUtils.makeAlertText(R.string.preference_disable_battery_optimization_summary_no, requireContext())
+                    }
+                batPref.onPreferenceClickListener =
+                    Preference.OnPreferenceClickListener {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                            && !(requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms()
+                        ) {
+                            startActivity(Prefs.getIntentScheduleExactSettings(context))
+                        } else {
+                            startActivity(Prefs.getIntentDisableBatteryOptimization(context))
+                        }
+                        updateBatteryPrefDescription(batPref)
+                        true
+                    }
+            }
     }
 }

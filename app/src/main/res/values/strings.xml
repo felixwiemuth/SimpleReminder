@@ -26,6 +26,7 @@
     <string name="dialog_startup_dont_show_again">Don\'t show again</string>
     <string name="dialog_startup_disable_battery_optimization_title">Battery Optimization</string>
     <string name="dialog_startup_disable_battery_optimization_message">You must disable battery optimization so that reminders can be shown reliably.\n\nSimpleReminder still only becomes active when a scheduled reminder is due.</string>
+    <string name="dialog_startup_disable_battery_optimization_message_API31">If reminders are not shown on time, disabling battery optimization might help.\n\nSimpleReminder still only becomes active when a scheduled reminder is due.</string>
     <string name="dialog_startup_disable_battery_optimization_turn_off">Turn off for SimpleReminder</string>
     <string name="dialog_startup_schedule_exact_title">Scheduling permission</string>
     <string name="dialog_startup_schedule_exact_message">You have to grant permission for the app to be able to show reminders on time.</string>
@@ -117,7 +118,12 @@
     <string name="preference_run_on_boot_summary_on">Continue showing reminders after a restart of the device.</string>
     <string name="preference_disable_battery_optimization">Battery optimization</string>
     <string name="preference_disable_battery_optimization_summary_yes">OK. Battery optimization is disabled for SimpleReminder, reminders will be shown on time. Click to open settings.</string>
-    <string name="preference_disable_battery_optimization_summary_no">NOTE: Battery optimization is enabled - reminders might not be shown after the device was idle for too long. Click to disable for SimpleReminder.</string>
+    <string name="preference_disable_battery_optimization_summary_yes_API31">Battery optimization is disabled for SimpleReminder - this should not be necessary on Android 12 when \"Alarms &amp; Reminders\" is allowed, but if reminders are otherwise not shown on time, this might help. Click to open settings.</string>
+    <string name="preference_disable_battery_optimization_summary_yes_API33">Battery optimization is disabled for SimpleReminder - this should not be necessary anymore from Android 13 on, but if reminders are otherwise not shown on time, this might help. Click to open settings.</string>
+    <string name="preference_disable_battery_optimization_summary_no">NOTE: Battery optimization is enabled - reminders might not be shown on time (or not at all after the device was idle for too long). Click to disable for SimpleReminder.</string>
+    <string name="preference_disable_battery_optimization_summary_no_API31_exactAllowed">Battery optimization is enabled - on Android 12 this should not be a problem (as \"Alarms &amp; Reminders\" is allowed), but if you experience reminders not being shown on time, consider disabling it for SimpleReminder (click here).</string>
+    <string name="preference_disable_battery_optimization_summary_no_API31_exactNotAllowed">NOTE: Battery optimization is enabled and \"Alarms &amp; Reminders\" is not allowed. Reminders might not be shown on time (or not at all after the device was idle for too long). Click to allow \"Alarms &amp; Reminders\".</string>
+    <string name="preference_disable_battery_optimization_summary_no_API33">Battery optimization is enabled - from Android 13 on this should not be a problem, but if you experience reminders not being shown on time, consider disabling it for SimpleReminder (click here).</string>
     <string name="toast_permission_not_granted">Permission not granted.</string>
     <string name="toast_run_on_boot_revoked_therefore_disabled">Permission to run on device startup has been revoked, the setting has been disabled.</string>
     <string name="priority_min">Min</string>
