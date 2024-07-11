@@ -98,6 +98,7 @@ class RemindersListActivity : AppCompatActivity() {
         val isFirstRunOfVersion = changeLog.isFirstRun
         if (isFirstRunOfVersion) {
             changeLog.logDialog.show()
+            Prefs.resetAllDontShowAgain(this)
         }
 
         // Check whether have permission to schedule exact alarms (needed for APIs 31-32),
