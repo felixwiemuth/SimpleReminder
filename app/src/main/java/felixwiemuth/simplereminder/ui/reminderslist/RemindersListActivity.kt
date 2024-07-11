@@ -185,6 +185,9 @@ class RemindersListActivity : AppCompatActivity() {
      * If yes, checks whether permission is granted and warns and disables setting if this is not the case.
      */
     private fun checkRunOnBoot() {
+        if (Prefs.isRunOnBootDontShowAgain(this))
+            return
+
         if (Prefs.isRunOnBoot(this)) {
             if (!BootReceiver.isPermissionGranted(applicationContext)) {
                 Prefs.setRunOnBoot(this, false)
