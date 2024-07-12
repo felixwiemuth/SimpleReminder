@@ -111,6 +111,7 @@
     <string name="preference_reminder_dialog_timepicker_text_size_format_error">Choose a positive number</string>
     <string name="preference_reminder_dialog_timepicker_height">Clock height</string>
     <string name="preference_reminder_dialog_timepicker_height_format_error">Choose a positive number</string>
+    <string name="preference_reminder_dialog_timepicker_sizes_recommended">(recommended: %s)</string>
     <string name="preference_reminder_dialog_show">Show reminder dialog</string>
     <string name="preference_category_app">Run conditions</string>
     <string name="preference_run_on_boot">Activate on device startup</string>
