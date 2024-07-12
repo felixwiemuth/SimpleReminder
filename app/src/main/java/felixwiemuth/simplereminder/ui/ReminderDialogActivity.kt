@@ -131,7 +131,7 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP // None of the customizations apply before Android 5.0
             && (!Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_show_keyboard_button, true, this)
-            || Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_customize_size, true, this))
+                    || Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_customize_size, true, this))
         ) {
             adaptTimePickerLayout()
         }
@@ -162,7 +162,8 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
                 }
                 renderSelectedDate()
             }
-            if (Prefs.getBooleanPref(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && Prefs.getBooleanPref(
                     R.string.prefkey_reminder_dialog_close_keyboard_on_timepicker_use,
                     false,
                     this@ReminderDialogActivity
