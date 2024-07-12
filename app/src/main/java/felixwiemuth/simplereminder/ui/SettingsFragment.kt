@@ -81,9 +81,16 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
                 }
         }
 
+        // Reminder dialog customizations only apply for Android >= 5.0
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            findPreference<PreferenceCategory>(getString(R.string.prefkey_cat_ui))?.apply {
+                parent?.removePreference(this)
+            }
+        }
+
         // Priority/Sound settings only work for Android < 8
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationsPrefGroup = findPreference<PreferenceCategory>(getString(R.string.prefkey_notifications))
+            val notificationsPrefGroup = findPreference<PreferenceCategory>(getString(R.string.prefkey_cat_notifications))
             notificationsPrefGroup!!.removePreference(findPreference(getString(R.string.prefkey_priority))!!)
             notificationsPrefGroup.removePreference(findPreference(getString(R.string.prefkey_enable_sound))!!)
             val notificationChannelPreference = Preference(requireContext())
