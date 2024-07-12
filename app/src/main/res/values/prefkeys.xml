@@ -20,12 +20,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- NOTE: enum keys must match exactly the constant names -->
 
-    <string name="prefkey_notifications">notifications</string>
+    <string name="prefkey_cat_notifications">notifications</string>
     <string name="prefkey_notifications_display">notifications_display</string>
     <string name="prefkey_display_original_due_time_normal">display_original_due_time_normal</string>
     <string name="prefkey_display_original_due_time_nag">display_original_due_time_nag</string>
     <string name="prefkey_display_original_due_time_recreate">display_original_due_time_recreate</string>
-    <string name="prefkey_ui">ui</string>
+    <string name="prefkey_cat_ui">ui</string>
+    <string name="prefkey_cat_ui_reminder_dialog">ui_reminder_dialog</string>
     <string name="prefkey_reminder_dialog_close_keyboard_on_timepicker_use">ui_close_keyboard_on_timepicker_use</string>
     <string name="prefkey_reminder_dialog_timepicker_text_size">ui_time_picker_text_size</string>
     <string name="prefkey_reminder_dialog_timepicker_height">ui_time_picker_width</string>

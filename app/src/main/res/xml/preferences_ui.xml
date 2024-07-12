@@ -18,7 +18,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
-        android:key="@string/prefkey_ui"
+        android:key="@string/prefkey_cat_ui_reminder_dialog"
         android:title="@string/preference_category_reminder_dialog"
         app:iconSpaceReserved="false">
 
