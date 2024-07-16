@@ -238,10 +238,11 @@ public class Prefs {
     }
 
     public static void resetAllDontShowAgain(Context context) {
+        // Reset to default value by removing preferences (holds the preference file small)
         getStatePrefs(context).edit()
-                .putBoolean(PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN, false)
-                .putBoolean(PREF_STATE_SCHEDULE_EXACT_PERMISSION_DONT_SHOW_AGAIN, false)
-                .putBoolean(PREF_STATE_RUN_ON_BOOT_DONT_SHOW_AGAIN, false)
+                .remove(PREF_STATE_BATTERY_OPTIMIZATION_DONT_SHOW_AGAIN)
+                .remove(PREF_STATE_SCHEDULE_EXACT_PERMISSION_DONT_SHOW_AGAIN)
+                .remove(PREF_STATE_RUN_ON_BOOT_DONT_SHOW_AGAIN)
                 .apply();
     }
 
