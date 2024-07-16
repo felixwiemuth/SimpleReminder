@@ -124,8 +124,8 @@ class UISettingsFragment : PreferenceFragmentCompat() {
         startActivity(
             Intent(context, AddReminderDialogActivity::class.java)
                 .addFlags(
-                    Intent.FLAG_ACTIVITY_NEW_TASK or
-                            Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    // Independently start activity, but if it already exists, navigate to it
+                    Intent.FLAG_ACTIVITY_NEW_TASK
                 )
         )
     }
