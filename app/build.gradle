@@ -72,7 +72,7 @@ android {
         versionName = versionCodeMajor + "." + versionCodeMinor + "." + versionCodePoint + "-" + releaseChannel + "-" + gitDescription
 
         minSdkVersion 16
-        targetSdkVersion 33
+        targetSdkVersion 34
 
         archivesBaseName = "SimpleReminder_" + versionName
 
