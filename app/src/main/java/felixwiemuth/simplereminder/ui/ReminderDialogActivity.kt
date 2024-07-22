@@ -53,6 +53,7 @@ import felixwiemuth.simplereminder.R
 import felixwiemuth.simplereminder.data.Reminder
 import felixwiemuth.simplereminder.data.Reminder.Companion.builder
 import felixwiemuth.simplereminder.util.DateTimeUtil
+import felixwiemuth.simplereminder.util.setOneTimeClickListener
 import java.util.Calendar
 
 /**
@@ -184,7 +185,7 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
                 addKbCloseOnTouch(this)
             }
         }
-        addButton.setOnClickListener { onDone() }
+        addButton.setOneTimeClickListener { onDone() }
         naggingRepeatInterval = Prefs.getNaggingRepeatInterval(this)
         renderSelectedDate()
     }
