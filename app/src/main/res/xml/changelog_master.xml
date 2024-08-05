@@ -17,6 +17,13 @@
   -->
 
 <changelog>
+    <release version="0.9.14" versioncode="914100">
+        <change>Update to Android 14</change>
+        <change>UI customizations are now also available on Android 5+ (with restrictions for some versions)</change>
+        <change>Prevent reminders being added twice by accidental double-clicks on "Add" button</change>
+        <change>Settings: Option to reset "Don't show again" choices</change>
+        <change>Update battery optimization recommendations</change>
+    </release>
     <release version="0.9.13" versioncode="913100" >
         <change>New setting: Customize sizes of elements in the "Add reminder" dialog (see Settings -> User Interface)</change>
         <change>New setting: Close keyboard when using the clock</change>

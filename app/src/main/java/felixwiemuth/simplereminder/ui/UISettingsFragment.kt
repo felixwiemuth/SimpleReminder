@@ -18,6 +18,7 @@
 package felixwiemuth.simplereminder.ui
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.widget.EditText
@@ -32,6 +33,20 @@ import felixwiemuth.simplereminder.R
 class UISettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences_ui, rootKey)
+
+        // The toggle button does not exist before Android 8.0, so remove the corresponding preference
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            findPreference<Preference>(getString(R.string.prefkey_reminder_dialog_timepicker_show_keyboard_button))?.apply {
+                parent?.removePreference(this)
+            }
+        }
+
+        // Automatic closing of keyboard when using clock does not work on Android 5, so remove the corresponding preference
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            findPreference<Preference>(getString(R.string.prefkey_reminder_dialog_close_keyboard_on_timepicker_use))?.apply {
+                parent?.removePreference(this)
+            }
+        }
 
         val timePickerHeightPref = findPreference<EditTextPreference>(getString(R.string.prefkey_reminder_dialog_timepicker_height))!!
         val timePickerTextSizePref = findPreference<EditTextPreference>(getString(R.string.prefkey_reminder_dialog_timepicker_text_size))!!
@@ -51,7 +66,8 @@ class UISettingsFragment : PreferenceFragmentCompat() {
                 editText.inputType = InputType.TYPE_CLASS_NUMBER
             }
             summaryProvider = Preference.SummaryProvider { _: Preference? ->
-                "${Prefs.getReminderDialogTimePickerHeight(context)} (default: ${Prefs.Defaults.REMINDER_DIALOG_TIMEPICKER_HEIGHT})"
+                "${Prefs.getReminderDialogTimePickerHeight(context)} ${getString(R.string.preference_reminder_dialog_timepicker_sizes_recommended,
+                    Prefs.Defaults.REMINDER_DIALOG_TIMEPICKER_HEIGHT.toString())}"
             }
             // Validation
             onPreferenceChangeListener =
@@ -76,7 +92,8 @@ class UISettingsFragment : PreferenceFragmentCompat() {
                 editText.inputType = InputType.TYPE_CLASS_NUMBER
             }
             summaryProvider = Preference.SummaryProvider { _: Preference? ->
-                "${Prefs.getReminderDialogTimePickerTextSize(context)} (default: ${Prefs.Defaults.REMINDER_DIALOG_TIMEPICKER_TEXTSIZE})"
+                "${Prefs.getReminderDialogTimePickerTextSize(context)} ${getString(R.string.preference_reminder_dialog_timepicker_sizes_recommended,
+                    Prefs.Defaults.REMINDER_DIALOG_TIMEPICKER_TEXTSIZE.toString())}"
             }
             // Validation
             onPreferenceChangeListener =
@@ -104,8 +121,12 @@ class UISettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun startAddReminderActivity() {
-        startActivity(Intent(context, AddReminderDialogActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP))
+        startActivity(
+            Intent(context, AddReminderDialogActivity::class.java)
+                .addFlags(
+                    // Independently start activity, but if it already exists, navigate to it
+                    Intent.FLAG_ACTIVITY_NEW_TASK
+                )
+        )
     }
 }

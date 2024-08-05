@@ -1,0 +1,11 @@
+• Update to Android 14
+• UI customizations are now also available on Android 5+ (with restrictions for some versions before Android 8)
+• Prevent reminders being added twice by accidental double-clicks on "Add" button
+• Settings: Option to reset "Don't show again" choices
+• Update battery optimization recommendations
+
+Added in 0.9.13:
+• New setting: Customize sizes of elements in the "Add reminder" dialog (see Settings -> User Interface)
+• New setting: Close keyboard when using the clock
+• The "Add reminder" dialog now also exits completely on Android 12+ when navigating back (as on previous Android versions)
+• Donations: support the development of SimpleReminder!

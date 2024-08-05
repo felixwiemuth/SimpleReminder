@@ -52,7 +52,7 @@ android {
         // Version variables
         def versionCodeMajor = 0
         def versionCodeMinor = 9
-        def versionCodePoint = 13
+        def versionCodePoint = 14
 
         // Sub version for release channel (only used on some release channels)
         def versionCodeSub = 0
@@ -72,7 +72,7 @@ android {
         versionName = versionCodeMajor + "." + versionCodeMinor + "." + versionCodePoint
 
         minSdkVersion 16
-        targetSdkVersion 33
+        targetSdkVersion 34
 
         archivesBaseName = "SimpleReminder_" + versionName
 

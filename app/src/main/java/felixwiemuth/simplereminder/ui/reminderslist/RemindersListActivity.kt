@@ -17,6 +17,8 @@
 package felixwiemuth.simplereminder.ui.reminderslist
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.app.AlarmManager
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -36,7 +38,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import de.cketti.library.changelog.ChangeLog
-import felixwiemuth.simplereminder.*
+import felixwiemuth.simplereminder.BootReceiver
+import felixwiemuth.simplereminder.BuildConfig
+import felixwiemuth.simplereminder.Main
+import felixwiemuth.simplereminder.Prefs
+import felixwiemuth.simplereminder.R
 import felixwiemuth.simplereminder.ui.AddReminderDialogActivity
 import felixwiemuth.simplereminder.ui.SettingsActivity
 import felixwiemuth.simplereminder.ui.actions.DisplayChangeLog
@@ -92,9 +98,16 @@ class RemindersListActivity : AppCompatActivity() {
         val isFirstRunOfVersion = changeLog.isFirstRun
         if (isFirstRunOfVersion) {
             changeLog.logDialog.show()
+            Prefs.resetAllDontShowAgain(this)
         }
 
-        // Check whether battery optimization is disabled and show dialog to disable it otherwise.
+        // Check whether have permission to schedule exact alarms (needed for APIs 31-32),
+        // as user can revoke the permission even if it is pre-granted.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            checkScheduleExactPermission()
+        }
+
+        // Depending on platform version, check whether battery optimization is disabled and show dialog to disable it otherwise.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkBatteryOptimization()
         }
@@ -103,7 +116,7 @@ class RemindersListActivity : AppCompatActivity() {
         checkRunOnBoot()
 
         // Check whether the notification permission is granted and request it if not.
-        if (Build.VERSION.SDK_INT >= 33) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             checkNotificationPermission()
         }
 
@@ -132,6 +145,7 @@ class RemindersListActivity : AppCompatActivity() {
                 startActivity(Intent(this, SettingsActivity::class.java))
                 return true
             }
+
             R.id.action_help -> {
                 HtmlDialogFragment.displayHtmlDialogFragment(
                     supportFragmentManager,
@@ -139,6 +153,7 @@ class RemindersListActivity : AppCompatActivity() {
                     R.raw.help
                 )
             }
+
             R.id.action_about -> {
                 val title = getString(R.string.app_name) + " " + BuildConfig.VERSION_NAME
                 HtmlDialogFragment.displayHtmlDialogFragment(
@@ -170,6 +185,9 @@ class RemindersListActivity : AppCompatActivity() {
      * If yes, checks whether permission is granted and warns and disables setting if this is not the case.
      */
     private fun checkRunOnBoot() {
+        if (Prefs.isRunOnBootDontShowAgain(this))
+            return
+
         if (Prefs.isRunOnBoot(this)) {
             if (!BootReceiver.isPermissionGranted(applicationContext)) {
                 Prefs.setRunOnBoot(this, false)
@@ -195,15 +213,46 @@ class RemindersListActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * On Android 12 and 12L, check whether [AlarmManager.canScheduleExactAlarms]. Before and after
+     * these versions, this is not needed (from API 33+ have USE_EXACT_ALARM (non-revocable)).
+     */
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    private fun checkScheduleExactPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            || Prefs.isScheduleExactPermissionDontShowAgain(this)
+            || (getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms()
+        ) return
+
+        AlertDialog.Builder(this)
+            .setTitle(R.string.dialog_startup_schedule_exact_title)
+            .setMessage(R.string.dialog_startup_schedule_exact_message)
+            .setPositiveButton(
+                R.string.dialog_startup_grant_permission
+            ) { _: DialogInterface?, _: Int ->
+                startActivity(Prefs.getIntentScheduleExactSettings(this))
+            }
+            .setNeutralButton(R.string.dialog_startup_later, null)
+            .setNegativeButton(
+                R.string.dialog_startup_dont_show_again
+            ) { _: DialogInterface?, _: Int -> Prefs.setScheduleExactPermissionDontShowAgain(this) }
+            .show()
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     private fun checkBatteryOptimization() {
-        if (Prefs.isBatteryOptimizationDontShowAgain(this) || Prefs.isIgnoringBatteryOptimization(this)) {
-            return
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU // Here we don't want to ask explicitly for it anymore
+            || Prefs.isBatteryOptimizationDontShowAgain(this)
+            || Prefs.isIgnoringBatteryOptimization(this)
+        ) return
+
         AlertDialog.Builder(this)
             .setTitle(R.string.dialog_startup_disable_battery_optimization_title)
-            .setMessage(R.string.dialog_startup_disable_battery_optimization_message)
-            .setPositiveButton(
+            .setMessage(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    R.string.dialog_startup_disable_battery_optimization_message_API31
+                else R.string.dialog_startup_disable_battery_optimization_message
+            ).setPositiveButton(
                 R.string.dialog_startup_disable_battery_optimization_turn_off
             ) { _: DialogInterface?, _: Int ->
                 startActivity(

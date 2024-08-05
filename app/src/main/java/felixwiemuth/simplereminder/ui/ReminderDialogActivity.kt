@@ -34,6 +34,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.CheckedTextView
 import android.widget.DatePicker
 import android.widget.LinearLayout
 import android.widget.NumberPicker
@@ -52,6 +53,7 @@ import felixwiemuth.simplereminder.R
 import felixwiemuth.simplereminder.data.Reminder
 import felixwiemuth.simplereminder.data.Reminder.Companion.builder
 import felixwiemuth.simplereminder.util.DateTimeUtil
+import felixwiemuth.simplereminder.util.setOneTimeClickListener
 import java.util.Calendar
 
 /**
@@ -128,8 +130,9 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
 
         timePicker = findViewById(R.id.timePicker)
 
-        if (!Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_show_keyboard_button, true, this)
-            || Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_customize_size, true, this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP // None of the customizations apply before Android 5.0
+            && (!Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_show_keyboard_button, true, this)
+                    || Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_customize_size, true, this))
         ) {
             adaptTimePickerLayout()
         }
@@ -160,7 +163,13 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
                 }
                 renderSelectedDate()
             }
-            if (Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_close_keyboard_on_timepicker_use, false, this@ReminderDialogActivity)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && Prefs.getBooleanPref(
+                    R.string.prefkey_reminder_dialog_close_keyboard_on_timepicker_use,
+                    false,
+                    this@ReminderDialogActivity
+                )
+            ) {
                 // Close the keyboard and remove focus from the TextView when touching any view in the TimePicker
                 fun addKbCloseOnTouch(view: View) {
                     // noinspection ClickableViewAccessibility
@@ -176,7 +185,7 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
                 addKbCloseOnTouch(this)
             }
         }
-        addButton.setOnClickListener { onDone() }
+        addButton.setOneTimeClickListener { onDone() }
         naggingRepeatInterval = Prefs.getNaggingRepeatInterval(this)
         renderSelectedDate()
     }
@@ -232,7 +241,7 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             timePicker.hour = calendar[Calendar.HOUR_OF_DAY]
             timePicker.minute = calendar[Calendar.MINUTE]
-        } else {
+        } else @Suppress("DEPRECATION") run {
             timePicker.currentHour = calendar[Calendar.HOUR_OF_DAY]
             timePicker.currentMinute = calendar[Calendar.MINUTE]
         }
@@ -445,16 +454,16 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
      * Adapt the time picker layout according to user's set preferences.
      */
     private fun adaptTimePickerLayout() {
-        // Removing the whole layout with the toggle button
+        // Removing the whole layout with the toggle button if present (it exists from Android 8.0 on) and disabled by user
         //noinspection DiscouragedApi (have to access the internal system resources by name)
-        timePicker.findViewById<View>(Resources.getSystem().getIdentifier("toggle_mode", "id", "android"))
-            ?.let { toggleButton ->
-                toggleButton.parent as? ViewGroup
-            }
-            ?.let { toggleButtonLayout ->
-                (toggleButtonLayout.parent as? ViewGroup)
-                    ?.let { timePickerRootLayout ->
-                        if (!Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_show_keyboard_button, true, this)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+            && !Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_show_keyboard_button, true, this)
+        ) {
+            val toggleButton = timePicker.findViewById<View>(Resources.getSystem().getIdentifier("toggle_mode", "id", "android"))
+            (toggleButton?.parent as? ViewGroup)
+                ?.let { toggleButtonLayout ->
+                    (toggleButtonLayout.parent as? ViewGroup)
+                        ?.let { timePickerRootLayout ->
                             // Remove all views related to the toggle button
 
                             timePickerRootLayout.removeView(toggleButtonLayout)
@@ -471,67 +480,78 @@ abstract class ReminderDialogActivity : AppCompatActivity() {
                                 )
                             )
                         }
+                }
+        }
 
-                        if (Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_customize_size, false, this)) {
-                            // Changing the height of the time display by changing the font size
-                            timePickerRootLayout.findViewById<View>(
-                                Resources.getSystem().getIdentifier("time_header", "id", "android")
-                            )?.let { timeHeader ->
-                                // Adapting the size of all text in the time header (also the AM/PM labels in 12-hour mode).
-                                // Note that the numbers also serve as buttons to switch between hour and minute selection.
+        // Adapting sizes of time display and clock if enabled
+        //noinspection DiscouragedApi (have to access the internal system resources by name)
+        if (Prefs.getBooleanPref(R.string.prefkey_reminder_dialog_timepicker_customize_size, false, this)) {
+            // Changing the height of the time display by changing the font size
+            timePicker.findViewById<View>(
+                Resources.getSystem().getIdentifier("time_header", "id", "android")
+            )?.let { timeHeader ->
+                // Adapting the size of all text in the time header (also the AM/PM labels in 12-hour mode).
+                // Note that the numbers also serve as buttons to switch between hour and minute selection.
 
-                                // In default resource: 60dp
-                                val timeHeaderTextSize = TypedValue.applyDimension(
-                                    TypedValue.COMPLEX_UNIT_DIP,
-                                    Prefs.getReminderDialogTimePickerTextSize(this).toFloat(),
-                                    resources.displayMetrics
-                                )
+                // In default resource: 60dp
+                val timeHeaderTextSize = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    Prefs.getReminderDialogTimePickerTextSize(this).toFloat(),
+                    resources.displayMetrics
+                )
 
-                                // In default resource: 16dp (smaller than [timeHeaderTextSize] by a factor of 3.75)
-                                val textSizeAmPmLabel = TypedValue.applyDimension(
-                                    TypedValue.COMPLEX_UNIT_DIP,
-                                    Prefs.getReminderDialogTimePickerTextSize(this).toFloat() / 3.75f,
-                                    resources.displayMetrics
-                                )
+                // In default resource: 16dp (smaller than [timeHeaderTextSize] by a factor of 3.75)
+                val textSizeAmPmLabel = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    Prefs.getReminderDialogTimePickerTextSize(this).toFloat() / 3.75f,
+                    resources.displayMetrics
+                )
 
-                                timeHeader.findViewById<TextView>(Resources.getSystem().getIdentifier("hours", "id", "android"))
-                                    ?.let { it.textSize = timeHeaderTextSize }
-                                timeHeader.findViewById<TextView>(Resources.getSystem().getIdentifier("minutes", "id", "android"))
-                                    ?.let { it.textSize = timeHeaderTextSize }
-                                timeHeader.findViewById<TextView>(Resources.getSystem().getIdentifier("separator", "id", "android"))
-                                    ?.let { it.textSize = timeHeaderTextSize }
-                                timeHeader.findViewById<RadioButton>(Resources.getSystem().getIdentifier("am_label", "id", "android"))
-                                    ?.let { it.textSize = textSizeAmPmLabel }
-                                timeHeader.findViewById<RadioButton>(Resources.getSystem().getIdentifier("pm_label", "id", "android"))
-                                    ?.let { it.textSize = textSizeAmPmLabel }
+                timeHeader.findViewById<TextView>(Resources.getSystem().getIdentifier("hours", "id", "android"))
+                    ?.let { it.textSize = timeHeaderTextSize }
+                timeHeader.findViewById<TextView>(Resources.getSystem().getIdentifier("minutes", "id", "android"))
+                    ?.let { it.textSize = timeHeaderTextSize }
+                timeHeader.findViewById<TextView>(Resources.getSystem().getIdentifier("separator", "id", "android"))
+                    ?.let { it.textSize = timeHeaderTextSize }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { // The type of the label views changes on Android 7 (tested with Pixel 5 emulator)
+                    timeHeader.findViewById<RadioButton>(Resources.getSystem().getIdentifier("am_label", "id", "android"))
+                        ?.let { it.textSize = textSizeAmPmLabel }
+                    timeHeader.findViewById<RadioButton>(Resources.getSystem().getIdentifier("pm_label", "id", "android"))
+                        ?.let { it.textSize = textSizeAmPmLabel }
+                } else {
+                    timeHeader.findViewById<CheckedTextView>(Resources.getSystem().getIdentifier("am_label", "id", "android"))
+                        ?.let { it.textSize = textSizeAmPmLabel }
+                    timeHeader.findViewById<CheckedTextView>(Resources.getSystem().getIdentifier("pm_label", "id", "android"))
+                        ?.let { it.textSize = textSizeAmPmLabel }
+                }
 
-                                // Making the height adapt to the changed font size (however, MATCH_PARENT also seems to work)
-                                // Note: This expects a LinearLayout.LayoutParams despite the parameter type
-                                timeHeader.layoutParams = LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT
-                                )
+                // Making the height adapt to the changed font size (however, MATCH_PARENT also seems to work)
+                // Note: This expects a LinearLayout.LayoutParams despite the parameter type
+                timeHeader.layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
 
-                                val layoutParams = timeHeader.layoutParams as LinearLayout.LayoutParams
-                                layoutParams.bottomMargin = 16 // 16dp is used both as bottom of time header layout and top of time picker, but 16 in total is more symmetric
-                            }
-
-                            // Changing the height of the TimePicker
-                            timePickerRootLayout.findViewById<View>(
-                                Resources.getSystem().getIdentifier("radial_picker", "id", "android")
-                            )?.let { radialTimePicker ->
-                                // Note: This expects a LinearLayout.LayoutParams despite the parameter type
-                                radialTimePicker.layoutParams = LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    TypedValue.applyDimension(
-                                        TypedValue.COMPLEX_UNIT_DIP,
-                                        Prefs.getReminderDialogTimePickerHeight(this).toFloat(),
-                                        resources.displayMetrics
-                                    ).toInt()
-                                )
-                            }
-                        }
-                    }
+                val layoutParams = timeHeader.layoutParams as LinearLayout.LayoutParams
+                layoutParams.bottomMargin =
+                    16 // 16dp is used both as bottom of time header layout and top of time picker, but 16 in total is more symmetric
             }
+
+            // Changing the height of the TimePicker
+            timePicker.findViewById<View>(
+
+                Resources.getSystem().getIdentifier("radial_picker", "id", "android")
+            )?.let { radialTimePicker ->
+                // Note: This expects a LinearLayout.LayoutParams despite the parameter type
+                radialTimePicker.layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        Prefs.getReminderDialogTimePickerHeight(this).toFloat(),
+                        resources.displayMetrics
+                    ).toInt()
+                )
+            }
+        }
     }
 }
