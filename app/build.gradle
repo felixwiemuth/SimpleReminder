@@ -23,7 +23,7 @@ plugins {
 }
 
 android {
-    compileSdk 34
+    compileSdk 35
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -72,7 +72,7 @@ android {
         versionName = versionCodeMajor + "." + versionCodeMinor + "." + versionCodePoint + "-" + releaseChannel + "-" + gitDescription
 
         minSdkVersion 16
-        targetSdkVersion 34
+        targetSdkVersion 35
 
         archivesBaseName = "SimpleReminder_" + versionName
 
