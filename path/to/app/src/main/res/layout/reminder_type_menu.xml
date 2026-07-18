@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_reminder_type_notification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Notification"
+        app:icon="@drawable/ic_notification" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_reminder_type_nagging"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nagging"
+        app:icon="@drawable/ic_nagging" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_reminder_type_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Alarm"
+        app:icon="@drawable/ic_alarm" />
+
+</LinearLayout>
