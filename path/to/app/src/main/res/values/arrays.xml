@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="reminder_types">
+        <item>notification</item>
+        <item>nagging</item>
+        <item>alarm</item>
+    </string-array>
+</resources>
